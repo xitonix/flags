@@ -3,8 +3,10 @@ package flags
 type StringFlag struct {
 	envVariable         EnvironmentVariable
 	defaultValue, value string
+	ptr                 *string
 	name, short         string
 	usage               string
+	isSet               bool
 }
 
 func newString(name string, defaultValue string, usage string) *StringFlag {
@@ -12,37 +14,59 @@ func newString(name string, defaultValue string, usage string) *StringFlag {
 }
 
 func newStringP(name string, short string, defaultValue string, usage string) *StringFlag {
-	return &StringFlag{envVariable: &Variable{}, defaultValue: defaultValue, name: name, short: short, usage: usage}
+	ptr := new(string)
+	return &StringFlag{envVariable: &Variable{}, defaultValue: defaultValue, name: name, short: short, usage: usage, ptr: ptr}
 }
 
-func (s *StringFlag) Env() EnvironmentVariable {
-	return s.envVariable
+func (f *StringFlag) Env() EnvironmentVariable {
+	return f.envVariable
 }
 
-func (s *StringFlag) Name() string {
-	return s.name
+func (f *StringFlag) Name() string {
+	return f.name
 }
 
-func (s *StringFlag) Short() string {
-	return s.short
+func (f *StringFlag) Type() string {
+	return "string"
 }
 
-func (s *StringFlag) Usage() string {
-	return s.usage
+func (f *StringFlag) Short() string {
+	return f.short
 }
 
-func (s *StringFlag) Set(value string) {
-	if isEmpty(value) {
-		value = s.defaultValue
-	}
-	s.value = value
+func (f *StringFlag) Usage() string {
+	return f.usage
 }
 
-func (s *StringFlag) Get() string {
-	return s.value
+func (f *StringFlag) IsSet() bool {
+	return f.isSet
 }
 
-func (s *StringFlag) WithEnv(variable string) *StringFlag {
-	s.envVariable.set(variable)
-	return s
+func (f *StringFlag) Set(value string) error {
+	f.isSet = true
+	f.set(value)
+	return nil
+}
+
+func (f *StringFlag) ResetToDefault() {
+	f.isSet = false
+	f.set(f.defaultValue)
+}
+
+func (f *StringFlag) Var() *string {
+	return f.ptr
+}
+
+func (f *StringFlag) Get() string {
+	return f.value
+}
+
+func (f *StringFlag) WithEnv(variable string) *StringFlag {
+	f.envVariable.set(variable)
+	return f
+}
+
+func (f *StringFlag) set(value string) {
+	f.value = value
+	*f.ptr = value
 }

@@ -5,4 +5,7 @@ type Flag interface {
 	Name() string
 	Short() string
 	Usage() string
+	IsSet() bool
+	ResetToDefault()
+	Type() string
 }

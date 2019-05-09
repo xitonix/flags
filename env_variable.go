@@ -1,6 +1,8 @@
 package flags
 
-import "strings"
+import (
+	"strings"
+)
 
 type EnvironmentVariable interface {
 	Prefix() string

@@ -435,7 +435,7 @@ func TestArgSource_Read(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			src := newArgSource(tc.in)
+			src, _ := newArgSource(tc.in)
 			for _, e := range tc.expected {
 				actual, ok := src.Read(e.key)
 				if ok != e.ok {
@@ -464,7 +464,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 		expectedCount int
 	}{
 		{
-			title: "long form variable with hyphened value",
+			title: "long form ptr with hyphened value",
 			in:    []string{"--key1=--a=10 --b=20"},
 			expected: []entry{
 				{
@@ -476,7 +476,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form variable with comma separated value and equal sign",
+			title: "long form ptr with comma separated value and equal sign",
 			in:    []string{"--key1=a,b,c"},
 			expected: []entry{
 				{
@@ -488,7 +488,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form variable with comma separated value and without equal sign",
+			title: "long form ptr with comma separated value and without equal sign",
 			in:    []string{"--key1", "a,b,c"},
 			expected: []entry{
 				{
@@ -500,7 +500,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form variable with square braces and equal sign",
+			title: "long form ptr with square braces and equal sign",
 			in:    []string{"--key1=[a,b,c]"},
 			expected: []entry{
 				{
@@ -512,7 +512,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form variable with square braces and without equal sign",
+			title: "long form ptr with square braces and without equal sign",
 			in:    []string{"--key1", "[a,b,c]"},
 			expected: []entry{
 				{
@@ -524,7 +524,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form variable with hyphened value",
+			title: "short form ptr with hyphened value",
 			in:    []string{"-k=--a=10 --b=20"},
 			expected: []entry{
 				{
@@ -537,7 +537,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 		},
 
 		{
-			title: "short form variable with comma separated value and equal sign",
+			title: "short form ptr with comma separated value and equal sign",
 			in:    []string{"-k=a,b,c"},
 			expected: []entry{
 				{
@@ -549,7 +549,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form variable with comma separated value and without equal sign",
+			title: "short form ptr with comma separated value and without equal sign",
 			in:    []string{"-k", "a,b,c"},
 			expected: []entry{
 				{
@@ -561,7 +561,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form variable with square braces and equal sign",
+			title: "short form ptr with square braces and equal sign",
 			in:    []string{"-k=[a,b,c]"},
 			expected: []entry{
 				{
@@ -573,7 +573,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form variable with square braces and without equal sign",
+			title: "short form ptr with square braces and without equal sign",
 			in:    []string{"-k", "[a,b,c]"},
 			expected: []entry{
 				{
@@ -588,7 +588,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			src := newArgSource(tc.in)
+			src, _ := newArgSource(tc.in)
 			for _, e := range tc.expected {
 				actual, ok := src.Read(e.key)
 				if ok != e.ok {
@@ -600,6 +600,63 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 				if tc.expectedCount != len(src.arguments) {
 					t.Errorf("Count, Expected: %v, Actual: %v", tc.expectedCount, len(src.arguments))
 				}
+			}
+		})
+	}
+}
+
+func TestHelpFlags(t *testing.T) {
+	testCases := []struct {
+		title    string
+		in       []string
+		expected bool
+	}{
+		{
+			title:    "nil input",
+			expected: false,
+		},
+		{
+			title:    "empty input",
+			in:       make([]string, 0),
+			expected: false,
+		},
+		{
+			title:    "no help flag",
+			in:       []string{"--random"},
+			expected: false,
+		},
+		{
+			title:    "with H flag",
+			in:       []string{"-h"},
+			expected: true,
+		},
+		{
+			title:    "with HELP flag",
+			in:       []string{"--help"},
+			expected: true,
+		},
+		{
+			title:    "with long H flag",
+			in:       []string{"--h"},
+			expected: false,
+		},
+		{
+			title:    "with HELP flag and equal sign",
+			in:       []string{"--help="},
+			expected: true,
+		},
+		{
+			title:    "with H flag and equal sign",
+			in:       []string{"-h="},
+			expected: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			_, actual := newArgSource(tc.in)
+			if actual != tc.expected {
+				t.Errorf("Help Request, Expected: %v, Actual: %v", tc.expected, actual)
 			}
 		})
 	}

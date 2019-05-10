@@ -4,24 +4,11 @@ import (
 	"strings"
 )
 
-type EnvironmentVariable interface {
-	Prefix() string
-	Name() string
-	Key() string
-	auto()
-	setPrefix(string)
-	set(string)
-}
-
-type Variable struct {
+type EnvVariable struct {
 	prefix, key string
 }
 
-func (v *Variable) Prefix() string {
-	return v.prefix
-}
-
-func (v *Variable) Name() string {
+func (v *EnvVariable) Name() string {
 	if isEmpty(v.key) {
 		return ""
 	}
@@ -31,21 +18,17 @@ func (v *Variable) Name() string {
 	return v.prefix + "_" + v.key
 }
 
-func (v *Variable) Key() string {
-	return v.key
-}
-
-func (v *Variable) auto() {
+func (v *EnvVariable) auto(longName string) {
 	if isEmpty(v.key) {
-		v.set(v.key)
+		v.set(longName)
 	}
 }
 
-func (v *Variable) setPrefix(prefix string) {
+func (v *EnvVariable) setPrefix(prefix string) {
 	v.prefix = sanitise(prefix)
 }
 
-func (v *Variable) set(key string) {
+func (v *EnvVariable) set(key string) {
 	v.key = sanitise(key)
 }
 

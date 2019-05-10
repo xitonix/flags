@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"go.xitonix.io/flags/config"
 	"text/tabwriter"
 )
 
@@ -11,17 +13,13 @@ type Bucket struct {
 	reg           *registry
 	flags         []Flag
 	sources       []Source
-	ops           *Options
+	ops           *config.Options
 	argSource     *argSource
 	helpRequested bool
 }
 
-var (
-	DefaultBucket = NewBucket()
-)
-
-func NewBucket(opts ...Option) *Bucket {
-	ops := NewOptions()
+func NewBucket(opts ...config.Option) *Bucket {
+	ops := config.NewOptions()
 	for _, option := range opts {
 		option(ops)
 	}
@@ -49,14 +47,14 @@ func (b *Bucket) StringP(name string, short string, defaultValue string, usage s
 	return f
 }
 
+func (b *Bucket) Flags() []Flag {
+	return b.flags
+}
+
 func (b *Bucket) Help() {
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.AlignRight)
 	for _, flag := range b.flags {
-		var short string
-		if len(flag.Short()) > 0 {
-			short = "-" + flag.Short() + ","
-		}
-		_, _ = fmt.Fprintf(tw, "%s\t--%s %s\t\t%s\t\t\t%s\n", short, flag.Name(), flag.Type(), flag.Env().Name(), flag.Usage())
+		_, _ = fmt.Fprintln(tw, flag.FormatHelp())
 	}
 	_ = tw.Flush()
 }
@@ -76,9 +74,9 @@ func (b *Bucket) Parse() {
 
 	for _, f := range b.flags {
 		for _, src := range b.sources {
-			value, found := src.Read(f.Name())
+			value, found := src.Read(f.LongName())
 			if !found {
-				value, found = src.Read(f.Short())
+				value, found = src.Read(f.ShortName())
 			}
 			if !found {
 				f.ResetToDefault()
@@ -96,10 +94,6 @@ func (b *Bucket) Parse() {
 			break
 		}
 	}
-}
-
-func Parse() {
-	DefaultBucket.Parse()
 }
 
 func (b *Bucket) checkForUnknownFlags() error {
@@ -121,7 +115,7 @@ func (b *Bucket) init() {
 
 	if b.ops.AutoEnv {
 		for _, f := range b.flags {
-			f.Env().auto()
+			f.Env().auto(f.LongName())
 		}
 	}
 }
@@ -132,4 +126,16 @@ func (b *Bucket) addFlag(flag Flag) {
 		b.ops.Log.Fatal(err)
 	}
 	b.flags = append(b.flags, flag)
+}
+
+func (b *Bucket) enableAutoEnv() {
+	b.ops.AutoEnv = true
+}
+
+func (b *Bucket) setEnvPrefix(prefix string) {
+	b.ops.EnvPrefix = sanitise(prefix)
+}
+
+func (b *Bucket) setLogger(logger config.Logger) {
+	b.ops.Log = logger
 }

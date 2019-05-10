@@ -20,7 +20,7 @@ func newRegistry() *registry {
 }
 
 func (r *registry) add(flag Flag) error {
-	long := flag.Name()
+	long := flag.LongName()
 
 	if isEmpty(long) {
 		return ErrEmptyFlagName
@@ -30,7 +30,7 @@ func (r *registry) add(flag Flag) error {
 		return errInvalidFlag(long, "", "is a reserved flag")
 	}
 
-	short := flag.Short()
+	short := flag.ShortName()
 	if r.isReserved(short) {
 		return errInvalidFlag("", short, "is a reserved flag")
 	}

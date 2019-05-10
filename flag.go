@@ -1,11 +1,13 @@
 package flags
 
 type Flag interface {
-	Env() EnvironmentVariable
-	Name() string
-	Short() string
+	LongName() string
+	ShortName() string
 	Usage() string
 	IsSet() bool
-	ResetToDefault()
 	Type() string
+	Env() *EnvVariable
+	Set(value string) error
+	ResetToDefault()
+	FormatHelp() string
 }

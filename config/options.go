@@ -1,9 +1,12 @@
-package flags
+package config
+
+import "io"
 
 type Options struct {
-	EnvPrefix string
-	AutoEnv   bool
-	Log       Logger
+	EnvPrefix  string
+	AutoEnv    bool
+	Log        Logger
+	HelpWriter io.Writer
 }
 
 func NewOptions() *Options {
@@ -18,7 +21,7 @@ func NewOptions() *Options {
 // Option represents an option function
 type Option func(options *Options)
 
-func EnableAutoEnv() Option {
+func WithAutoEnv() Option {
 	return func(options *Options) {
 		options.AutoEnv = true
 	}
@@ -30,7 +33,7 @@ func WithLogger(logger Logger) Option {
 	}
 }
 
-func EnvPrefix(prefix string) Option {
+func WithEnvPrefix(prefix string) Option {
 	return func(options *Options) {
 		options.EnvPrefix = prefix
 	}

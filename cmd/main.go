@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	flags.EnableAutoEnv()
-	str := flags.DefaultBucket.StringP("name", "n", "default", "usage of name").WithEnv("Custom")
-	_ = flags.DefaultBucket.StringP("something-longer", "", "default", "usage of name is a bit longer").Var()
+	flags.SetEnvPrefix("AAA")
+	str := flags.StringPD("name", "n", "focus", "usage of name").WithEnv("ENV_NAME")
+	_ = flags.StringD("something-longer", "hh", `usage of name is a bit longer`).Var()
 	flags.Parse()
 	fmt.Println(*str)
 }

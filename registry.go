@@ -1,5 +1,10 @@
 package flags
 
+import (
+	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/internal"
+)
+
 type registry struct {
 	shorts map[string]interface{}
 	longs  map[string]interface{}
@@ -19,10 +24,10 @@ func newRegistry() *registry {
 	}
 }
 
-func (r *registry) add(flag Flag) error {
+func (r *registry) add(flag core.Flag) error {
 	long := flag.LongName()
 
-	if isEmpty(long) {
+	if internal.IsEmpty(long) {
 		return ErrEmptyFlagName
 	}
 

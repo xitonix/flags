@@ -1,5 +1,7 @@
 package flags
 
+import "go.xitonix.io/flags/internal"
+
 type ErrInvalidFlag struct {
 	long, short string
 	msg         string
@@ -19,12 +21,12 @@ func (e *ErrInvalidFlag) FieldName() string {
 
 func (e *ErrInvalidFlag) Error() string {
 	var str string
-	if !isEmpty(e.long) {
+	if !internal.IsEmpty(e.long) {
 		str += "--" + e.long
 	}
-	if !isEmpty(e.short) {
+	if !internal.IsEmpty(e.short) {
 		var comma string
-		if !isEmpty(str) {
+		if !internal.IsEmpty(str) {
 			comma = ", "
 		}
 		str += comma + "-" + e.short

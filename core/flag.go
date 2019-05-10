@@ -1,4 +1,4 @@
-package flags
+package core
 
 type Flag interface {
 	LongName() string
@@ -6,8 +6,8 @@ type Flag interface {
 	Usage() string
 	IsSet() bool
 	Type() string
-	Env() *EnvVariable
+	Env() *EnvironmentVariable
 	Set(value string) error
 	ResetToDefault()
-	FormatHelp() string
+	Default() interface{}
 }

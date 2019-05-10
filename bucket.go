@@ -1,17 +1,17 @@
 package flags
 
 import (
-	"fmt"
+	"go.xitonix.io/flags/internal"
 	"os"
 	"strings"
 
 	"go.xitonix.io/flags/config"
-	"text/tabwriter"
+	"go.xitonix.io/flags/core"
 )
 
 type Bucket struct {
 	reg           *registry
-	flags         []Flag
+	flags         []core.Flag
 	sources       []Source
 	ops           *config.Options
 	argSource     *argSource
@@ -27,7 +27,7 @@ func NewBucket(opts ...config.Option) *Bucket {
 	argSource, helpRequested := newArgSource(os.Args[1:])
 	return &Bucket{
 		reg:   newRegistry(),
-		flags: make([]Flag, 0),
+		flags: make([]core.Flag, 0),
 		sources: []Source{
 			argSource,
 		},
@@ -37,26 +37,39 @@ func NewBucket(opts ...config.Option) *Bucket {
 	}
 }
 
-func (b *Bucket) String(name string, defaultValue string, usage string) *StringFlag {
-	return b.StringP(name, "", defaultValue, usage)
-}
-
-func (b *Bucket) StringP(name string, short string, defaultValue string, usage string) *StringFlag {
-	f := newStringP(strings.TrimSpace(strings.ToLower(name)), strings.TrimSpace(strings.ToLower(short)), defaultValue, usage)
+func (b *Bucket) String(name string, usage string) *StringFlag {
+	f := newString(strings.TrimSpace(strings.ToLower(name)), usage)
 	b.addFlag(f)
 	return f
 }
 
-func (b *Bucket) Flags() []Flag {
+func (b *Bucket) StringP(name string, short string, usage string) *StringFlag {
+	f := newStringP(strings.TrimSpace(strings.ToLower(name)), strings.TrimSpace(strings.ToLower(short)), usage)
+	b.addFlag(f)
+	return f
+}
+
+func (b *Bucket) StringPD(name string, short string, defaultValue string, usage string) *StringFlag {
+	f := newStringPD(strings.TrimSpace(strings.ToLower(name)), strings.TrimSpace(strings.ToLower(short)), defaultValue, usage)
+	b.addFlag(f)
+	return f
+}
+
+func (b *Bucket) StringD(name string, defaultValue string, usage string) *StringFlag {
+	f := newStringD(strings.TrimSpace(strings.ToLower(name)), defaultValue, usage)
+	b.addFlag(f)
+	return f
+}
+
+func (b *Bucket) Flags() []core.Flag {
 	return b.flags
 }
 
 func (b *Bucket) Help() {
-	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.AlignRight)
 	for _, flag := range b.flags {
-		_, _ = fmt.Fprintln(tw, flag.FormatHelp())
+		_, _ = b.ops.HelpProvider.Writer.Write([]byte(b.ops.HelpProvider.Formatter.Format(flag)))
 	}
-	_ = tw.Flush()
+	_ = b.ops.HelpProvider.Writer.Close()
 }
 
 func (b *Bucket) Parse() {
@@ -83,11 +96,7 @@ func (b *Bucket) Parse() {
 				continue
 			}
 
-			var err error
-			switch flag := f.(type) {
-			case *StringFlag:
-				err = flag.Set(value)
-			}
+			err := f.Set(value)
 			if err != nil {
 				b.ops.Log.Fatal(err)
 			}
@@ -107,20 +116,20 @@ func (b *Bucket) checkForUnknownFlags() error {
 }
 
 func (b *Bucket) init() {
-	if !isEmpty(b.ops.EnvPrefix) {
+	if !internal.IsEmpty(b.ops.EnvPrefix) {
 		for _, f := range b.flags {
-			f.Env().setPrefix(b.ops.EnvPrefix)
+			f.Env().SetPrefix(b.ops.EnvPrefix)
 		}
 	}
 
 	if b.ops.AutoEnv {
 		for _, f := range b.flags {
-			f.Env().auto(f.LongName())
+			f.Env().Auto(f.LongName())
 		}
 	}
 }
 
-func (b *Bucket) addFlag(flag Flag) {
+func (b *Bucket) addFlag(flag core.Flag) {
 	err := b.reg.add(flag)
 	if err != nil {
 		b.ops.Log.Fatal(err)
@@ -133,9 +142,9 @@ func (b *Bucket) enableAutoEnv() {
 }
 
 func (b *Bucket) setEnvPrefix(prefix string) {
-	b.ops.EnvPrefix = sanitise(prefix)
+	b.ops.EnvPrefix = internal.SanitiseEnvVarName(prefix)
 }
 
-func (b *Bucket) setLogger(logger config.Logger) {
+func (b *Bucket) setLogger(logger core.Logger) {
 	b.ops.Log = logger
 }

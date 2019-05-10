@@ -1,6 +1,9 @@
 package flags
 
-import "go.xitonix.io/flags/core"
+import (
+	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/internal"
+)
 
 type StringFlag struct {
 	env                 *core.EnvironmentVariable
@@ -31,13 +34,6 @@ func newStringPD(name string, short string, defaultValue string, usage string) *
 func newStringInternal(name string, short string, defaultValue string, usage string, hasDefault bool) *StringFlag {
 	ptr := new(string)
 	return &StringFlag{env: &core.EnvironmentVariable{}, defaultValue: defaultValue, long: name, short: short, usage: usage, ptr: ptr, hasDefault: hasDefault}
-}
-
-func (f *StringFlag) Default() interface{} {
-	if f.hasDefault {
-		return f.defaultValue
-	}
-	return nil
 }
 
 func (f *StringFlag) LongName() string {
@@ -82,6 +78,16 @@ func (f *StringFlag) Set(value string) error {
 func (f *StringFlag) ResetToDefault() {
 	f.isSet = false
 	f.set(f.defaultValue)
+}
+
+func (f *StringFlag) Default() interface{} {
+	if !f.hasDefault {
+		return nil
+	}
+	if internal.IsEmpty(f.defaultValue) {
+		return "''"
+	}
+	return f.defaultValue
 }
 
 func (f *StringFlag) Env() *core.EnvironmentVariable {

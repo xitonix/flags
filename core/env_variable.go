@@ -6,6 +6,11 @@ import (
 
 type EnvironmentVariable struct {
 	prefix, key string
+	isSet       bool
+}
+
+func (v *EnvironmentVariable) Prefix() string {
+	return v.prefix
 }
 
 func (v *EnvironmentVariable) Name() string {
@@ -19,7 +24,7 @@ func (v *EnvironmentVariable) Name() string {
 }
 
 func (v *EnvironmentVariable) Auto(longName string) {
-	if internal.IsEmpty(v.key) {
+	if !v.isSet {
 		v.Set(longName)
 	}
 }
@@ -30,4 +35,5 @@ func (v *EnvironmentVariable) SetPrefix(prefix string) {
 
 func (v *EnvironmentVariable) Set(key string) {
 	v.key = internal.SanitiseEnvVarName(key)
+	v.isSet = true
 }

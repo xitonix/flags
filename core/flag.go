@@ -1,5 +1,6 @@
 package core
 
+// Flag is the interface for defining a CLI flag.
 type Flag interface {
 	LongName() string
 	ShortName() string

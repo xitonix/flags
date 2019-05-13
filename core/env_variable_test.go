@@ -71,7 +71,7 @@ func TestEnvironmentVariable_Auto(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			e := &core.EnvironmentVariable{}
-			e.Auto(tc.inputName)
+			e.Set(tc.inputName, true)
 			e.SetPrefix(tc.inputPrefix)
 			actual := e.Name()
 			if actual != tc.expectedName {
@@ -117,7 +117,7 @@ func TestEnvironmentVariable_Set(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			e := &core.EnvironmentVariable{}
-			e.Set(tc.inputName)
+			e.Set(tc.inputName, false)
 			e.SetPrefix(tc.inputPrefix)
 			actual := e.Name()
 			if actual != tc.expectedName {
@@ -188,8 +188,8 @@ func TestEnvironmentVariable_Set_Overrides_Auto(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			e := &core.EnvironmentVariable{}
 			e.SetPrefix(tc.inputPrefix)
-			e.Auto(tc.inputAutoName)
-			e.Set(tc.inputName)
+			e.Set(tc.inputAutoName, true)
+			e.Set(tc.inputName, false)
 			actual := e.Name()
 			if actual != tc.expectedName {
 				t.Errorf("Name, Expected: %s, Actual:%s", tc.expectedName, actual)
@@ -240,8 +240,8 @@ func TestEnvironmentVariable_Auto_Does_Not_Override_Set(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			e := &core.EnvironmentVariable{}
 			e.SetPrefix(tc.inputPrefix)
-			e.Set(tc.inputName)
-			e.Auto(tc.inputAutoName)
+			e.Set(tc.inputName, false)
+			e.Set(tc.inputAutoName, true)
 			actual := e.Name()
 			if actual != tc.expectedName {
 				t.Errorf("Name, Expected: %s, Actual:%s", tc.expectedName, actual)

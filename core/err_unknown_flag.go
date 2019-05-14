@@ -1,10 +1,10 @@
-package flags
+package core
 
 type ErrUnknownFlag struct {
 	name string
 }
 
-func errUnknownFlag(name string) *ErrUnknownFlag {
+func NewUnknownFlagErr(name string) *ErrUnknownFlag {
 	return &ErrUnknownFlag{
 		name: name,
 	}

@@ -65,7 +65,7 @@ func (f *StringFlag) Get() string {
 }
 
 func (f *StringFlag) WithEnv(variable string) *StringFlag {
-	f.env.Set(variable)
+	f.env.Set(variable, false)
 	return f
 }
 

@@ -1,12 +1,12 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/internal"
 	"os"
 	"strings"
 
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/internal"
 )
 
 type Bucket struct {
@@ -110,7 +110,7 @@ func (b *Bucket) checkForUnknownFlags() error {
 		if b.reg.isRegistered(arg) || b.reg.isReserved(arg) {
 			continue
 		}
-		return errUnknownFlag(arg)
+		return core.NewUnknownFlagErr(arg)
 	}
 	return nil
 }
@@ -124,7 +124,7 @@ func (b *Bucket) init() {
 
 	if b.ops.AutoEnv {
 		for _, f := range b.flags {
-			f.Env().Auto(f.LongName())
+			f.Env().Set(f.LongName(), true)
 		}
 	}
 }

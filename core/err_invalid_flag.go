@@ -1,4 +1,4 @@
-package flags
+package core
 
 import "go.xitonix.io/flags/internal"
 
@@ -7,7 +7,7 @@ type ErrInvalidFlag struct {
 	msg         string
 }
 
-func errInvalidFlag(long, short, msg string) *ErrInvalidFlag {
+func NewInvalidFlagErr(long, short, msg string) *ErrInvalidFlag {
 	return &ErrInvalidFlag{
 		long:  long,
 		short: short,

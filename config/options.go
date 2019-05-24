@@ -17,7 +17,7 @@ func NewOptions() *Options {
 		EnvPrefix:    "",
 		AutoEnv:      false,
 		Log:          &DefaultLogger{},
-		HelpProvider: DefaultHelpProvider(),
+		HelpProvider: NewHelpProvider(NewTabbedHelpWriter(), NewTabbedHelpFormatter("(default: %v)", "[DEPRECATED]")),
 	}
 }
 

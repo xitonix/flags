@@ -7,10 +7,12 @@ import (
 const defaultFlagValue = "default"
 
 type flagMock struct {
-	long, short string
-	value       string
-	isSet       bool
-	env         *core.EnvironmentVariable
+	long, short  string
+	value        string
+	isSet        bool
+	isDeprecated bool
+	isHidden     bool
+	env          *core.EnvironmentVariable
 }
 
 func newMockedFlag(long, short string) *flagMock {
@@ -35,6 +37,14 @@ func (f *flagMock) Usage() string {
 
 func (f *flagMock) IsSet() bool {
 	return f.isSet
+}
+
+func (f *flagMock) IsHidden() bool {
+	return f.isHidden
+}
+
+func (f *flagMock) IsDeprecated() bool {
+	return f.isDeprecated
 }
 
 func (f *flagMock) Type() string {

@@ -17,7 +17,3 @@ func NewHelpProvider(w io.WriteCloser, f core.HelpFormatter) HelpProvider {
 		Formatter: f,
 	}
 }
-
-func DefaultHelpProvider() HelpProvider {
-	return NewHelpProvider(NewTabbedHelpWriter(), &TabbedHelpFormatter{})
-}

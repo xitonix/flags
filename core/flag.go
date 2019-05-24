@@ -11,5 +11,6 @@ type Flag interface {
 	Set(value string) error
 	ResetToDefault()
 	IsHidden() bool
+	IsDeprecated() bool
 	Default() interface{}
 }

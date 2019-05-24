@@ -13,26 +13,18 @@ type StringFlag struct {
 	long, short         string
 	usage               string
 	isSet               bool
+	isDeprecated        bool
 	isHidden            bool
 }
 
-func newString(name, usage string) *StringFlag {
-	return newStringInternal(name, usage, "", false)
-}
-
-func newStringD(name, usage, defaultValue string) *StringFlag {
-	return newStringInternal(name, usage, defaultValue, true)
-}
-
-func newStringInternal(name, usage, defaultValue string, hasDefault bool) *StringFlag {
+func newString(name, usage, short string) *StringFlag {
 	ptr := new(string)
 	return &StringFlag{
-		env:          &core.EnvironmentVariable{},
-		defaultValue: defaultValue,
-		long:         internal.SanitiseLongName(name),
-		usage:        usage,
-		ptr:          ptr,
-		hasDefault:   hasDefault,
+		env:   &core.EnvironmentVariable{},
+		short: internal.SanitiseShortName(short),
+		long:  internal.SanitiseLongName(name),
+		usage: usage,
+		ptr:   ptr,
 	}
 }
 
@@ -42,6 +34,10 @@ func (f *StringFlag) LongName() string {
 
 func (f *StringFlag) IsHidden() bool {
 	return f.isHidden
+}
+
+func (f *StringFlag) IsDeprecated() bool {
+	return f.isDeprecated
 }
 
 func (f *StringFlag) Type() string {
@@ -73,13 +69,19 @@ func (f *StringFlag) WithEnv(variable string) *StringFlag {
 	return f
 }
 
-func (f *StringFlag) WithShort(shortName string) *StringFlag {
-	f.short = internal.SanitiseShortName(shortName)
+func (f *StringFlag) WithDefault(defaultValue string) *StringFlag {
+	f.defaultValue = defaultValue
+	f.hasDefault = true
 	return f
 }
 
 func (f *StringFlag) Hide() *StringFlag {
 	f.isHidden = true
+	return f
+}
+
+func (f *StringFlag) MarkAsDeprecated() *StringFlag {
+	f.isDeprecated = true
 	return f
 }
 

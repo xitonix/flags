@@ -1,17 +1,18 @@
 package flags
 
 import (
+	"os"
+
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
-	"os"
 )
 
 type Bucket struct {
+	opts          *config.Options
 	reg           *registry
 	flags         []core.Flag
 	sources       []Source
-	ops           *config.Options
 	argSource     *argSource
 	helpRequested bool
 }
@@ -31,18 +32,18 @@ func NewBucket(opts ...config.Option) *Bucket {
 		},
 		argSource:     argSource,
 		helpRequested: helpRequested,
-		ops:           ops,
+		opts:          ops,
 	}
 }
 
-func (b *Bucket) String(name, usage string) *StringFlag {
-	f := newString(name, usage)
+func (b *Bucket) String(longName, usage string) *StringFlag {
+	f := newString(longName, usage, "")
 	b.addFlag(f)
 	return f
 }
 
-func (b *Bucket) StringD(name, usage, defaultValue string) *StringFlag {
-	f := newStringD(name, usage, defaultValue)
+func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
+	f := newString(longName, usage, shortName)
 	b.addFlag(f)
 	return f
 }
@@ -53,9 +54,9 @@ func (b *Bucket) Flags() []core.Flag {
 
 func (b *Bucket) Help() {
 	for _, flag := range b.flags {
-		_, _ = b.ops.HelpProvider.Writer.Write([]byte(b.ops.HelpProvider.Formatter.Format(flag)))
+		_, _ = b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
 	}
-	_ = b.ops.HelpProvider.Writer.Close()
+	_ = b.opts.HelpProvider.Writer.Close()
 }
 
 func (b *Bucket) Parse() {
@@ -68,7 +69,7 @@ func (b *Bucket) Parse() {
 
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
-		b.ops.Log.Fatal(err)
+		b.opts.Log.Fatal(err)
 	}
 
 	for _, f := range b.flags {
@@ -84,7 +85,7 @@ func (b *Bucket) Parse() {
 
 			err := f.Set(value)
 			if err != nil {
-				b.ops.Log.Fatal(err)
+				b.opts.Log.Fatal(err)
 			}
 			break
 		}
@@ -102,13 +103,13 @@ func (b *Bucket) checkForUnknownFlags() error {
 }
 
 func (b *Bucket) init() {
-	if !internal.IsEmpty(b.ops.EnvPrefix) {
+	if !internal.IsEmpty(b.opts.EnvPrefix) {
 		for _, f := range b.flags {
-			f.Env().SetPrefix(b.ops.EnvPrefix)
+			f.Env().SetPrefix(b.opts.EnvPrefix)
 		}
 	}
 
-	if b.ops.AutoEnv {
+	if b.opts.AutoEnv {
 		for _, f := range b.flags {
 			f.Env().Set(f.LongName(), true)
 		}
@@ -118,19 +119,19 @@ func (b *Bucket) init() {
 func (b *Bucket) addFlag(flag core.Flag) {
 	err := b.reg.add(flag)
 	if err != nil {
-		b.ops.Log.Fatal(err)
+		b.opts.Log.Fatal(err)
 	}
 	b.flags = append(b.flags, flag)
 }
 
 func (b *Bucket) enableAutoEnv() {
-	b.ops.AutoEnv = true
+	b.opts.AutoEnv = true
 }
 
 func (b *Bucket) setEnvPrefix(prefix string) {
-	b.ops.EnvPrefix = internal.SanitiseEnvVarName(prefix)
+	b.opts.EnvPrefix = internal.SanitiseEnvVarName(prefix)
 }
 
 func (b *Bucket) setLogger(logger core.Logger) {
-	b.ops.Log = logger
+	b.opts.Log = logger
 }

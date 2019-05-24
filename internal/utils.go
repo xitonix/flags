@@ -1,13 +1,18 @@
 package internal
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
 
 func IsEmpty(value string) bool {
 	return len(strings.TrimSpace(value)) == 0
 }
 
 func SanitiseEnvVarName(value string) string {
-	return strings.ToUpper(strings.ReplaceAll(value, "-", "_"))
+	duplicates := regexp.MustCompile(`\s+|[-]+`)
+	value = duplicates.ReplaceAllString(strings.TrimSpace(value), "_")
+	return strings.ToUpper(value)
 }
 
 func SanitiseLongName(name string) string {
@@ -15,5 +20,7 @@ func SanitiseLongName(name string) string {
 }
 
 func SanitiseShortName(name string) string {
-	return strings.TrimSpace(strings.TrimLeft(name, "-"))
+	space := regexp.MustCompile(`\s+`)
+	name = space.ReplaceAllString(strings.TrimSpace(name), "-")
+	return strings.TrimLeft(name, "-")
 }

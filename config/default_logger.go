@@ -2,12 +2,10 @@ package config
 
 import (
 	"fmt"
-	"os"
 )
 
 type DefaultLogger struct{}
 
-func (*DefaultLogger) Fatal(err error) {
-	fmt.Println(err.Error())
-	os.Exit(1)
+func (*DefaultLogger) Print(msg string) {
+	fmt.Println(msg)
 }

@@ -18,12 +18,16 @@ type Bucket struct {
 }
 
 func NewBucket(opts ...config.Option) *Bucket {
+	return newBucket(os.Args[1:], opts...)
+}
+
+func newBucket(args []string, opts ...config.Option) *Bucket {
 	ops := config.NewOptions()
 	for _, option := range opts {
 		option(ops)
 	}
 
-	argSource, helpRequested := newArgSource(os.Args[1:])
+	argSource, helpRequested := newArgSource(args)
 	return &Bucket{
 		reg:   newRegistry(),
 		flags: make([]core.Flag, 0),
@@ -64,12 +68,13 @@ func (b *Bucket) Parse() {
 
 	if b.helpRequested {
 		b.Help()
-		os.Exit(0)
+		b.opts.Terminator.Terminate(0)
 	}
 
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
-		b.opts.Log.Fatal(err)
+		b.opts.Logger.Print(err.Error())
+		b.opts.Terminator.Terminate(-1)
 	}
 
 	for _, f := range b.flags {
@@ -85,7 +90,8 @@ func (b *Bucket) Parse() {
 
 			err := f.Set(value)
 			if err != nil {
-				b.opts.Log.Fatal(err)
+				b.opts.Logger.Print(err.Error())
+				b.opts.Terminator.Terminate(-1)
 			}
 			break
 		}

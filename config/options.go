@@ -7,7 +7,8 @@ import (
 type Options struct {
 	EnvPrefix    string
 	AutoEnv      bool
-	Log          core.Logger
+	Terminator   core.Terminator
+	Logger       core.Logger
 	HelpProvider HelpProvider
 }
 
@@ -16,7 +17,8 @@ func NewOptions() *Options {
 		// Set default values here
 		EnvPrefix:    "",
 		AutoEnv:      false,
-		Log:          &DefaultLogger{},
+		Terminator:   &core.OSTerminator{},
+		Logger:       &DefaultLogger{},
 		HelpProvider: NewHelpProvider(NewTabbedHelpWriter(), NewTabbedHelpFormatter("(default: %v)", "[DEPRECATED]")),
 	}
 }
@@ -36,9 +38,15 @@ func WithAutoEnv() Option {
 	}
 }
 
+func WithTerminator(terminator core.Terminator) Option {
+	return func(options *Options) {
+		options.Terminator = terminator
+	}
+}
+
 func WithLogger(logger core.Logger) Option {
 	return func(options *Options) {
-		options.Log = logger
+		options.Logger = logger
 	}
 }
 

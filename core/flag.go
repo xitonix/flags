@@ -10,5 +10,6 @@ type Flag interface {
 	Env() *EnvironmentVariable
 	Set(value string) error
 	ResetToDefault()
+	IsHidden() bool
 	Default() interface{}
 }

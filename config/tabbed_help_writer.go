@@ -17,6 +17,10 @@ func NewTabbedHelpWriter() *TabbedHelpWriter {
 }
 
 func (h *TabbedHelpWriter) Write(p []byte) (int, error) {
+	// Hidden flag
+	if len(p) == 0 {
+		return 0, nil
+	}
 	return fmt.Fprintf(h.w, string(p))
 }
 

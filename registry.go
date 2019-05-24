@@ -1,6 +1,8 @@
 package flags
 
 import (
+	"strings"
+
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
 )
@@ -25,7 +27,7 @@ func newRegistry() *registry {
 }
 
 func (r *registry) add(flag core.Flag) error {
-	long := flag.LongName()
+	long := strings.ToLower(strings.TrimSpace(flag.LongName()))
 
 	if internal.IsEmpty(long) {
 		return core.ErrEmptyFlagName

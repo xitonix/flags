@@ -7,7 +7,7 @@ TODOs:
     * []string
     * map[string]string
     * Counters (with Verbose alias)
-* Hidden flags
+* ~~Hidden flags~~
 * Deprecated flags
 * Env variable source
 * Ability to add custom sources

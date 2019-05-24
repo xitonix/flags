@@ -1,8 +1,9 @@
 package core_test
 
 import (
-	"go.xitonix.io/flags/core"
 	"testing"
+
+	"go.xitonix.io/flags/core"
 )
 
 func TestEnvironmentVariable_SetPrefix(t *testing.T) {

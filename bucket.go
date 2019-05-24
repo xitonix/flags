@@ -1,12 +1,10 @@
 package flags
 
 import (
-	"os"
-	"strings"
-
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
+	"os"
 )
 
 type Bucket struct {
@@ -37,26 +35,14 @@ func NewBucket(opts ...config.Option) *Bucket {
 	}
 }
 
-func (b *Bucket) String(name string, usage string) *StringFlag {
-	f := newString(strings.TrimSpace(strings.ToLower(name)), usage)
+func (b *Bucket) String(name, usage string) *StringFlag {
+	f := newString(name, usage)
 	b.addFlag(f)
 	return f
 }
 
-func (b *Bucket) StringP(name string, short string, usage string) *StringFlag {
-	f := newStringP(strings.TrimSpace(strings.ToLower(name)), strings.TrimSpace(strings.ToLower(short)), usage)
-	b.addFlag(f)
-	return f
-}
-
-func (b *Bucket) StringPD(name string, short string, defaultValue string, usage string) *StringFlag {
-	f := newStringPD(strings.TrimSpace(strings.ToLower(name)), strings.TrimSpace(strings.ToLower(short)), defaultValue, usage)
-	b.addFlag(f)
-	return f
-}
-
-func (b *Bucket) StringD(name string, defaultValue string, usage string) *StringFlag {
-	f := newStringD(strings.TrimSpace(strings.ToLower(name)), defaultValue, usage)
+func (b *Bucket) StringD(name, usage, defaultValue string) *StringFlag {
+	f := newStringD(name, usage, defaultValue)
 	b.addFlag(f)
 	return f
 }

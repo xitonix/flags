@@ -13,31 +13,35 @@ type StringFlag struct {
 	long, short         string
 	usage               string
 	isSet               bool
+	isHidden            bool
 }
 
-func newString(name string, usage string) *StringFlag {
-	return newStringInternal(name, "", "", usage, false)
+func newString(name, usage string) *StringFlag {
+	return newStringInternal(name, usage, "", false)
 }
 
-func newStringD(name string, defaultValue string, usage string) *StringFlag {
-	return newStringInternal(name, "", defaultValue, usage, true)
+func newStringD(name, usage, defaultValue string) *StringFlag {
+	return newStringInternal(name, usage, defaultValue, true)
 }
 
-func newStringP(name string, short string, usage string) *StringFlag {
-	return newStringInternal(name, short, "", usage, false)
-}
-
-func newStringPD(name string, short string, defaultValue string, usage string) *StringFlag {
-	return newStringInternal(name, short, defaultValue, usage, true)
-}
-
-func newStringInternal(name string, short string, defaultValue string, usage string, hasDefault bool) *StringFlag {
+func newStringInternal(name, usage, defaultValue string, hasDefault bool) *StringFlag {
 	ptr := new(string)
-	return &StringFlag{env: &core.EnvironmentVariable{}, defaultValue: defaultValue, long: name, short: short, usage: usage, ptr: ptr, hasDefault: hasDefault}
+	return &StringFlag{
+		env:          &core.EnvironmentVariable{},
+		defaultValue: defaultValue,
+		long:         internal.SanitiseLongName(name),
+		usage:        usage,
+		ptr:          ptr,
+		hasDefault:   hasDefault,
+	}
 }
 
 func (f *StringFlag) LongName() string {
 	return f.long
+}
+
+func (f *StringFlag) IsHidden() bool {
+	return f.isHidden
 }
 
 func (f *StringFlag) Type() string {
@@ -66,6 +70,16 @@ func (f *StringFlag) Get() string {
 
 func (f *StringFlag) WithEnv(variable string) *StringFlag {
 	f.env.Set(variable, false)
+	return f
+}
+
+func (f *StringFlag) WithShort(shortName string) *StringFlag {
+	f.short = internal.SanitiseShortName(shortName)
+	return f
+}
+
+func (f *StringFlag) Hide() *StringFlag {
+	f.isHidden = true
 	return f
 }
 

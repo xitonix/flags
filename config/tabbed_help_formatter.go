@@ -10,6 +10,9 @@ type TabbedHelpFormatter struct {
 }
 
 func (*TabbedHelpFormatter) Format(f core.Flag) string {
+	if f.IsHidden() {
+		return ""
+	}
 	short := f.ShortName()
 	if !internal.IsEmpty(short) {
 		short = "-" + short + ","

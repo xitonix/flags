@@ -6,55 +6,55 @@ import (
 
 const defaultFlagValue = "default"
 
-type genericFlag struct {
+type flagMock struct {
 	long, short string
 	value       string
 	isSet       bool
 	env         *core.EnvironmentVariable
 }
 
-func newGeneric(long, short string) *genericFlag {
-	return &genericFlag{
+func newMockedFlag(long, short string) *flagMock {
+	return &flagMock{
 		long:  long,
 		short: short,
 		env:   &core.EnvironmentVariable{},
 	}
 }
 
-func (f *genericFlag) LongName() string {
+func (f *flagMock) LongName() string {
 	return f.long
 }
 
-func (f *genericFlag) ShortName() string {
+func (f *flagMock) ShortName() string {
 	return f.short
 }
 
-func (f *genericFlag) Usage() string {
+func (f *flagMock) Usage() string {
 	return "This is a very useful flag"
 }
 
-func (f *genericFlag) IsSet() bool {
+func (f *flagMock) IsSet() bool {
 	return f.isSet
 }
 
-func (f *genericFlag) Type() string {
+func (f *flagMock) Type() string {
 	return "generic"
 }
 
-func (f *genericFlag) Env() *core.EnvironmentVariable {
+func (f *flagMock) Env() *core.EnvironmentVariable {
 	return f.env
 }
 
-func (f *genericFlag) Set(value string) error {
+func (f *flagMock) Set(value string) error {
 	f.isSet = true
 	f.value = value
 	return nil
 }
 
-func (f *genericFlag) ResetToDefault() {
+func (f *flagMock) ResetToDefault() {
 	f.value = defaultFlagValue
 }
 
-func (f *genericFlag) Default() interface{} {
+func (f *flagMock) Default() interface{} {
 	return defaultFlagValue
 }

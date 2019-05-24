@@ -1,9 +1,9 @@
 package test
 
 type LoggerMock struct {
-	IsPrintCalled bool
+	Error error
 }
 
-func (l LoggerMock) Print(string) {
-	l.IsPrintCalled = true
+func (l *LoggerMock) Print(err error) {
+	l.Error = err
 }

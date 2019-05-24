@@ -2,6 +2,7 @@ package config
 
 import (
 	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/defaults"
 )
 
 type Options struct {
@@ -15,11 +16,12 @@ type Options struct {
 func NewOptions() *Options {
 	return &Options{
 		// Set default values here
-		EnvPrefix:    "",
-		AutoEnv:      false,
-		Terminator:   &core.OSTerminator{},
-		Logger:       &DefaultLogger{},
-		HelpProvider: NewHelpProvider(NewTabbedHelpWriter(), NewTabbedHelpFormatter("(default: %v)", "[DEPRECATED]")),
+		EnvPrefix:  "",
+		AutoEnv:    false,
+		Terminator: &defaults.Terminator{},
+		Logger:     &defaults.Logger{},
+		HelpProvider: NewHelpProvider(NewTabbedHelpWriter(),
+			NewTabbedHelpFormatter(defaults.DefaultValueFormatString, defaults.DeprecatedFlagIndicator)),
 	}
 }
 

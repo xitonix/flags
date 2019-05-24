@@ -73,7 +73,7 @@ func (b *Bucket) Parse() {
 
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
-		b.opts.Logger.Print(err.Error())
+		b.opts.Logger.Print(err)
 		b.opts.Terminator.Terminate(-1)
 	}
 
@@ -90,7 +90,7 @@ func (b *Bucket) Parse() {
 
 			err := f.Set(value)
 			if err != nil {
-				b.opts.Logger.Print(err.Error())
+				b.opts.Logger.Print(err)
 				b.opts.Terminator.Terminate(-1)
 			}
 			break
@@ -125,7 +125,8 @@ func (b *Bucket) init() {
 func (b *Bucket) addFlag(flag core.Flag) {
 	err := b.reg.add(flag)
 	if err != nil {
-		b.opts.Log.Fatal(err)
+		b.opts.Logger.Print(err)
+		b.opts.Terminator.Terminate(-1)
 	}
 	b.flags = append(b.flags, flag)
 }
@@ -139,5 +140,5 @@ func (b *Bucket) setEnvPrefix(prefix string) {
 }
 
 func (b *Bucket) setLogger(logger core.Logger) {
-	b.opts.Log = logger
+	b.opts.Logger = logger
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type StringFlag struct {
-	env                 *core.EnvironmentVariable
+	key                 *core.Key
 	defaultValue, value string
 	hasDefault          bool
 	ptr                 *string
@@ -20,7 +20,7 @@ type StringFlag struct {
 func newString(name, usage, short string) *StringFlag {
 	ptr := new(string)
 	return &StringFlag{
-		env:   &core.EnvironmentVariable{},
+		key:   &core.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
@@ -64,8 +64,8 @@ func (f *StringFlag) Get() string {
 	return f.value
 }
 
-func (f *StringFlag) WithEnv(variable string) *StringFlag {
-	f.env.Set(variable, false)
+func (f *StringFlag) WithKey(keyID string) *StringFlag {
+	f.key.SetID(keyID, false)
 	return f
 }
 
@@ -106,8 +106,8 @@ func (f *StringFlag) Default() interface{} {
 	return f.defaultValue
 }
 
-func (f *StringFlag) Env() *core.EnvironmentVariable {
-	return f.env
+func (f *StringFlag) Key() *core.Key {
+	return f.key
 }
 
 func (f *StringFlag) set(value string) {

@@ -8,8 +8,7 @@ import (
 )
 
 type registry struct {
-	shorts map[string]interface{}
-	longs  map[string]interface{}
+	book map[string]interface{}
 }
 
 var (
@@ -21,8 +20,7 @@ var (
 
 func newRegistry() *registry {
 	return &registry{
-		shorts: make(map[string]interface{}),
-		longs:  make(map[string]interface{}),
+		book: make(map[string]interface{}),
 	}
 }
 
@@ -34,31 +32,42 @@ func (r *registry) add(flag core.Flag) error {
 	}
 
 	if r.isReserved(long) {
-		return core.NewInvalidFlagErr(long, "", "is a reserved flag")
+		return core.NewInvalidFlagErr(long, "", "", "is a reserved flag")
 	}
 
 	short := flag.ShortName()
 	if r.isReserved(short) {
-		return core.NewInvalidFlagErr("", short, "is a reserved flag")
+		return core.NewInvalidFlagErr("", short, "", "is a reserved flag")
 	}
 
-	if r.isLongNameRegistered(long) {
-		return core.NewInvalidFlagErr(long, "", "flag already exists")
+	if r.isRegistered(long) {
+		return core.NewInvalidFlagErr(long, "", "", "flag already exists")
 	}
 
-	if r.isShortNameRegistered(short) {
-		return core.NewInvalidFlagErr("", short, "flag already exists")
+	if r.isRegistered(short) {
+		return core.NewInvalidFlagErr("", short, "", "flag already exists")
 	}
 
-	r.longs[long] = nil
+	key := flag.Key().Value()
+	if r.isRegistered(key) {
+		return core.NewInvalidFlagErr("", "", key, "flag key already exists")
+	}
+
+	r.book[long] = nil
 	if len(short) > 0 {
-		r.shorts[short] = nil
+		r.book[short] = nil
 	}
+
+	if len(key) > 0 {
+		r.book[key] = key
+	}
+
 	return nil
 }
 
 func (r *registry) isRegistered(name string) bool {
-	return r.isLongNameRegistered(name) || r.isShortNameRegistered(name)
+	_, ok := r.book[name]
+	return ok
 }
 
 func (r *registry) isReserved(name string) bool {
@@ -66,12 +75,7 @@ func (r *registry) isReserved(name string) bool {
 	return ok
 }
 
-func (r *registry) isLongNameRegistered(name string) bool {
-	_, ok := r.longs[name]
-	return ok
-}
-
 func (r *registry) isShortNameRegistered(name string) bool {
-	_, ok := r.shorts[name]
+	_, ok := r.book[name]
 	return ok
 }

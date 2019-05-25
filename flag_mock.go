@@ -12,14 +12,14 @@ type flagMock struct {
 	isSet        bool
 	isDeprecated bool
 	isHidden     bool
-	env          *core.EnvironmentVariable
+	key          *core.Key
 }
 
 func newMockedFlag(long, short string) *flagMock {
 	return &flagMock{
 		long:  long,
 		short: short,
-		env:   &core.EnvironmentVariable{},
+		key:   &core.Key{},
 	}
 }
 
@@ -51,8 +51,8 @@ func (f *flagMock) Type() string {
 	return "generic"
 }
 
-func (f *flagMock) Env() *core.EnvironmentVariable {
-	return f.env
+func (f *flagMock) Key() *core.Key {
+	return f.key
 }
 
 func (f *flagMock) Set(value string) error {

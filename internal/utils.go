@@ -9,7 +9,7 @@ func IsEmpty(value string) bool {
 	return len(strings.TrimSpace(value)) == 0
 }
 
-func SanitiseEnvVarName(value string) string {
+func SanitiseFlagID(value string) string {
 	duplicates := regexp.MustCompile(`\s+|[-]+`)
 	value = duplicates.ReplaceAllString(strings.TrimSpace(value), "_")
 	return strings.ToUpper(value)

@@ -8,12 +8,12 @@ var (
 	DefaultBucket = NewBucket()
 )
 
-func EnableAutoEnv() {
-	DefaultBucket.enableAutoEnv()
+func EnableAutoKeyGeneration() {
+	DefaultBucket.enableAutoKeyGen()
 }
 
-func SetEnvPrefix(prefix string) {
-	DefaultBucket.setEnvPrefix(prefix)
+func SetKeyPrefix(prefix string) {
+	DefaultBucket.setKeyPrefix(prefix)
 }
 
 func SetLogger(logger core.Logger) {

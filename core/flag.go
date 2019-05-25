@@ -7,7 +7,7 @@ type Flag interface {
 	Usage() string
 	IsSet() bool
 	Type() string
-	Env() *EnvironmentVariable
+	Key() *Key
 	Set(value string) error
 	ResetToDefault()
 	IsHidden() bool

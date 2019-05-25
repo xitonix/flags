@@ -9,10 +9,14 @@ import (
 
 func TestRegistry_Add(t *testing.T) {
 	testCases := []struct {
-		title             string
-		first             core.Flag
-		expectedFirstErr  string
+		title string
+
+		first            core.Flag
+		firstKey         string
+		expectedFirstErr string
+
 		second            core.Flag
+		secondKey         string
 		expectedSecondErr string
 	}{
 		{
@@ -43,6 +47,24 @@ func TestRegistry_Add(t *testing.T) {
 			expectedFirstErr:  "",
 			second:            newMockedFlag("long-2", "short"),
 			expectedSecondErr: "flag already exists",
+		},
+		{
+			title:             "two flags with the same keys",
+			first:             newMockedFlag("long-1", "short-1"),
+			firstKey:          "key",
+			expectedFirstErr:  "",
+			second:            newMockedFlag("long-2", "short-2"),
+			secondKey:         "key",
+			expectedSecondErr: "flag key already exists",
+		},
+		{
+			title:             "two flags with different keys",
+			first:             newMockedFlag("long-1", "short-1"),
+			firstKey:          "key-1",
+			expectedFirstErr:  "",
+			second:            newMockedFlag("long-2", "short-2"),
+			secondKey:         "key-2",
+			expectedSecondErr: "",
 		},
 		{
 			title:             "two flags with different short name casing",
@@ -77,6 +99,7 @@ func TestRegistry_Add(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
+			tc.first.Key().SetID(tc.firstKey, false)
 			reg := newRegistry()
 			err := reg.add(tc.first)
 			if !test.ErrorContains(err, tc.expectedFirstErr) {
@@ -84,6 +107,7 @@ func TestRegistry_Add(t *testing.T) {
 			}
 
 			if tc.second != nil {
+				tc.second.Key().SetID(tc.secondKey, false)
 				err = reg.add(tc.second)
 				if !test.ErrorContains(err, tc.expectedSecondErr) {
 					t.Errorf("Second Flag: Expected to get '%v' error, but received '%v'", tc.expectedSecondErr, err)

@@ -3,14 +3,15 @@ package core
 import "go.xitonix.io/flags/internal"
 
 type ErrInvalidFlag struct {
-	long, short string
-	msg         string
+	long, short, key string
+	msg              string
 }
 
-func NewInvalidFlagErr(long, short, msg string) *ErrInvalidFlag {
+func NewInvalidFlagErr(long, short, key, msg string) *ErrInvalidFlag {
 	return &ErrInvalidFlag{
 		long:  long,
 		short: short,
+		key:   key,
 		msg:   msg,
 	}
 }
@@ -30,6 +31,9 @@ func (e *ErrInvalidFlag) Error() string {
 			comma = ", "
 		}
 		str += comma + "-" + e.short
+	}
+	if !internal.IsEmpty(e.key) {
+		str = e.key
 	}
 	return str + " " + e.msg
 }

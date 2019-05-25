@@ -6,7 +6,7 @@ import (
 	"go.xitonix.io/flags/core"
 )
 
-func TestEnvironmentVariable_SetPrefix(t *testing.T) {
+func TestKey_SetPrefix(t *testing.T) {
 	testCases := []struct {
 		title          string
 		inputPrefix    string
@@ -26,7 +26,7 @@ func TestEnvironmentVariable_SetPrefix(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.EnvironmentVariable{}
+			e := &core.Key{}
 			e.SetPrefix(tc.inputPrefix)
 			actual := e.Prefix()
 			if actual != tc.expectedPrefix {
@@ -36,7 +36,7 @@ func TestEnvironmentVariable_SetPrefix(t *testing.T) {
 	}
 }
 
-func TestEnvironmentVariable_Auto(t *testing.T) {
+func TestKey_Auto(t *testing.T) {
 	testCases := []struct {
 		title        string
 		inputName    string
@@ -71,18 +71,18 @@ func TestEnvironmentVariable_Auto(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.EnvironmentVariable{}
-			e.Set(tc.inputName, true)
+			e := &core.Key{}
+			e.SetID(tc.inputName, true)
 			e.SetPrefix(tc.inputPrefix)
-			actual := e.Name()
+			actual := e.Value()
 			if actual != tc.expectedName {
-				t.Errorf("Name, Expected: %s, Actual:%s", tc.expectedName, actual)
+				t.Errorf("Value, Expected: %s, Actual:%s", tc.expectedName, actual)
 			}
 		})
 	}
 }
 
-func TestEnvironmentVariable_Set(t *testing.T) {
+func TestKey_Set(t *testing.T) {
 	testCases := []struct {
 		title        string
 		inputName    string
@@ -117,18 +117,18 @@ func TestEnvironmentVariable_Set(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.EnvironmentVariable{}
-			e.Set(tc.inputName, false)
+			e := &core.Key{}
+			e.SetID(tc.inputName, false)
 			e.SetPrefix(tc.inputPrefix)
-			actual := e.Name()
+			actual := e.Value()
 			if actual != tc.expectedName {
-				t.Errorf("Name, Expected: %s, Actual:%s", tc.expectedName, actual)
+				t.Errorf("Value, Expected: %s, Actual:%s", tc.expectedName, actual)
 			}
 		})
 	}
 }
 
-func TestEnvironmentVariable_Set_Overrides_Auto(t *testing.T) {
+func TestKey_Set_Overrides_Auto(t *testing.T) {
 	testCases := []struct {
 		title         string
 		inputAutoName string
@@ -187,19 +187,19 @@ func TestEnvironmentVariable_Set_Overrides_Auto(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.EnvironmentVariable{}
+			e := &core.Key{}
 			e.SetPrefix(tc.inputPrefix)
-			e.Set(tc.inputAutoName, true)
-			e.Set(tc.inputName, false)
-			actual := e.Name()
+			e.SetID(tc.inputAutoName, true)
+			e.SetID(tc.inputName, false)
+			actual := e.Value()
 			if actual != tc.expectedName {
-				t.Errorf("Name, Expected: %s, Actual:%s", tc.expectedName, actual)
+				t.Errorf("Value, Expected: %s, Actual:%s", tc.expectedName, actual)
 			}
 		})
 	}
 }
 
-func TestEnvironmentVariable_Auto_Does_Not_Override_Set(t *testing.T) {
+func TestKey_Auto_Does_Not_Override_Set(t *testing.T) {
 	testCases := []struct {
 		title         string
 		inputAutoName string
@@ -239,13 +239,13 @@ func TestEnvironmentVariable_Auto_Does_Not_Override_Set(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.EnvironmentVariable{}
+			e := &core.Key{}
 			e.SetPrefix(tc.inputPrefix)
-			e.Set(tc.inputName, false)
-			e.Set(tc.inputAutoName, true)
-			actual := e.Name()
+			e.SetID(tc.inputName, false)
+			e.SetID(tc.inputAutoName, true)
+			actual := e.Value()
 			if actual != tc.expectedName {
-				t.Errorf("Name, Expected: %s, Actual:%s", tc.expectedName, actual)
+				t.Errorf("Value, Expected: %s, Actual:%s", tc.expectedName, actual)
 			}
 		})
 	}

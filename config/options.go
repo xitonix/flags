@@ -6,8 +6,8 @@ import (
 )
 
 type Options struct {
-	EnvPrefix    string
-	AutoEnv      bool
+	KeyPrefix    string
+	AutoKeys     bool
 	Terminator   core.Terminator
 	Logger       core.Logger
 	HelpProvider HelpProvider
@@ -15,9 +15,9 @@ type Options struct {
 
 func NewOptions() *Options {
 	return &Options{
-		// Set default values here
-		EnvPrefix:  "",
-		AutoEnv:    false,
+		// SetID default values here
+		KeyPrefix:  "",
+		AutoKeys:   false,
 		Terminator: &defaults.Terminator{},
 		Logger:     &defaults.Logger{},
 		HelpProvider: NewHelpProvider(NewTabbedHelpWriter(),
@@ -34,9 +34,9 @@ func WithHelpProvider(p HelpProvider) Option {
 	}
 }
 
-func WithAutoEnv() Option {
+func WithAutoKeys() Option {
 	return func(options *Options) {
-		options.AutoEnv = true
+		options.AutoKeys = true
 	}
 }
 
@@ -52,8 +52,8 @@ func WithLogger(logger core.Logger) Option {
 	}
 }
 
-func WithEnvPrefix(prefix string) Option {
+func WithKeyPrefix(prefix string) Option {
 	return func(options *Options) {
-		options.EnvPrefix = prefix
+		options.KeyPrefix = prefix
 	}
 }

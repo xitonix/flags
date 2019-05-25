@@ -48,7 +48,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestSanitiseEnvVarName(t *testing.T) {
+func TestSanitiseFlagID(t *testing.T) {
 	testCases := []struct {
 		title    string
 		input    string
@@ -63,34 +63,34 @@ func TestSanitiseEnvVarName(t *testing.T) {
 		},
 		{
 			title:    "lower case input",
-			input:    "environment_variable",
-			expected: "ENVIRONMENT_VARIABLE",
+			input:    "flag_id",
+			expected: "FLAG_ID",
 		},
 		{
 			title:    "hyphened input",
-			input:    "environment-variable",
-			expected: "ENVIRONMENT_VARIABLE",
+			input:    "flag-id",
+			expected: "FLAG_ID",
 		},
 		{
 			title:    "prefixed with hyphened input",
-			input:    "--environment-variable",
-			expected: "_ENVIRONMENT_VARIABLE",
+			input:    "--flag-id",
+			expected: "_FLAG_ID",
 		},
 		{
 			title:    "spaced input",
-			input:    "environment variable",
-			expected: "ENVIRONMENT_VARIABLE",
+			input:    "flag id",
+			expected: "FLAG_ID",
 		},
 		{
 			title:    "multi spaced input",
-			input:    "environment  variable",
-			expected: "ENVIRONMENT_VARIABLE",
+			input:    "flag      id",
+			expected: "FLAG_ID",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			actual := internal.SanitiseEnvVarName(tc.input)
+			actual := internal.SanitiseFlagID(tc.input)
 			if actual != tc.expected {
 				t.Errorf("Expected %s, Actual: %s", tc.expected, actual)
 			}
@@ -193,8 +193,8 @@ func TestSanitiseShortName(t *testing.T) {
 		},
 		{
 			title:    "multi words mixed case input",
-			input:    "Flag Name",
-			expected: "Flag-Name",
+			input:    "Flag Value",
+			expected: "Flag-Value",
 		},
 		{
 			title:    "hyphened input",

@@ -109,15 +109,15 @@ func (b *Bucket) checkForUnknownFlags() error {
 }
 
 func (b *Bucket) init() {
-	if !internal.IsEmpty(b.opts.EnvPrefix) {
+	if !internal.IsEmpty(b.opts.KeyPrefix) {
 		for _, f := range b.flags {
-			f.Env().SetPrefix(b.opts.EnvPrefix)
+			f.Key().SetPrefix(b.opts.KeyPrefix)
 		}
 	}
 
-	if b.opts.AutoEnv {
+	if b.opts.AutoKeys {
 		for _, f := range b.flags {
-			f.Env().Set(f.LongName(), true)
+			f.Key().SetID(f.LongName(), true)
 		}
 	}
 }
@@ -131,12 +131,12 @@ func (b *Bucket) addFlag(flag core.Flag) {
 	b.flags = append(b.flags, flag)
 }
 
-func (b *Bucket) enableAutoEnv() {
-	b.opts.AutoEnv = true
+func (b *Bucket) enableAutoKeyGen() {
+	b.opts.AutoKeys = true
 }
 
-func (b *Bucket) setEnvPrefix(prefix string) {
-	b.opts.EnvPrefix = internal.SanitiseEnvVarName(prefix)
+func (b *Bucket) setKeyPrefix(prefix string) {
+	b.opts.KeyPrefix = internal.SanitiseFlagID(prefix)
 }
 
 func (b *Bucket) setLogger(logger core.Logger) {

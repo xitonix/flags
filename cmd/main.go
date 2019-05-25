@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	flags.SetEnvPrefix("ALG")
-	flags.EnableAutoEnv()
+	flags.SetKeyPrefix("ALG")
+	flags.EnableAutoKeyGeneration()
 	str := flags.String("name", "usage of name").WithDefault("abc")
 	_ = flags.StringP("something-longer", `usage of name is a bit longer`, "s").MarkAsDeprecated().Var()
 	flags.Parse()

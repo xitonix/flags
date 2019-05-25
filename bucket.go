@@ -41,14 +41,12 @@ func newBucket(args []string, opts ...config.Option) *Bucket {
 }
 
 func (b *Bucket) String(longName, usage string) *StringFlag {
-	f := newString(longName, usage, "")
-	b.addFlag(f)
-	return f
+	return StringP(longName, usage, "")
 }
 
 func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
 	f := newString(longName, usage, shortName)
-	b.addFlag(f)
+	b.flags = append(b.flags, f)
 	return f
 }
 
@@ -109,26 +107,20 @@ func (b *Bucket) checkForUnknownFlags() error {
 }
 
 func (b *Bucket) init() {
-	if !internal.IsEmpty(b.opts.KeyPrefix) {
-		for _, f := range b.flags {
+	for _, f := range b.flags {
+		if !internal.IsEmpty(b.opts.KeyPrefix) {
 			f.Key().SetPrefix(b.opts.KeyPrefix)
 		}
-	}
 
-	if b.opts.AutoKeys {
-		for _, f := range b.flags {
+		if b.opts.AutoKeys {
 			f.Key().SetID(f.LongName(), true)
 		}
+		err := b.reg.add(f)
+		if err != nil {
+			b.opts.Logger.Print(err)
+			b.opts.Terminator.Terminate(-1)
+		}
 	}
-}
-
-func (b *Bucket) addFlag(flag core.Flag) {
-	err := b.reg.add(flag)
-	if err != nil {
-		b.opts.Logger.Print(err)
-		b.opts.Terminator.Terminate(-1)
-	}
-	b.flags = append(b.flags, flag)
 }
 
 func (b *Bucket) enableAutoKeyGen() {

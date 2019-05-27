@@ -1,11 +1,12 @@
 package flags
 
 import (
+	"os"
+	"sort"
+
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
-	"os"
-	"sort"
 )
 
 type Bucket struct {
@@ -74,19 +75,6 @@ func (b *Bucket) Help() {
 	}
 }
 
-func (b *Bucket) sortFlags() []core.Flag {
-	if b.opts.Comparer == nil {
-		return b.flags
-	}
-
-	clone := make([]core.Flag, len(b.flags))
-	copy(clone, b.flags)
-	sort.Slice(clone, func(i, j int) bool {
-		return b.opts.Comparer.LessThan(clone[i], clone[j])
-	})
-	return clone
-}
-
 func (b *Bucket) Parse() {
 	b.init()
 
@@ -146,6 +134,19 @@ func (b *Bucket) init() {
 			b.opts.Terminator.Terminate(core.FailureExitCode)
 		}
 	}
+}
+
+func (b *Bucket) sortFlags() []core.Flag {
+	if b.opts.Comparer == nil {
+		return b.flags
+	}
+
+	clone := make([]core.Flag, len(b.flags))
+	copy(clone, b.flags)
+	sort.Slice(clone, func(i, j int) bool {
+		return b.opts.Comparer.LessThan(clone[i], clone[j])
+	})
+	return clone
 }
 
 func (b *Bucket) enableAutoKeyGen() {

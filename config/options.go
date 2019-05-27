@@ -20,7 +20,7 @@ func NewOptions() *Options {
 		// SetID default values here
 		KeyPrefix:  "",
 		AutoKeys:   false,
-		Comparer:   by.Declared,
+		Comparer:   by.DeclarationOrder,
 		Terminator: &Terminator{},
 		Logger:     &Logger{},
 		HelpProvider: core.NewHelpProvider(core.NewTabbedHelpWriter(),

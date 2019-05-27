@@ -1,14 +1,16 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/config"
+	"go.xitonix.io/flags/by"
+	"strings"
 	"testing"
 
+	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/test"
 )
 
-func TestBucket_Parse(t *testing.T) {
+func TestBucket_Parse_Validation(t *testing.T) {
 	testCases := []struct {
 		title                   string
 		args                    []string
@@ -18,7 +20,6 @@ func TestBucket_Parse(t *testing.T) {
 		expectedTerminationCode int
 		mustTerminate           bool
 	}{
-		// Validation
 		{
 			title:                   "unknown flags",
 			args:                    []string{"--unexpected"},
@@ -53,58 +54,11 @@ func TestBucket_Parse(t *testing.T) {
 			mustPrintHelp:           false,
 			expectedTerminationCode: core.FailureExitCode,
 		},
-
-		// HELP
-		{
-			title:                   "help requested with help flag and no other registered flags",
-			args:                    []string{"--help"},
-			mustTerminate:           true,
-			mustPrintHelp:           false,
-			expectedTerminationCode: 0,
-		},
-		{
-			title:                   "help requested with help flag and other registered flags",
-			args:                    []string{"--help"},
-			flags:                   []core.Flag{newMockedFlag("flag", "f")},
-			mustTerminate:           true,
-			mustPrintHelp:           true,
-			expectedTerminationCode: core.SuccessExitCode,
-		},
-		{
-			title:                   "help requested with H flag and no other registered flags",
-			args:                    []string{"-h"},
-			mustTerminate:           true,
-			mustPrintHelp:           false,
-			expectedTerminationCode: core.SuccessExitCode,
-		},
-		{
-			title:                   "help requested with H flag and other registered flags",
-			args:                    []string{"-h"},
-			flags:                   []core.Flag{newMockedFlag("flag", "f")},
-			mustTerminate:           true,
-			mustPrintHelp:           true,
-			expectedTerminationCode: core.SuccessExitCode,
-		},
-		{
-			title:                   "help requested with H flag set to true and no other registered flags",
-			args:                    []string{"-h=true"},
-			mustTerminate:           true,
-			mustPrintHelp:           false,
-			expectedTerminationCode: core.SuccessExitCode,
-		},
-		{
-			title:                   "help requested with H flag set to true and other registered flags",
-			args:                    []string{"-h=true"},
-			flags:                   []core.Flag{newMockedFlag("flag", "f")},
-			mustTerminate:           true,
-			mustPrintHelp:           true,
-			expectedTerminationCode: core.SuccessExitCode,
-		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(&test.NullWriter{}, &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(test.NewNullWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &test.LoggerMock{}
 			tm := &test.TerminatorMock{}
@@ -134,6 +88,205 @@ func TestBucket_Parse(t *testing.T) {
 
 			if !test.ErrorContains(lg.Error, tc.expectedErr) {
 				t.Errorf("Expected '%v', but received %v", tc.expectedErr, lg.Error)
+			}
+		})
+	}
+}
+
+func TestBucket_Parse_Help_Request(t *testing.T) {
+	testCases := []struct {
+		title         string
+		args          []string
+		flags         []core.Flag
+		mustPrintHelp bool
+	}{
+		{
+			title:         "help requested with help flag and no other registered flags",
+			args:          []string{"--help"},
+			mustPrintHelp: false,
+		},
+		{
+			title:         "help requested with help flag and other registered flags",
+			args:          []string{"--help"},
+			flags:         []core.Flag{newMockedFlag("flag", "f")},
+			mustPrintHelp: true,
+		},
+		{
+			title:         "help requested with H flag and no other registered flags",
+			args:          []string{"-h"},
+			mustPrintHelp: false,
+		},
+		{
+			title:         "help requested with H flag and other registered flags",
+			args:          []string{"-h"},
+			flags:         []core.Flag{newMockedFlag("flag", "f")},
+			mustPrintHelp: true,
+		},
+		{
+			title:         "help requested with H flag set to true and no other registered flags",
+			args:          []string{"-h=true"},
+			mustPrintHelp: false,
+		},
+		{
+			title:         "help requested with H flag set to true and other registered flags",
+			args:          []string{"-h=true"},
+			flags:         []core.Flag{newMockedFlag("flag", "f")},
+			mustPrintHelp: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			hp := core.NewHelpProvider(test.NewNullWriter(), &core.TabbedHelpFormatter{})
+
+			lg := &test.LoggerMock{}
+			tm := &test.TerminatorMock{}
+			bucket := newBucket(tc.args,
+				config.WithHelpProvider(hp),
+				config.WithLogger(lg),
+				config.WithTerminator(tm))
+
+			for _, flag := range tc.flags {
+				bucket.flags = append(bucket.flags, flag)
+			}
+
+			bucket.Parse()
+
+			if !tm.IsTerminated {
+				t.Errorf("Expected to terminate, but it did not happen")
+			}
+
+			if tm.Code != core.SuccessExitCode {
+				t.Errorf("Expected termination code: %d, Actual: %d", core.SuccessExitCode, tm.Code)
+			}
+
+			if tc.mustPrintHelp && hp.Writer.(*test.NullWriter).WriteCounter == 0 {
+				t.Errorf("Expectced the Help() function to get called, but it did not happen")
+			}
+
+			if !tc.mustPrintHelp && hp.Writer.(*test.NullWriter).WriteCounter != 0 {
+				t.Errorf("Did not expect the Help() function to get called, but it happened")
+			}
+		})
+	}
+}
+
+func TestBucket_Parse_Help_Sort(t *testing.T) {
+	testCases := []struct {
+		title         string
+		args          []string
+		flags         []core.Flag
+		comparer      by.Comparer
+		expectedLines []string
+	}{
+		{
+			title:         "default order as declared xa",
+			args:          []string{"--help"},
+			comparer:      by.DeclarationOrder,
+			flags:         []core.Flag{newMockedFlag("x-long", "x-short"), newMockedFlag("a-long", "a-short")},
+			expectedLines: []string{"x-long", "a-long"},
+		},
+		{
+			title:         "default order as declared ax",
+			args:          []string{"--help"},
+			comparer:      by.DeclarationOrder,
+			flags:         []core.Flag{newMockedFlag("a-long", "a-short"), newMockedFlag("x-long", "x-short")},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "sort by long name ascending",
+			args:          []string{"--help"},
+			comparer:      by.LongNameAscending,
+			flags:         []core.Flag{newMockedFlag("x-long", "x-short"), newMockedFlag("a-long", "a-short")},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "sort by long name descending",
+			args:          []string{"--help"},
+			comparer:      by.LongNameDescending,
+			flags:         []core.Flag{newMockedFlag("a-long", "a-short"), newMockedFlag("x-long", "x-short")},
+			expectedLines: []string{"x-long", "a-long"},
+		},
+		{
+			title:         "sort by short name ascending",
+			args:          []string{"--help"},
+			comparer:      by.ShortNameAscending,
+			flags:         []core.Flag{newMockedFlag("x-long", "x-short"), newMockedFlag("a-long", "a-short")},
+			expectedLines: []string{"a-short", "x-short"},
+		},
+		{
+			title:         "sort by short name descending",
+			args:          []string{"--help"},
+			comparer:      by.ShortNameDescending,
+			flags:         []core.Flag{newMockedFlag("a-long", "a-short"), newMockedFlag("x-long", "x-short")},
+			expectedLines: []string{"x-short", "a-short"},
+		},
+		{
+			title:         "sort by key ascending",
+			args:          []string{"--help"},
+			comparer:      by.KeyAscending,
+			flags:         []core.Flag{newMockedFlagWithKey("x-long", "x-short", "x-key"), newMockedFlagWithKey("a-long", "a-short", "a-key")},
+			expectedLines: []string{"A_KEY", "X_KEY"},
+		},
+		{
+			title:         "sort by key descending",
+			args:          []string{"--help"},
+			comparer:      by.KeyDescending,
+			flags:         []core.Flag{newMockedFlagWithKey("a-long", "a-short", "a-key"), newMockedFlagWithKey("x-long", "x-short", "x-key")},
+			expectedLines: []string{"X_KEY", "A_KEY"},
+		},
+		{
+			title:         "sort by usage ascending",
+			args:          []string{"--help"},
+			comparer:      by.UsageAscending,
+			flags:         []core.Flag{newMockedFlagWithUsage("x-long", "x-short", "x usage"), newMockedFlagWithUsage("a-long", "a-short", "a usage")},
+			expectedLines: []string{"a usage", "x usage"},
+		},
+		{
+			title:         "sort by usage descending",
+			args:          []string{"--help"},
+			comparer:      by.UsageDescending,
+			flags:         []core.Flag{newMockedFlagWithUsage("a-long", "a-short", "a usage"), newMockedFlagWithUsage("x-long", "x-short", "x usage")},
+			expectedLines: []string{"x usage", "a usage"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			hp := core.NewHelpProvider(test.NewNullWriter(), &core.TabbedHelpFormatter{})
+
+			lg := &test.LoggerMock{}
+			tm := &test.TerminatorMock{}
+			bucket := newBucket(tc.args,
+				config.WithHelpProvider(hp),
+				config.WithLogger(lg),
+				config.WithTerminator(tm),
+				config.WithSort(tc.comparer))
+
+			for _, flag := range tc.flags {
+				bucket.flags = append(bucket.flags, flag)
+			}
+
+			bucket.Parse()
+
+			if !tm.IsTerminated {
+				t.Errorf("Expected to terminate, but it did not happen")
+			}
+
+			if tm.Code != core.SuccessExitCode {
+				t.Errorf("Expected termination code: %d, Actual: %d", core.SuccessExitCode, tm.Code)
+			}
+
+			writer := hp.Writer.(*test.NullWriter)
+
+			if writer.WriteCounter != 2 {
+				t.Errorf("Expectced to call Help() for 2 flags, Actual: %d", writer.WriteCounter)
+			}
+
+			for i, line := range writer.Lines {
+				if !strings.Contains(line, tc.expectedLines[i]) {
+					t.Errorf("Expectced the Help line %d to contain '%s', Actual %s", i+1, tc.expectedLines[i], line)
+				}
 			}
 		})
 	}
@@ -182,7 +335,7 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(&test.NullWriter{}, &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(test.NewNullWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &test.LoggerMock{}
 			tm := &test.TerminatorMock{}
@@ -301,7 +454,7 @@ func TestBucket_KeyGeneration(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(&test.NullWriter{}, &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(test.NewNullWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &test.LoggerMock{}
 			tm := &test.TerminatorMock{}

@@ -7,53 +7,52 @@ import (
 )
 
 var (
-	Declared            Comparer = nil
-	LongNameAscending            = flagComparer{ascending: true, field: longName}
-	LongNameDescending           = flagComparer{field: longName}
-	ShortNameAscending           = flagComparer{ascending: true, field: shortName}
-	ShortNameDescending          = flagComparer{field: shortName}
-	KeyAscending                 = flagComparer{ascending: true, field: key}
-	KeyDescending                = flagComparer{field: key}
-	UsageAscending               = flagComparer{ascending: true, field: usage}
-	UsageDescending              = flagComparer{field: usage}
+	DeclarationOrder    Comparer = nil
+	LongNameAscending            = FlagComparer{Ascending: true, Field: LongName}
+	LongNameDescending           = FlagComparer{Field: LongName}
+	ShortNameAscending           = FlagComparer{Ascending: true, Field: ShortName}
+	ShortNameDescending          = FlagComparer{Field: ShortName}
+	KeyAscending                 = FlagComparer{Ascending: true, Field: Key}
+	KeyDescending                = FlagComparer{Field: Key}
+	UsageAscending               = FlagComparer{Ascending: true, Field: Usage}
+	UsageDescending              = FlagComparer{Field: Usage}
 )
 
-type compareField int8
+type ComparisonField int8
 
 const (
-	longName compareField = iota
-	shortName
-	key
-	usage
+	LongName ComparisonField = iota
+	ShortName
+	Key
+	Usage
 )
 
-type flagComparer struct {
-	ascending bool
-	field     compareField
+type FlagComparer struct {
+	Ascending bool
+	Field     ComparisonField
 }
 
-func (l flagComparer) LessThan(f1, f2 core.Flag) bool {
+func (f FlagComparer) LessThan(f1, f2 core.Flag) bool {
 	if f1 == nil || f2 == nil {
 		return false
 	}
-	field1, field2 := l.getFieldsToCompare(f1, f2)
+	field1, field2 := f.getFieldsToCompare(f1, f2)
 	result := strings.Compare(field1, field2)
-	if l.ascending {
+	if f.Ascending {
 		return result < 0
 	}
 	return result > 0
 }
 
-func (l flagComparer) getFieldsToCompare(f1, f2 core.Flag) (string, string) {
-	switch l.field {
-	case longName:
+func (f FlagComparer) getFieldsToCompare(f1, f2 core.Flag) (string, string) {
+	switch f.Field {
+	case LongName:
 		return f1.LongName(), f2.LongName()
-	case shortName:
+	case ShortName:
 		return f1.ShortName(), f2.ShortName()
-	case key:
+	case Key:
 		return f1.Key().Get(), f2.Key().Get()
 	default:
 		return f1.Usage(), f2.Usage()
 	}
-
 }

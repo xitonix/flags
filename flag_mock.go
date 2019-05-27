@@ -14,13 +14,29 @@ type flagMock struct {
 	defaultValue  string
 	makeSetToFail bool
 	key           *core.Key
+	usage         string
 }
 
 func newMockedFlag(long, short string) *flagMock {
+	return newMockedFlagWithUsage(long, short, "this is a mocked flag")
+}
+
+func newMockedFlagWithKey(long, short, key string) *flagMock {
+	k := &core.Key{}
+	k.Set(key)
+	return &flagMock{
+		long:  long,
+		short: short,
+		key:   k,
+	}
+}
+
+func newMockedFlagWithUsage(long, short, usage string) *flagMock {
 	return &flagMock{
 		long:  long,
 		short: short,
 		key:   &core.Key{},
+		usage: usage,
 	}
 }
 
@@ -33,7 +49,7 @@ func (f *flagMock) ShortName() string {
 }
 
 func (f *flagMock) Usage() string {
-	return "This is a very useful flag"
+	return f.usage
 }
 
 func (f *flagMock) IsSet() bool {

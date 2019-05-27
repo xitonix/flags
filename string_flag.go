@@ -65,7 +65,7 @@ func (f *StringFlag) Get() string {
 }
 
 func (f *StringFlag) WithKey(keyID string) *StringFlag {
-	f.key.SetID(keyID, false)
+	f.key.Set(keyID)
 	return f
 }
 

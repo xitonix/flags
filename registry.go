@@ -8,7 +8,7 @@ import (
 )
 
 type registry struct {
-	book map[string]interface{}
+	catalogue map[string]interface{}
 }
 
 var (
@@ -20,7 +20,7 @@ var (
 
 func newRegistry() *registry {
 	return &registry{
-		book: make(map[string]interface{}),
+		catalogue: make(map[string]interface{}),
 	}
 }
 
@@ -48,34 +48,29 @@ func (r *registry) add(flag core.Flag) error {
 		return core.NewInvalidFlagErr("", short, "", "flag already exists")
 	}
 
-	key := flag.Key().Value()
+	key := flag.Key().Get()
 	if r.isRegistered(key) {
 		return core.NewInvalidFlagErr("", "", key, "flag key already exists")
 	}
 
-	r.book[long] = nil
+	r.catalogue[long] = nil
 	if len(short) > 0 {
-		r.book[short] = nil
+		r.catalogue[short] = nil
 	}
 
 	if len(key) > 0 {
-		r.book[key] = key
+		r.catalogue[key] = key
 	}
 
 	return nil
 }
 
 func (r *registry) isRegistered(name string) bool {
-	_, ok := r.book[name]
+	_, ok := r.catalogue[name]
 	return ok
 }
 
 func (r *registry) isReserved(name string) bool {
 	_, ok := reserved[name]
-	return ok
-}
-
-func (r *registry) isShortNameRegistered(name string) bool {
-	_, ok := r.book[name]
 	return ok
 }

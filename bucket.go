@@ -2,6 +2,7 @@ package flags
 
 import (
 	"os"
+	"sort"
 
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
@@ -54,11 +55,27 @@ func (b *Bucket) Flags() []core.Flag {
 	return b.flags
 }
 
-func (b *Bucket) Help() {
+//TODO: Fix me
+func (b *Bucket) sortBy(by sort.Interface) []core.Flag {
+	clone := make([]core.Flag, len(b.flags))
+	copy(clone, b.flags)
+	sort.Sort(config.ByLongNameAsc(clone))
+	return clone
+}
+
+func (b *Bucket) Help(sortBy sort.Interface) {
 	for _, flag := range b.flags {
-		_, _ = b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
+		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
+		if err != nil {
+			b.opts.Logger.Print(err)
+			b.opts.Terminator.Terminate(core.FailureExitCode)
+		}
 	}
-	_ = b.opts.HelpProvider.Writer.Close()
+	err := b.opts.HelpProvider.Writer.Close()
+	if err != nil {
+		b.opts.Logger.Print(err)
+		b.opts.Terminator.Terminate(core.FailureExitCode)
+	}
 }
 
 func (b *Bucket) Parse() {
@@ -66,15 +83,14 @@ func (b *Bucket) Parse() {
 
 	if b.helpRequested {
 		b.Help()
-		b.opts.Terminator.Terminate(0)
+		b.opts.Terminator.Terminate(core.SuccessExitCode)
 	}
 
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
 		b.opts.Logger.Print(err)
-		b.opts.Terminator.Terminate(-1)
+		b.opts.Terminator.Terminate(core.FailureExitCode)
 	}
-
 	for _, f := range b.flags {
 		for _, src := range b.sources {
 			value, found := src.Read(f.LongName())
@@ -89,7 +105,7 @@ func (b *Bucket) Parse() {
 			err := f.Set(value)
 			if err != nil {
 				b.opts.Logger.Print(err)
-				b.opts.Terminator.Terminate(-1)
+				b.opts.Terminator.Terminate(core.FailureExitCode)
 			}
 			break
 		}
@@ -112,13 +128,13 @@ func (b *Bucket) init() {
 			f.Key().SetPrefix(b.opts.KeyPrefix)
 		}
 
-		if b.opts.AutoKeys {
-			f.Key().SetID(f.LongName(), true)
+		if b.opts.AutoKeys && !f.Key().IsSet() {
+			f.Key().Set(f.LongName())
 		}
 		err := b.reg.add(f)
 		if err != nil {
 			b.opts.Logger.Print(err)
-			b.opts.Terminator.Terminate(-1)
+			b.opts.Terminator.Terminate(core.FailureExitCode)
 		}
 	}
 }

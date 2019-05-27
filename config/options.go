@@ -3,6 +3,7 @@ package config
 import (
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/defaults"
+	"go.xitonix.io/flags/internal"
 )
 
 type Options struct {
@@ -54,6 +55,6 @@ func WithLogger(logger core.Logger) Option {
 
 func WithKeyPrefix(prefix string) Option {
 	return func(options *Options) {
-		options.KeyPrefix = prefix
+		options.KeyPrefix = internal.SanitiseFlagID(prefix)
 	}
 }

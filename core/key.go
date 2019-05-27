@@ -13,7 +13,6 @@ import (
 // For example PREFIX_PORT_NUMBER
 type Key struct {
 	prefix, id string
-	isSet      bool
 }
 
 // Prefix returns the prefix of the key if it is set.
@@ -21,8 +20,8 @@ func (k *Key) Prefix() string {
 	return k.prefix
 }
 
-// Value returns [PREFIX]_ID
-func (k *Key) Value() string {
+// Get returns [PREFIX]_ID
+func (k *Key) Get() string {
 	if k == nil {
 		return ""
 	}
@@ -40,14 +39,17 @@ func (k *Key) SetPrefix(prefix string) {
 	k.prefix = internal.SanitiseFlagID(prefix)
 }
 
-// SetID sets the key ID.
-//
-// An automatically generated ID ('auto' == true), will be overridden with
-// explicit values (where the method is called with 'auto' parameter set to false).
-func (k *Key) SetID(id string, auto bool) {
-	if k.isSet && auto {
-		return
-	}
+func (k *Key) Set(id string) {
 	k.id = internal.SanitiseFlagID(id)
-	k.isSet = !auto
+}
+
+func (k *Key) IsSet() bool {
+	if k == nil {
+		return false
+	}
+	return !internal.IsEmpty(k.id)
+}
+
+func (k *Key) Clear() {
+	k.id = ""
 }

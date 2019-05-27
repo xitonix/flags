@@ -1,18 +1,19 @@
 package flags
 
 import (
+	"errors"
 	"go.xitonix.io/flags/core"
 )
 
-const defaultFlagValue = "default"
-
 type flagMock struct {
-	long, short  string
-	value        string
-	isSet        bool
-	isDeprecated bool
-	isHidden     bool
-	key          *core.Key
+	long, short   string
+	value         string
+	isSet         bool
+	isDeprecated  bool
+	isHidden      bool
+	defaultValue  string
+	makeSetToFail bool
+	key           *core.Key
 }
 
 func newMockedFlag(long, short string) *flagMock {
@@ -56,15 +57,22 @@ func (f *flagMock) Key() *core.Key {
 }
 
 func (f *flagMock) Set(value string) error {
+	if f.makeSetToFail {
+		return errors.New("you asked for it")
+	}
 	f.isSet = true
 	f.value = value
 	return nil
 }
 
 func (f *flagMock) ResetToDefault() {
-	f.value = defaultFlagValue
+	f.value = f.defaultValue
+}
+
+func (f *flagMock) SetDefaultValue(defaultValue string) {
+	f.defaultValue = defaultValue
 }
 
 func (f *flagMock) Default() interface{} {
-	return defaultFlagValue
+	return f.defaultValue
 }

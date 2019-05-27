@@ -1,9 +1,9 @@
 package flags
 
 import (
+	"go.xitonix.io/flags/config"
 	"testing"
 
-	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/test"
 )
@@ -104,7 +104,7 @@ func TestBucket_Parse(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := config.NewHelpProvider(&test.NullWriter{}, &config.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(&test.NullWriter{}, &core.TabbedHelpFormatter{})
 
 			lg := &test.LoggerMock{}
 			tm := &test.TerminatorMock{}
@@ -182,7 +182,7 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := config.NewHelpProvider(&test.NullWriter{}, &config.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(&test.NullWriter{}, &core.TabbedHelpFormatter{})
 
 			lg := &test.LoggerMock{}
 			tm := &test.TerminatorMock{}
@@ -301,7 +301,7 @@ func TestBucket_KeyGeneration(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := config.NewHelpProvider(&test.NullWriter{}, &config.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(&test.NullWriter{}, &core.TabbedHelpFormatter{})
 
 			lg := &test.LoggerMock{}
 			tm := &test.TerminatorMock{}

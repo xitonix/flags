@@ -1,12 +1,11 @@
 package flags
 
 import (
-	"os"
-	"sort"
-
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
+	"os"
+	"sort"
 )
 
 type Bucket struct {
@@ -41,6 +40,10 @@ func newBucket(args []string, opts ...config.Option) *Bucket {
 	}
 }
 
+func (b *Bucket) Options() *config.Options {
+	return b.opts
+}
+
 func (b *Bucket) String(longName, usage string) *StringFlag {
 	return StringP(longName, usage, "")
 }
@@ -55,16 +58,9 @@ func (b *Bucket) Flags() []core.Flag {
 	return b.flags
 }
 
-//TODO: Fix me
-func (b *Bucket) sortBy(by sort.Interface) []core.Flag {
-	clone := make([]core.Flag, len(b.flags))
-	copy(clone, b.flags)
-	sort.Sort(config.ByLongNameAsc(clone))
-	return clone
-}
-
-func (b *Bucket) Help(sortBy sort.Interface) {
-	for _, flag := range b.flags {
+func (b *Bucket) Help() {
+	flags := b.sortFlags()
+	for _, flag := range flags {
 		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
 		if err != nil {
 			b.opts.Logger.Print(err)
@@ -76,6 +72,19 @@ func (b *Bucket) Help(sortBy sort.Interface) {
 		b.opts.Logger.Print(err)
 		b.opts.Terminator.Terminate(core.FailureExitCode)
 	}
+}
+
+func (b *Bucket) sortFlags() []core.Flag {
+	if b.opts.Comparer == nil {
+		return b.flags
+	}
+
+	clone := make([]core.Flag, len(b.flags))
+	copy(clone, b.flags)
+	sort.Slice(clone, func(i, j int) bool {
+		return b.opts.Comparer.LessThan(clone[i], clone[j])
+	})
+	return clone
 }
 
 func (b *Bucket) Parse() {

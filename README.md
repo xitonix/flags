@@ -8,7 +8,7 @@ TODOs:
     * map[string]string
     * Counters (with Verbose alias)
 * ~~Hidden flags~~
-* Deprecated flags
+* ~~Deprecated flags~~
 * Env variable source
 * Ability to add custom sources
-* Sorting help
+* ~~Sorting help~~

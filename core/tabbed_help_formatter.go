@@ -1,9 +1,8 @@
-package config
+package core
 
 import (
 	"fmt"
 
-	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
 )
 
@@ -16,7 +15,7 @@ func NewTabbedHelpFormatter(defaultValueFormatString string, deprecatedIndicator
 	return &TabbedHelpFormatter{DefaultValueFormatString: defaultValueFormatString, DeprecatedFlagIndicator: deprecatedIndicator}
 }
 
-func (t *TabbedHelpFormatter) Format(f core.Flag) string {
+func (t *TabbedHelpFormatter) Format(f Flag) string {
 	if f.IsHidden() {
 		return ""
 	}

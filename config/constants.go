@@ -1,4 +1,4 @@
-package defaults
+package config
 
 const (
 	DefaultValueFormatString = "(default: %v)"

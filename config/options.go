@@ -1,8 +1,8 @@
 package config
 
 import (
+	"go.xitonix.io/flags/by"
 	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/defaults"
 	"go.xitonix.io/flags/internal"
 )
 
@@ -11,7 +11,8 @@ type Options struct {
 	AutoKeys     bool
 	Terminator   core.Terminator
 	Logger       core.Logger
-	HelpProvider HelpProvider
+	HelpProvider core.HelpProvider
+	Comparer     by.Comparer
 }
 
 func NewOptions() *Options {
@@ -19,17 +20,24 @@ func NewOptions() *Options {
 		// SetID default values here
 		KeyPrefix:  "",
 		AutoKeys:   false,
-		Terminator: &defaults.Terminator{},
-		Logger:     &defaults.Logger{},
-		HelpProvider: NewHelpProvider(NewTabbedHelpWriter(),
-			NewTabbedHelpFormatter(defaults.DefaultValueFormatString, defaults.DeprecatedFlagIndicator)),
+		Comparer:   by.Declared,
+		Terminator: &Terminator{},
+		Logger:     &Logger{},
+		HelpProvider: core.NewHelpProvider(core.NewTabbedHelpWriter(),
+			core.NewTabbedHelpFormatter(DefaultValueFormatString, DeprecatedFlagIndicator)),
 	}
 }
 
 // Option represents an option function
 type Option func(options *Options)
 
-func WithHelpProvider(p HelpProvider) Option {
+func WithSort(c by.Comparer) Option {
+	return func(options *Options) {
+		options.Comparer = c
+	}
+}
+
+func WithHelpProvider(p core.HelpProvider) Option {
 	return func(options *Options) {
 		options.HelpProvider = p
 	}

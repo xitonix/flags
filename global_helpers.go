@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 )
 
@@ -22,6 +23,10 @@ func SetLogger(logger core.Logger) {
 
 func Parse() {
 	DefaultBucket.Parse()
+}
+
+func Options() *config.Options {
+	return DefaultBucket.opts
 }
 
 func String(longName, usage string) *StringFlag {

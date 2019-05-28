@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -373,6 +374,209 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 			tc.flag.makeSetToFail = tc.makeSetToFail
 
 			bucket.flags = []core.Flag{tc.flag}
+
+			bucket.Parse()
+
+			if tc.makeSetToFail {
+				if !test.ErrorContains(lg.Error, "asked for it") {
+					t.Errorf("Expected to receive 'asked for it' error, but received: %s", lg.Error)
+				}
+				if !tm.IsTerminated {
+					t.Errorf("Expected to terminate, but it didn't happen")
+				}
+				if tm.Code != core.FailureExitCode {
+					t.Errorf("Expectced termination code %d, actual: %d", core.FailureExitCode, tm.Code)
+				}
+				return
+			}
+
+			if tc.flag.value != tc.expectedValue {
+				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.value)
+			}
+		})
+	}
+}
+
+func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
+	testCases := []struct {
+		title            string
+		envVariableValue string
+		expectedValue    string
+		defaultValue     string
+		args             []string
+		flag             *flagMock
+		keyPrefix        string
+		autoKey          bool
+		explicitKey      string
+		envVariableKey   string
+		makeSetToFail    bool
+	}{
+		{
+			title:         "default value only",
+			flag:          newMockedFlag("flag", "f"),
+			defaultValue:  "default_value",
+			expectedValue: "default_value",
+		},
+		{
+			title:            "with default value and explicit environment variable",
+			flag:             newMockedFlag("flag", "f"),
+			explicitKey:      "TEST_FLAG",
+			envVariableKey:   "TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "env_value",
+		},
+		{
+			title:            "with default value and explicit empty environment variable",
+			flag:             newMockedFlag("flag", "f"),
+			explicitKey:      "TEST_FLAG",
+			envVariableKey:   "TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "",
+			expectedValue:    "",
+		},
+		{
+			title:            "without default value and with explicit environment variable",
+			flag:             newMockedFlag("flag", "f"),
+			explicitKey:      "TEST_FLAG",
+			envVariableKey:   "TEST_FLAG",
+			envVariableValue: "env_value",
+			expectedValue:    "env_value",
+		},
+		{
+			title:            "without default value and with explicit empty environment variable",
+			flag:             newMockedFlag("flag", "f"),
+			explicitKey:      "TEST_FLAG",
+			envVariableKey:   "TEST_FLAG",
+			envVariableValue: "",
+			expectedValue:    "",
+		},
+		{
+			title:            "with auto environment variable and no prefix",
+			flag:             newMockedFlag("test-flag", "f"),
+			autoKey:          true,
+			envVariableKey:   "TEST_FLAG",
+			envVariableValue: "env_value",
+			expectedValue:    "env_value",
+		},
+		{
+			title:            "with empty auto environment variable and no prefix",
+			flag:             newMockedFlag("test-flag", "f"),
+			autoKey:          true,
+			envVariableKey:   "TEST_FLAG",
+			envVariableValue: "",
+			expectedValue:    "",
+		},
+		{
+			title:            "with auto environment variable and prefix",
+			flag:             newMockedFlag("test-flag", "f"),
+			autoKey:          true,
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			envVariableValue: "env_value",
+			expectedValue:    "env_value",
+		},
+		{
+			title:            "with empty auto environment variable and prefix",
+			flag:             newMockedFlag("test-flag", "f"),
+			autoKey:          true,
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			envVariableValue: "",
+			expectedValue:    "",
+		},
+		{
+			title:            "long flag value override with default value and explicit environment variable",
+			flag:             newMockedFlag("flag", "f"),
+			args:             []string{"--flag", "flag_value"},
+			explicitKey:      "TEST_FLAG",
+			envVariableKey:   "TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+		{
+			title:            "long flag value override with default value and auto environment variable",
+			flag:             newMockedFlag("test-flag", "f"),
+			args:             []string{"--test-flag", "flag_value"},
+			autoKey:          true,
+			envVariableKey:   "TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+		{
+			title:            "long flag value override with default value and prefixed auto environment variable",
+			flag:             newMockedFlag("test-flag", "f"),
+			args:             []string{"--test-flag", "flag_value"},
+			autoKey:          true,
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+		{
+			title:            "short flag value override with default value and explicit environment variable",
+			flag:             newMockedFlag("flag", "f"),
+			args:             []string{"-f", "flag_value"},
+			explicitKey:      "TEST_FLAG",
+			envVariableKey:   "TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+		{
+			title:            "short flag value override with default value and auto environment variable",
+			flag:             newMockedFlag("test-flag", "f"),
+			args:             []string{"-f", "flag_value"},
+			autoKey:          true,
+			envVariableKey:   "TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+		{
+			title:            "short flag value override with default value and prefixed auto environment variable",
+			flag:             newMockedFlag("test-flag", "f"),
+			args:             []string{"-f", "flag_value"},
+			autoKey:          true,
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			hp := core.NewHelpProvider(test.NewNullWriter(), &core.TabbedHelpFormatter{})
+			lg := &test.LoggerMock{}
+			tm := &test.TerminatorMock{}
+			bucket := newBucket(tc.args,
+				config.WithHelpProvider(hp),
+				config.WithLogger(lg),
+				config.WithTerminator(tm),
+				config.WithKeyPrefix(tc.keyPrefix))
+
+			bucket.Options().AutoKeys = tc.autoKey
+
+			tc.flag.SetDefaultValue(tc.defaultValue)
+			tc.flag.makeSetToFail = tc.makeSetToFail
+
+			if tc.explicitKey != "" {
+				tc.flag.Key().Set(tc.explicitKey)
+			}
+
+			bucket.flags = []core.Flag{tc.flag}
+
+			if tc.envVariableKey != "" {
+				_ = os.Setenv(tc.envVariableKey, tc.envVariableValue)
+				defer func() {
+					_ = os.Unsetenv(tc.envVariableKey)
+				}()
+			}
 
 			bucket.Parse()
 

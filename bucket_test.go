@@ -1,10 +1,10 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/by"
 	"strings"
 	"testing"
 
+	"go.xitonix.io/flags/by"
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/test"
@@ -23,6 +23,24 @@ func TestBucket_Parse_Validation(t *testing.T) {
 		{
 			title:                   "unknown flags",
 			args:                    []string{"--unexpected"},
+			flags:                   []core.Flag{newMockedFlag("flag", "f")},
+			expectedErr:             "is an unknown flag",
+			mustPrintHelp:           true,
+			mustTerminate:           true,
+			expectedTerminationCode: core.FailureExitCode,
+		},
+		{
+			title:                   "long name with single dash",
+			args:                    []string{"-long"},
+			flags:                   []core.Flag{newMockedFlag("flag", "f")},
+			expectedErr:             "is an unknown flag",
+			mustPrintHelp:           true,
+			mustTerminate:           true,
+			expectedTerminationCode: core.FailureExitCode,
+		},
+		{
+			title:                   "short name with double dash",
+			args:                    []string{"--f"},
 			flags:                   []core.Flag{newMockedFlag("flag", "f")},
 			expectedErr:             "is an unknown flag",
 			mustPrintHelp:           true,
@@ -95,43 +113,50 @@ func TestBucket_Parse_Validation(t *testing.T) {
 
 func TestBucket_Parse_Help_Request(t *testing.T) {
 	testCases := []struct {
-		title         string
-		args          []string
-		flags         []core.Flag
-		mustPrintHelp bool
+		title                   string
+		args                    []string
+		flags                   []core.Flag
+		mustPrintHelp           bool
+		expectedTerminationCode int
 	}{
 		{
-			title:         "help requested with help flag and no other registered flags",
-			args:          []string{"--help"},
-			mustPrintHelp: false,
+			title:                   "help requested with help flag and no other registered flags",
+			args:                    []string{"--help"},
+			mustPrintHelp:           false,
+			expectedTerminationCode: core.SuccessExitCode,
 		},
 		{
-			title:         "help requested with help flag and other registered flags",
-			args:          []string{"--help"},
-			flags:         []core.Flag{newMockedFlag("flag", "f")},
-			mustPrintHelp: true,
+			title:                   "help requested with help flag and other registered flags",
+			args:                    []string{"--help"},
+			flags:                   []core.Flag{newMockedFlag("flag", "f")},
+			mustPrintHelp:           true,
+			expectedTerminationCode: core.SuccessExitCode,
 		},
 		{
-			title:         "help requested with H flag and no other registered flags",
-			args:          []string{"-h"},
-			mustPrintHelp: false,
+			title:                   "help requested with H flag and no other registered flags",
+			args:                    []string{"-h"},
+			mustPrintHelp:           false,
+			expectedTerminationCode: core.SuccessExitCode,
 		},
 		{
-			title:         "help requested with H flag and other registered flags",
-			args:          []string{"-h"},
-			flags:         []core.Flag{newMockedFlag("flag", "f")},
-			mustPrintHelp: true,
+			title:                   "help requested with H flag and other registered flags",
+			args:                    []string{"-h"},
+			flags:                   []core.Flag{newMockedFlag("flag", "f")},
+			mustPrintHelp:           true,
+			expectedTerminationCode: core.SuccessExitCode,
 		},
 		{
-			title:         "help requested with H flag set to true and no other registered flags",
-			args:          []string{"-h=true"},
-			mustPrintHelp: false,
+			title:                   "help requested with H flag set to true and no other registered flags",
+			args:                    []string{"-h=true"},
+			mustPrintHelp:           false,
+			expectedTerminationCode: core.SuccessExitCode,
 		},
 		{
-			title:         "help requested with H flag set to true and other registered flags",
-			args:          []string{"-h=true"},
-			flags:         []core.Flag{newMockedFlag("flag", "f")},
-			mustPrintHelp: true,
+			title:                   "help requested with H flag set to true and other registered flags",
+			args:                    []string{"-h=true"},
+			flags:                   []core.Flag{newMockedFlag("flag", "f")},
+			mustPrintHelp:           true,
+			expectedTerminationCode: core.SuccessExitCode,
 		},
 	}
 
@@ -156,8 +181,8 @@ func TestBucket_Parse_Help_Request(t *testing.T) {
 				t.Errorf("Expected to terminate, but it did not happen")
 			}
 
-			if tm.Code != core.SuccessExitCode {
-				t.Errorf("Expected termination code: %d, Actual: %d", core.SuccessExitCode, tm.Code)
+			if tm.Code != tc.expectedTerminationCode {
+				t.Errorf("Expected termination code: %d, Actual: %d", tc.expectedTerminationCode, tm.Code)
 			}
 
 			if tc.mustPrintHelp && hp.Writer.(*test.NullWriter).WriteCounter == 0 {

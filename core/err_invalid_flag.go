@@ -23,14 +23,14 @@ func (e *ErrInvalidFlag) FieldName() string {
 func (e *ErrInvalidFlag) Error() string {
 	var str string
 	if !internal.IsEmpty(e.long) {
-		str += "--" + e.long
+		str += e.long
 	}
 	if !internal.IsEmpty(e.short) {
 		var comma string
 		if !internal.IsEmpty(str) {
 			comma = ", "
 		}
-		str += comma + "-" + e.short
+		str += comma + e.short
 	}
 	if !internal.IsEmpty(e.key) {
 		str = e.key

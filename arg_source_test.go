@@ -42,7 +42,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key=value"},
 			expected: []entry{
 				{
-					key:   "key",
+					key:   "--key",
 					value: "value",
 					ok:    true,
 				},
@@ -54,7 +54,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key", "value"},
 			expected: []entry{
 				{
-					key:   "key",
+					key:   "--key",
 					value: "value",
 					ok:    true,
 				},
@@ -66,7 +66,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k=value"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "value",
 					ok:    true,
 				},
@@ -78,7 +78,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k", "value"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "value",
 					ok:    true,
 				},
@@ -90,12 +90,12 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key1=value1", "--key2=value2"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "value1",
 					ok:    true,
 				},
 				{
-					key:   "key2",
+					key:   "--key2",
 					value: "value2",
 					ok:    true,
 				},
@@ -107,12 +107,12 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key1", "value1", "--key2", "value2"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "value1",
 					ok:    true,
 				},
 				{
-					key:   "key2",
+					key:   "--key2",
 					value: "value2",
 					ok:    true,
 				},
@@ -124,12 +124,12 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k=value1", "-e=value2"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "value1",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "value2",
 					ok:    true,
 				},
@@ -141,12 +141,12 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k", "value1", "-e", "value2"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "value1",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "value2",
 					ok:    true,
 				},
@@ -158,7 +158,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key=value1", "--key=value2"},
 			expected: []entry{
 				{
-					key:   "key",
+					key:   "--key",
 					value: "value2",
 					ok:    true,
 				},
@@ -170,7 +170,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key", "value1", "--key", "value2"},
 			expected: []entry{
 				{
-					key:   "key",
+					key:   "--key",
 					value: "value2",
 					ok:    true,
 				},
@@ -182,7 +182,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k=value1", "-k=value2"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "value2",
 					ok:    true,
 				},
@@ -194,7 +194,7 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k", "value1", "-k", "value2"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "value2",
 					ok:    true,
 				},
@@ -206,12 +206,12 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key1", "--key2"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "key2",
+					key:   "--key2",
 					value: "",
 					ok:    true,
 				},
@@ -223,12 +223,12 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k", "-e"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "",
 					ok:    true,
 				},
@@ -240,17 +240,17 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key1", "--key2=value2", "--key3"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "key2",
+					key:   "--key2",
 					value: "value2",
 					ok:    true,
 				},
 				{
-					key:   "key3",
+					key:   "--key3",
 					value: "",
 					ok:    true,
 				},
@@ -262,17 +262,17 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--key1", "--key2", "value2", "--key3"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "key2",
+					key:   "--key2",
 					value: "value2",
 					ok:    true,
 				},
 				{
-					key:   "key3",
+					key:   "--key3",
 					value: "",
 					ok:    true,
 				},
@@ -284,17 +284,17 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k", "-e=value2", "-p"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "value2",
 					ok:    true,
 				},
 				{
-					key:   "p",
+					key:   "-p",
 					value: "",
 					ok:    true,
 				},
@@ -306,17 +306,17 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"-k", "-e", "value2", "-p"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "value2",
 					ok:    true,
 				},
 				{
-					key:   "p",
+					key:   "-p",
 					value: "",
 					ok:    true,
 				},
@@ -328,22 +328,22 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--long1", "-e", "--long2", "-p"},
 			expected: []entry{
 				{
-					key:   "long1",
+					key:   "--long1",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "p",
+					key:   "-p",
 					value: "",
 					ok:    true,
 				},
 				{
-					key:   "long2",
+					key:   "--long2",
 					value: "",
 					ok:    true,
 				},
@@ -355,22 +355,22 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--long1=lv1", "-e=s1", "--long2=lv2", "-p=s2"},
 			expected: []entry{
 				{
-					key:   "long1",
+					key:   "--long1",
 					value: "lv1",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "s1",
 					ok:    true,
 				},
 				{
-					key:   "p",
+					key:   "-p",
 					value: "s2",
 					ok:    true,
 				},
 				{
-					key:   "long2",
+					key:   "--long2",
 					value: "lv2",
 					ok:    true,
 				},
@@ -382,22 +382,22 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--long1", "lv1", "-e", "s1", "--long2", "lv2", "-p", "s2"},
 			expected: []entry{
 				{
-					key:   "long1",
+					key:   "--long1",
 					value: "lv1",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "s1",
 					ok:    true,
 				},
 				{
-					key:   "p",
+					key:   "-p",
 					value: "s2",
 					ok:    true,
 				},
 				{
-					key:   "long2",
+					key:   "--long2",
 					value: "lv2",
 					ok:    true,
 				},
@@ -409,22 +409,22 @@ func TestArgSource_Read(t *testing.T) {
 			in:    []string{"--long1", "lv1", "-e=s1", "--long2=lv2", "-p", "s2"},
 			expected: []entry{
 				{
-					key:   "long1",
+					key:   "--long1",
 					value: "lv1",
 					ok:    true,
 				},
 				{
-					key:   "e",
+					key:   "-e",
 					value: "s1",
 					ok:    true,
 				},
 				{
-					key:   "p",
+					key:   "-p",
 					value: "s2",
 					ok:    true,
 				},
 				{
-					key:   "long2",
+					key:   "--long2",
 					value: "lv2",
 					ok:    true,
 				},
@@ -468,7 +468,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"--key1=--a=10 --b=20"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "--a=10 --b=20",
 					ok:    true,
 				},
@@ -480,7 +480,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"--key1=a,b,c"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "a,b,c",
 					ok:    true,
 				},
@@ -492,7 +492,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"--key1", "a,b,c"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "a,b,c",
 					ok:    true,
 				},
@@ -504,7 +504,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"--key1=[a,b,c]"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "[a,b,c]",
 					ok:    true,
 				},
@@ -516,7 +516,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"--key1", "[a,b,c]"},
 			expected: []entry{
 				{
-					key:   "key1",
+					key:   "--key1",
 					value: "[a,b,c]",
 					ok:    true,
 				},
@@ -528,7 +528,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"-k=--a=10 --b=20"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "--a=10 --b=20",
 					ok:    true,
 				},
@@ -541,7 +541,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"-k=a,b,c"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "a,b,c",
 					ok:    true,
 				},
@@ -553,7 +553,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"-k", "a,b,c"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "a,b,c",
 					ok:    true,
 				},
@@ -565,7 +565,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"-k=[a,b,c]"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "[a,b,c]",
 					ok:    true,
 				},
@@ -577,7 +577,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:    []string{"-k", "[a,b,c]"},
 			expected: []entry{
 				{
-					key:   "k",
+					key:   "-k",
 					value: "[a,b,c]",
 					ok:    true,
 				},

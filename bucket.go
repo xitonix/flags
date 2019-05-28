@@ -13,7 +13,7 @@ type Bucket struct {
 	opts          *config.Options
 	reg           *registry
 	flags         []core.Flag
-	sources       []Source
+	sources       []core.Source
 	argSource     *argSource
 	helpRequested bool
 }
@@ -32,8 +32,9 @@ func newBucket(args []string, opts ...config.Option) *Bucket {
 	return &Bucket{
 		reg:   newRegistry(),
 		flags: make([]core.Flag, 0),
-		sources: []Source{
+		sources: []core.Source{
 			argSource,
+			&envVariableSource{},
 		},
 		argSource:     argSource,
 		helpRequested: helpRequested,
@@ -60,15 +61,7 @@ func (b *Bucket) Flags() []core.Flag {
 }
 
 func (b *Bucket) Help() {
-	flags := b.sortFlags()
-	for _, flag := range flags {
-		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
-		if err != nil {
-			b.opts.Logger.Print(err)
-			b.opts.Terminator.Terminate(core.FailureExitCode)
-		}
-	}
-	err := b.opts.HelpProvider.Writer.Close()
+	err := b.help()
 	if err != nil {
 		b.opts.Logger.Print(err)
 		b.opts.Terminator.Terminate(core.FailureExitCode)
@@ -81,19 +74,35 @@ func (b *Bucket) Parse() {
 	if b.helpRequested {
 		b.Help()
 		b.opts.Terminator.Terminate(core.SuccessExitCode)
+		return
 	}
 
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
 		b.opts.Logger.Print(err)
 		b.opts.Terminator.Terminate(core.FailureExitCode)
+		return
 	}
 	for _, f := range b.flags {
 		for _, src := range b.sources {
-			value, found := src.Read(f.LongName())
-			if !found {
-				value, found = src.Read(f.ShortName())
+			var (
+				found bool
+				value string
+			)
+
+			_, isArgs := src.(*argSource)
+
+			if isArgs {
+				value, found = src.Read("--" + f.LongName())
+				if !found {
+					value, found = src.Read("-" + f.ShortName())
+				}
 			}
+
+			if !found && !isArgs {
+				value, found = src.Read(f.Key().Get())
+			}
+
 			if !found {
 				f.ResetToDefault()
 				continue
@@ -107,6 +116,17 @@ func (b *Bucket) Parse() {
 			break
 		}
 	}
+}
+
+func (b *Bucket) help() error {
+	flags := b.sortFlags()
+	for _, flag := range flags {
+		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
+		if err != nil {
+			return err
+		}
+	}
+	return b.opts.HelpProvider.Writer.Close()
 }
 
 func (b *Bucket) checkForUnknownFlags() error {

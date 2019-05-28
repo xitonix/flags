@@ -9,6 +9,6 @@ TODOs:
     * Counters (with Verbose alias)
 * ~~Hidden flags~~
 * ~~Deprecated flags~~
-* Env variable source
+* ~~Env variable source~~
 * Ability to add custom sources
 * ~~Sorting help~~

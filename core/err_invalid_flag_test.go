@@ -15,24 +15,24 @@ func TestErrInvalidFlag_Error(t *testing.T) {
 	}{
 		{
 			title: "flag with long name",
-			long:  "long",
+			long:  "--long",
 			msg:   "error message",
 		},
 		{
 			title: "flag with short name only_this should never happen",
-			short: "short",
+			short: "-short",
 			msg:   "error message",
 		},
 		{
 			title: "flag with long and short names",
-			long:  "long",
-			short: "short",
+			long:  "--long",
+			short: "-short",
 			msg:   "error message",
 		},
 		{
 			title: "flag with long and short names along with a key",
-			long:  "long",
-			short: "short",
+			long:  "--long",
+			short: "-short",
 			key:   "FLAG_KEY",
 			msg:   "error message",
 		},
@@ -50,20 +50,20 @@ func TestErrInvalidFlag_Error(t *testing.T) {
 				if !strings.Contains(actual, tc.key) {
 					t.Errorf("Expected %v, Actual: %s", tc.key, actual)
 				}
-				if strings.Contains(actual, "--"+tc.long) {
+				if strings.Contains(actual, tc.long) {
 					t.Errorf("Did not expect to see --%v, Actual: %s", tc.long, actual)
 				}
-				if strings.Contains(actual, "-"+tc.short) {
+				if strings.Contains(actual, tc.short) {
 					t.Errorf("Did not expect to see -%v, Actual: %s", tc.short, actual)
 				}
 				return
 			}
 
-			if tc.long != "" && !strings.Contains(actual, "--"+tc.long) {
+			if tc.long != "" && !strings.Contains(actual, tc.long) {
 				t.Errorf("Expected --%v, Actual: %s", tc.long, actual)
 			}
 
-			if tc.short != "" && !strings.Contains(actual, "-"+tc.short) {
+			if tc.short != "" && !strings.Contains(actual, tc.short) {
 				t.Errorf("Expected -%v, Actual: %s", tc.short, actual)
 			}
 		})

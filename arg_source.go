@@ -21,8 +21,7 @@ func newArgSource(args []string) (*argSource, bool) {
 	var isHelpRequested bool
 	for _, arg := range args {
 		isKey := strings.HasPrefix(arg, "-")
-		trimmed := strings.TrimLeft(arg, "-")
-		parts := strings.Split(trimmed, "=")
+		parts := strings.Split(arg, "=")
 		if !isHelpRequested && isKey {
 			ag := strings.TrimSpace(strings.ToLower(arg))
 			if ag == "--help" || ag == "-h" || strings.HasPrefix(ag, "-h=") || strings.HasPrefix(ag, "--help=") {
@@ -38,8 +37,8 @@ func newArgSource(args []string) (*argSource, bool) {
 		}
 
 		if isKey {
-			src.arguments[trimmed] = ""
-			prevKey = trimmed
+			src.arguments[arg] = ""
+			prevKey = arg
 		} else {
 			src.arguments[prevKey] = arg
 			prevKey = ""

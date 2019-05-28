@@ -8,8 +8,8 @@ import (
 func main() {
 	flags.SetKeyPrefix("ALG")
 	flags.EnableAutoKeyGeneration()
-	str := flags.StringP("a-flag", "usage of name", "B").WithKey("ABC").WithDefault("abc")
-	_ = flags.StringP("x-flag", `usage of name is a bit longer`, "A").Var()
+	str := flags.StringP("flag", "usage of name", "a").WithKey("ABC").WithDefault("abc").Var()
+	_ = flags.StringP("x-flag", `usage of name is a bit longer`, "x").Var()
 	flags.Parse()
-	fmt.Println(*str)
+	fmt.Println("Value:", *str)
 }

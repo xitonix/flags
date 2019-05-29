@@ -3,4 +3,15 @@ language: go
 go:
   - 1.12.x
 
-script: go test -v ./...
+env:
+  - GO111MODULE=on
+
+install: true
+
+git:
+  depth: 1
+
+notifications:
+  email: false
+
+script: go test -v -race -cover ./...

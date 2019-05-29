@@ -100,7 +100,7 @@ func (f *StringFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil
 	}
-	if internal.IsEmpty(f.defaultValue) {
+	if f.defaultValue == "" {
 		return "''"
 	}
 	return f.defaultValue

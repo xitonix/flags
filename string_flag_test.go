@@ -88,6 +88,10 @@ func TestString(t *testing.T) {
 			if f.Get() != "" {
 				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
 			}
+
+			if f.Var() == nil {
+				t.Error("The initial flag variable should not be nil")
+			}
 		})
 	}
 }
@@ -205,6 +209,150 @@ func TestStringP(t *testing.T) {
 
 			if f.Get() != "" {
 				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
+			}
+
+			if f.Var() == nil {
+				t.Error("The initial flag variable should not be nil")
+			}
+		})
+	}
+}
+
+func TestStringFlag_WithKey(t *testing.T) {
+	testCases := []struct {
+		title       string
+		key         string
+		expectedKey string
+	}{
+		{
+			title: "empty key",
+		},
+		{
+			title: "whitespace key",
+			key:   "      ",
+		},
+		{
+			title:       "lowercase key",
+			key:         "key",
+			expectedKey: "KEY",
+		},
+		{
+			title:       "key with whitespace",
+			key:         "   key   ",
+			expectedKey: "KEY",
+		},
+		{
+			title:       "key with whitespace in the middle",
+			key:         "   key with whitespace  ",
+			expectedKey: "KEY_WITH_WHITESPACE",
+		},
+		{
+			title:       "key with hyphens",
+			key:         "------key-------with-----hyphen----",
+			expectedKey: "_KEY_WITH_HYPHEN_",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("long", "usage").WithKey(tc.key)
+			actual := f.Key().Get()
+			if actual != tc.expectedKey {
+				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
+			}
+		})
+	}
+}
+
+func TestStringFlag_WithDefault(t *testing.T) {
+	testCases := []struct {
+		title                string
+		defaultValue         string
+		expectedDefaultValue string
+	}{
+		{
+			title:                "empty default value",
+			expectedDefaultValue: "''",
+		},
+		{
+			title:                "whitespace default value",
+			defaultValue:         "    ",
+			expectedDefaultValue: "    ",
+		},
+		{
+			title:                "default value with whitespace",
+			defaultValue:         "  default value  ",
+			expectedDefaultValue: "  default value  ",
+		},
+		{
+			title:                "non empty default value",
+			defaultValue:         "default value",
+			expectedDefaultValue: "default value",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("long", "usage").WithDefault(tc.defaultValue)
+			actual := f.Default()
+			if actual != tc.expectedDefaultValue {
+				t.Errorf("Expected Default Value: %s, Actual: %s", tc.expectedDefaultValue, actual)
+			}
+		})
+	}
+}
+
+func TestStringFlag_Hide(t *testing.T) {
+	testCases := []struct {
+		title    string
+		isHidden bool
+	}{
+		{
+			title: "visible by default",
+		},
+		{
+			title:    "hidden flag",
+			isHidden: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("long", "usage")
+			if tc.isHidden {
+				f = f.Hide()
+			}
+			actual := f.IsHidden()
+			if actual != tc.isHidden {
+				t.Errorf("Expected IsHidden: %v, Actual: %v", tc.isHidden, actual)
+			}
+		})
+	}
+}
+
+func TestStringFlag_IsDeprecated(t *testing.T) {
+	testCases := []struct {
+		title        string
+		isDeprecated bool
+	}{
+		{
+			title: "not deprecated by default",
+		},
+		{
+			title:        "deprecated flag",
+			isDeprecated: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("long", "usage")
+			if tc.isDeprecated {
+				f = f.MarkAsDeprecated()
+			}
+			actual := f.IsDeprecated()
+			if actual != tc.isDeprecated {
+				t.Errorf("Expected IsDeprecated: %v, Actual: %v", tc.isDeprecated, actual)
 			}
 		})
 	}

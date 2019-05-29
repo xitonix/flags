@@ -14,4 +14,8 @@ git:
 notifications:
   email: false
 
-script: go test -v -race -cover ./...
+script:
+  - go test  -v -race -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

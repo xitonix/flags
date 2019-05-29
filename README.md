@@ -1,5 +1,8 @@
+[![Build Status](https://travis-ci.org/xitonix/flags.svg?branch=master)](https://travis-ci.org/xitonix/flags)
+
 # flags
-[![Build Status](https://travis-ci.com/xitonix/flags.svg?token=WD3iUTxyNRypfD78kc3p&branch=master)](https://travis-ci.com/xitonix/flags)
+
+WIP
 
 TODOs:
 

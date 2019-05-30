@@ -16,10 +16,6 @@ func NewInvalidFlagErr(long, short, key, msg string) *ErrInvalidFlag {
 	}
 }
 
-func (e *ErrInvalidFlag) FieldName() string {
-	return e.long
-}
-
 func (e *ErrInvalidFlag) Error() string {
 	var str string
 	if !internal.IsEmpty(e.long) {

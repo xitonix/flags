@@ -24,12 +24,12 @@ func (t *TabbedHelpFormatter) Format(f Flag) string {
 		short = "-" + short + ","
 	}
 	var def string
-	if dv := f.Default(); dv != nil {
+	if dv := f.Default(); dv != nil && !internal.IsEmpty(t.DefaultValueFormatString) {
 		def = fmt.Sprintf(" "+t.DefaultValueFormatString, dv)
 	}
 
 	var dep string
-	if f.IsDeprecated() {
+	if f.IsDeprecated() && !internal.IsEmpty(t.DeprecatedFlagIndicator) {
 		dep = " " + t.DeprecatedFlagIndicator
 	}
 

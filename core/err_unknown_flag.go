@@ -10,10 +10,6 @@ func NewUnknownFlagErr(name string) *ErrUnknownFlag {
 	}
 }
 
-func (e *ErrUnknownFlag) FieldName() string {
-	return e.name
-}
-
 func (e *ErrUnknownFlag) Error() string {
 	return e.name + " is an unknown flag"
 }

@@ -10,6 +10,7 @@ type Flag struct {
 	isSet         bool
 	isDeprecated  bool
 	isHidden      bool
+	hasDefault    bool
 	defaultValue  string
 	MakeSetToFail bool
 	key           *core.Key
@@ -86,10 +87,22 @@ func (f *Flag) ResetToDefault() {
 
 func (f *Flag) SetDefaultValue(defaultValue string) {
 	f.defaultValue = defaultValue
+	f.hasDefault = true
 }
 
 func (f *Flag) Default() interface{} {
+	if !f.hasDefault {
+		return nil
+	}
 	return f.defaultValue
+}
+
+func (f *Flag) SetDeprecated(deprecated bool) {
+	f.isDeprecated = deprecated
+}
+
+func (f *Flag) SetHidden(hidden bool) {
+	f.isHidden = hidden
 }
 
 func (f *Flag) Get() interface{} {

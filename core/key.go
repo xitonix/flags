@@ -22,9 +22,6 @@ func (k *Key) Prefix() string {
 
 // Get returns [PREFIX]_ID
 func (k *Key) Get() string {
-	if k == nil {
-		return ""
-	}
 	if internal.IsEmpty(k.id) {
 		return ""
 	}
@@ -44,12 +41,5 @@ func (k *Key) Set(id string) {
 }
 
 func (k *Key) IsSet() bool {
-	if k == nil {
-		return false
-	}
 	return !internal.IsEmpty(k.id)
-}
-
-func (k *Key) Clear() {
-	k.id = ""
 }

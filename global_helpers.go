@@ -3,6 +3,7 @@ package flags
 import (
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/internal"
 )
 
 var (
@@ -10,15 +11,15 @@ var (
 )
 
 func EnableAutoKeyGeneration() {
-	DefaultBucket.enableAutoKeyGen()
+	DefaultBucket.opts.AutoKeys = true
 }
 
 func SetKeyPrefix(prefix string) {
-	DefaultBucket.setKeyPrefix(prefix)
+	DefaultBucket.opts.KeyPrefix = internal.SanitiseFlagID(prefix)
 }
 
 func SetLogger(logger core.Logger) {
-	DefaultBucket.setLogger(logger)
+	DefaultBucket.opts.Logger = logger
 }
 
 func Parse() {

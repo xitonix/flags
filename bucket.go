@@ -19,10 +19,10 @@ type Bucket struct {
 }
 
 func NewBucket(opts ...config.Option) *Bucket {
-	return newBucket(os.Args[1:], opts...)
+	return newBucket(os.Args[1:], internal.OSEnvReader{}, opts...)
 }
 
-func newBucket(args []string, opts ...config.Option) *Bucket {
+func newBucket(args []string, envReader internal.EnvironmentVariableReader, opts ...config.Option) *Bucket {
 	ops := config.NewOptions()
 	for _, option := range opts {
 		option(ops)
@@ -34,7 +34,7 @@ func newBucket(args []string, opts ...config.Option) *Bucket {
 		flags: make([]core.Flag, 0),
 		sources: []core.Source{
 			argSource,
-			&envVariableSource{},
+			newEnvironmentVarSource(envReader),
 		},
 		argSource:     argSource,
 		helpRequested: helpRequested,
@@ -47,7 +47,7 @@ func (b *Bucket) Options() *config.Options {
 }
 
 func (b *Bucket) String(longName, usage string) *StringFlag {
-	return StringP(longName, usage, "")
+	return b.StringP(longName, usage, "")
 }
 
 func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
@@ -167,16 +167,4 @@ func (b *Bucket) sortFlags() []core.Flag {
 		return b.opts.Comparer.LessThan(clone[i], clone[j])
 	})
 	return clone
-}
-
-func (b *Bucket) enableAutoKeyGen() {
-	b.opts.AutoKeys = true
-}
-
-func (b *Bucket) setKeyPrefix(prefix string) {
-	b.opts.KeyPrefix = internal.SanitiseFlagID(prefix)
-}
-
-func (b *Bucket) setLogger(logger core.Logger) {
-	b.opts.Logger = logger
 }

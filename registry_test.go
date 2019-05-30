@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/mocks"
 	"go.xitonix.io/flags/test"
 )
 
@@ -21,78 +22,78 @@ func TestRegistry_Add(t *testing.T) {
 	}{
 		{
 			title:            "with none empty long name",
-			first:            newMockedFlag("long", "short"),
+			first:            mocks.NewFlag("long", "short"),
 			expectedFirstErr: "",
 		},
 		{
 			title:            "with empty long name",
-			first:            newMockedFlag("", "short"),
+			first:            mocks.NewFlag("", "short"),
 			expectedFirstErr: core.ErrEmptyFlagName.Error(),
 		},
 		{
 			title:            "with empty short name",
-			first:            newMockedFlag("long", ""),
+			first:            mocks.NewFlag("long", ""),
 			expectedFirstErr: "",
 		},
 		{
 			title:             "two flags with the same long name",
-			first:             newMockedFlag("long", "short-1"),
+			first:             mocks.NewFlag("long", "short-1"),
 			expectedFirstErr:  "",
-			second:            newMockedFlag("long", "short-2"),
+			second:            mocks.NewFlag("long", "short-2"),
 			expectedSecondErr: "flag already exists",
 		},
 		{
 			title:             "two flags with the same short name",
-			first:             newMockedFlag("long-1", "short"),
+			first:             mocks.NewFlag("long-1", "short"),
 			expectedFirstErr:  "",
-			second:            newMockedFlag("long-2", "short"),
+			second:            mocks.NewFlag("long-2", "short"),
 			expectedSecondErr: "flag already exists",
 		},
 		{
 			title:             "two flags with the same keys",
-			first:             newMockedFlag("long-1", "short-1"),
+			first:             mocks.NewFlag("long-1", "short-1"),
 			firstKey:          "key",
 			expectedFirstErr:  "",
-			second:            newMockedFlag("long-2", "short-2"),
+			second:            mocks.NewFlag("long-2", "short-2"),
 			secondKey:         "key",
 			expectedSecondErr: "flag key already exists",
 		},
 		{
 			title:             "two flags with different keys",
-			first:             newMockedFlag("long-1", "short-1"),
+			first:             mocks.NewFlag("long-1", "short-1"),
 			firstKey:          "key-1",
 			expectedFirstErr:  "",
-			second:            newMockedFlag("long-2", "short-2"),
+			second:            mocks.NewFlag("long-2", "short-2"),
 			secondKey:         "key-2",
 			expectedSecondErr: "",
 		},
 		{
 			title:             "two flags with different short name casing",
-			first:             newMockedFlag("long-1", "short"),
+			first:             mocks.NewFlag("long-1", "short"),
 			expectedFirstErr:  "",
-			second:            newMockedFlag("long-2", "SHORT"),
+			second:            mocks.NewFlag("long-2", "SHORT"),
 			expectedSecondErr: "",
 		},
 		{
 			title:             "two flags with different long name casing",
-			first:             newMockedFlag("long", "short-1"),
+			first:             mocks.NewFlag("long", "short-1"),
 			expectedFirstErr:  "",
-			second:            newMockedFlag("LONG", "short-2"),
+			second:            mocks.NewFlag("LONG", "short-2"),
 			expectedSecondErr: "flag already exists",
 		},
 		{
 			title:            "reserved help long flag",
-			first:            newMockedFlag("help", "short"),
+			first:            mocks.NewFlag("help", "short"),
 			expectedFirstErr: "reserved",
 		},
 		{
 			title:            "reserved h short flag",
-			first:            newMockedFlag("long", "h"),
+			first:            mocks.NewFlag("long", "h"),
 			expectedFirstErr: "reserved",
 		},
 		{
 			title:            "reserved H short flag",
-			first:            newMockedFlag("long", "H"),
+			first:            mocks.NewFlag("long", "H"),
 			expectedFirstErr: "",
 		},
 	}

@@ -92,6 +92,9 @@ func (f *StringFlag) Set(value string) error {
 }
 
 func (f *StringFlag) ResetToDefault() {
+	if !f.hasDefault {
+		return
+	}
 	f.isSet = false
 	f.set(f.defaultValue)
 }

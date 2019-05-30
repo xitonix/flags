@@ -2,6 +2,7 @@ package flags_test
 
 import (
 	"go.xitonix.io/flags"
+	"go.xitonix.io/flags/test"
 
 	"testing"
 )
@@ -353,6 +354,124 @@ func TestStringFlag_IsDeprecated(t *testing.T) {
 			actual := f.IsDeprecated()
 			if actual != tc.isDeprecated {
 				t.Errorf("Expected IsDeprecated: %v, Actual: %v", tc.isDeprecated, actual)
+			}
+		})
+	}
+}
+
+func TestStringFlag_Set(t *testing.T) {
+	testCases := []struct {
+		title         string
+		value         string
+		expectedError string
+	}{
+		{
+			title: "no value",
+		},
+		{
+			title: "whitespace value",
+			value: "   ",
+		},
+		{
+			title: "value with whitespace",
+			value: "  value  ",
+		},
+		{
+			title: "value with no whitespaces",
+			value: "value",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("long", "usage")
+			fVar := f.Var()
+			err := f.Set(tc.value)
+			if !test.ErrorContains(err, tc.expectedError) {
+				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
+			}
+			actual := f.Get()
+			if actual != tc.value {
+				t.Errorf("Expected value: %v, Actual: %v", tc.value, actual)
+			}
+
+			if *fVar != tc.value {
+				t.Errorf("Expected flag variable: %v, Actual: %v", tc.value, *fVar)
+			}
+		})
+	}
+}
+
+func TestStringFlag_ResetToDefault(t *testing.T) {
+	testCases := []struct {
+		title                   string
+		value                   string
+		defaultValue            string
+		expectedAfterResetValue string
+		expectedError           string
+		setDefault              bool
+	}{
+		{
+			title: "no value",
+		},
+		{
+			title:                   "reset without defining the default value",
+			value:                   "value",
+			expectedAfterResetValue: "value",
+			setDefault:              false,
+		},
+		{
+			title:                   "reset to empty default value",
+			value:                   "value",
+			defaultValue:            "",
+			expectedAfterResetValue: "",
+			setDefault:              true,
+		},
+		{
+			title:                   "reset to whitespace default value",
+			value:                   "value",
+			defaultValue:            "  ",
+			expectedAfterResetValue: "  ",
+			setDefault:              true,
+		},
+		{
+			title:                   "reset to non-empty default value",
+			value:                   "value",
+			defaultValue:            "Default   Value  ",
+			expectedAfterResetValue: "Default   Value  ",
+			setDefault:              true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("long", "usage")
+			if tc.setDefault {
+				f = f.WithDefault(tc.defaultValue)
+			}
+			fVar := f.Var()
+			err := f.Set(tc.value)
+			if !test.ErrorContains(err, tc.expectedError) {
+				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
+			}
+			actual := f.Get()
+			if actual != tc.value {
+				t.Errorf("Expected value: %v, Actual: %v", tc.value, actual)
+			}
+
+			if *fVar != tc.value {
+				t.Errorf("Expected flag variable: %v, Actual: %v", tc.value, *fVar)
+			}
+
+			f.ResetToDefault()
+
+			actual = f.Get()
+			if actual != tc.expectedAfterResetValue {
+				t.Errorf("Expected value after reset: %v, Actual: %v", tc.expectedAfterResetValue, actual)
+			}
+
+			if *fVar != tc.expectedAfterResetValue {
+				t.Errorf("Expected flag variable after reset: %v, Actual: %v", tc.expectedAfterResetValue, *fVar)
 			}
 		})
 	}

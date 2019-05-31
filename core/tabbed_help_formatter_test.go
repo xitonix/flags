@@ -24,7 +24,7 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 			title:    "hidden flag",
 			expected: "",
 			isHidden: true,
-			flag:     mocks.NewFlag("long", "short"),
+			flag:     mocks.NewFlag("long", "s"),
 		},
 		{
 			title:    "with long name and usage only",
@@ -33,13 +33,13 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 		},
 		{
 			title:    "with long and short names and empty usage",
-			expected: fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", "-short,", "long", "", "generic", "", "", ""),
-			flag:     mocks.NewFlagWithUsage("long", "short", ""),
+			expected: fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", "-s,", "long", "", "generic", "", "", ""),
+			flag:     mocks.NewFlagWithUsage("long", "s", ""),
 		},
 		{
 			title:    "with long and short names along with usage",
-			expected: fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", "-short,", "long", "", "generic", "usage", "", ""),
-			flag:     mocks.NewFlagWithUsage("long", "short", "usage"),
+			expected: fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", "-s,", "long", "", "generic", "usage", "", ""),
+			flag:     mocks.NewFlagWithUsage("long", "s", "usage"),
 		},
 		{
 			title:                    "with long name and default value along with usage",

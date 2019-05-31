@@ -148,8 +148,8 @@ func TestStringP(t *testing.T) {
 			title:         "lowercase long and short names",
 			long:          "long",
 			expectedLong:  "long",
-			short:         "short",
-			expectedShort: "short",
+			short:         "s",
+			expectedShort: "s",
 		},
 		{
 			title:         "uppercase long and short names",

@@ -5,6 +5,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
+// StringFlag represents a string flag
 type StringFlag struct {
 	key                 *data.Key
 	defaultValue, value string
@@ -28,6 +29,7 @@ func newString(name, usage, short string) *StringFlag {
 	}
 }
 
+// LongName returns the long name of the flag
 func (f *StringFlag) LongName() string {
 	return f.long
 }

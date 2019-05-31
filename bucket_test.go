@@ -31,6 +31,15 @@ func TestBucket_Parse_Validation(t *testing.T) {
 			expectedTerminationCode: core.FailureExitCode,
 		},
 		{
+			title:                   "invalid short flag",
+			args:                    []string{"--unexpected"},
+			flags:                   []core.Flag{mocks.NewFlag("flag", "invalid-short-name")},
+			expectedErr:             "can only be a single character",
+			mustPrintHelp:           true,
+			mustTerminate:           true,
+			expectedTerminationCode: core.FailureExitCode,
+		},
+		{
 			title:                   "long name with single dash",
 			args:                    []string{"-long"},
 			flags:                   []core.Flag{mocks.NewFlag("flag", "f")},
@@ -359,7 +368,7 @@ func TestBucket_Parse_Help_Failure(t *testing.T) {
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
-			bucket.flags = []core.Flag{mocks.NewFlag("long", "short")}
+			bucket.flags = []core.Flag{mocks.NewFlag("long", "s")}
 
 			bucket.Help()
 			if !test.ErrorContains(lg.Error, tc.expectedError) {

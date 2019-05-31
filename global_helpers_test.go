@@ -37,6 +37,7 @@ func TestParse(t *testing.T) {
 	flags.DefaultBucket = flags.NewBucket()
 	flags.Options().Terminator = &mocks.Terminator{}
 	flags.Options().Logger = &mocks.Logger{}
+	flags.Options().HelpProvider.Writer = mocks.NewInMemoryWriter()
 	flags.String("long", "usage")
 	flags.Parse()
 	actual := len(flags.DefaultBucket.Flags())
@@ -64,7 +65,7 @@ func TestGlobalString(t *testing.T) {
 
 func TestGlobalStringP(t *testing.T) {
 	flags.DefaultBucket = flags.NewBucket()
-	flags.StringP("long", "short", "usage")
+	flags.StringP("long", "s", "usage")
 	actual := len(flags.DefaultBucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)

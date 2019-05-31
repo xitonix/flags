@@ -1,6 +1,6 @@
 package mocks
 
-type NullWriter struct {
+type InMemoryWriter struct {
 	IsClosed          bool
 	WriteCounter      int
 	Lines             []string
@@ -8,13 +8,13 @@ type NullWriter struct {
 	ForceCloseToBreak bool
 }
 
-func NewNullWriter() *NullWriter {
-	return &NullWriter{
+func NewInMemoryWriter() *InMemoryWriter {
+	return &InMemoryWriter{
 		Lines: make([]string, 0),
 	}
 }
 
-func (w *NullWriter) Write(p []byte) (n int, err error) {
+func (w *InMemoryWriter) Write(p []byte) (n int, err error) {
 	if w.ForceWriteToBreak {
 		return 0, ErrExpected
 	}
@@ -23,7 +23,7 @@ func (w *NullWriter) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (w *NullWriter) Close() error {
+func (w *InMemoryWriter) Close() error {
 	if w.ForceCloseToBreak {
 		return ErrExpected
 	}

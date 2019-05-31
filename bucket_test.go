@@ -77,7 +77,7 @@ func TestBucket_Parse_Validation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewNullWriter(), &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
@@ -98,11 +98,11 @@ func TestBucket_Parse_Validation(t *testing.T) {
 				return
 			}
 
-			if tc.mustPrintHelp && hp.Writer.(*mocks.NullWriter).WriteCounter == 0 {
+			if tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter == 0 {
 				t.Errorf("Expectced the Help() function to get called, but it did not happen")
 			}
 
-			if !tc.mustPrintHelp && hp.Writer.(*mocks.NullWriter).WriteCounter != 0 {
+			if !tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter != 0 {
 				t.Errorf("Did not expect the Help() function to get called, but it happened")
 			}
 
@@ -164,7 +164,7 @@ func TestBucket_Parse_Help_Request(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewNullWriter(), &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
@@ -188,11 +188,11 @@ func TestBucket_Parse_Help_Request(t *testing.T) {
 				t.Errorf("Expected termination code: %d, Actual: %d", tc.expectedTerminationCode, tm.Code)
 			}
 
-			if tc.mustPrintHelp && hp.Writer.(*mocks.NullWriter).WriteCounter == 0 {
+			if tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter == 0 {
 				t.Errorf("Expectced the Help() function to get called, but it did not happen")
 			}
 
-			if !tc.mustPrintHelp && hp.Writer.(*mocks.NullWriter).WriteCounter != 0 {
+			if !tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter != 0 {
 				t.Errorf("Did not expect the Help() function to get called, but it happened")
 			}
 		})
@@ -281,7 +281,7 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewNullWriter(), &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
@@ -306,7 +306,7 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 				t.Errorf("Expected termination code: %d, Actual: %d", core.SuccessExitCode, tm.Code)
 			}
 
-			writer := hp.Writer.(*mocks.NullWriter)
+			writer := hp.Writer.(*mocks.InMemoryWriter)
 
 			if writer.WriteCounter != 2 {
 				t.Errorf("Expectced to call Help() for 2 flags, Actual: %d", writer.WriteCounter)
@@ -346,7 +346,7 @@ func TestBucket_Parse_Help_Failure(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			w := mocks.NewNullWriter()
+			w := mocks.NewInMemoryWriter()
 			w.ForceCloseToBreak = tc.forceCloseToFail
 			w.ForceWriteToBreak = tc.forceWriteToFail
 			hp := core.NewHelpProvider(w, &core.TabbedHelpFormatter{})
@@ -370,7 +370,7 @@ func TestBucket_Parse_Help_Failure(t *testing.T) {
 }
 
 func TestFlags(t *testing.T) {
-	w := mocks.NewNullWriter()
+	w := mocks.NewInMemoryWriter()
 	hp := core.NewHelpProvider(w, &core.TabbedHelpFormatter{})
 	lg := &mocks.Logger{}
 	tm := &mocks.Terminator{}
@@ -430,7 +430,7 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewNullWriter(), &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
@@ -621,7 +621,7 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewNullWriter(), &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
@@ -751,7 +751,7 @@ func TestBucket_KeyGeneration(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewNullWriter(), &core.TabbedHelpFormatter{})
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
 
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}

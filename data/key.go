@@ -1,4 +1,4 @@
-package core
+package data
 
 import (
 	"go.xitonix.io/flags/internal"

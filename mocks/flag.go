@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/data"
 )
 
 type Flag struct {
@@ -13,7 +13,7 @@ type Flag struct {
 	hasDefault    bool
 	defaultValue  string
 	MakeSetToFail bool
-	key           *core.Key
+	key           *data.Key
 	usage         string
 }
 
@@ -22,7 +22,7 @@ func NewFlag(long, short string) *Flag {
 }
 
 func NewFlagWithKey(long, short, key string) *Flag {
-	k := &core.Key{}
+	k := &data.Key{}
 	k.Set(key)
 	return &Flag{
 		long:  long,
@@ -35,7 +35,7 @@ func NewFlagWithUsage(long, short, usage string) *Flag {
 	return &Flag{
 		long:  long,
 		short: short,
-		key:   &core.Key{},
+		key:   &data.Key{},
 		usage: usage,
 	}
 }
@@ -68,7 +68,7 @@ func (f *Flag) Type() string {
 	return "generic"
 }
 
-func (f *Flag) Key() *core.Key {
+func (f *Flag) Key() *data.Key {
 	return f.key
 }
 

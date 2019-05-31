@@ -1,12 +1,12 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/data"
 	"go.xitonix.io/flags/internal"
 )
 
 type StringFlag struct {
-	key                 *core.Key
+	key                 *data.Key
 	defaultValue, value string
 	hasDefault          bool
 	ptr                 *string
@@ -20,7 +20,7 @@ type StringFlag struct {
 func newString(name, usage, short string) *StringFlag {
 	ptr := new(string)
 	return &StringFlag{
-		key:   &core.Key{},
+		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
@@ -109,7 +109,7 @@ func (f *StringFlag) Default() interface{} {
 	return f.defaultValue
 }
 
-func (f *StringFlag) Key() *core.Key {
+func (f *StringFlag) Key() *data.Key {
 	return f.key
 }
 

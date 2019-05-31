@@ -1,9 +1,9 @@
-package core_test
+package data_test
 
 import (
 	"testing"
 
-	"go.xitonix.io/flags/core"
+	"go.xitonix.io/flags/data"
 )
 
 func TestKey_SetPrefix(t *testing.T) {
@@ -26,7 +26,7 @@ func TestKey_SetPrefix(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.Key{}
+			e := &data.Key{}
 			e.SetPrefix(tc.inputPrefix)
 			actual := e.Prefix()
 			if actual != tc.expectedPrefix {
@@ -74,7 +74,7 @@ func TestKey_Set(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			e := &core.Key{}
+			e := &data.Key{}
 			e.SetPrefix(tc.inputPrefix)
 			e.Set(tc.inputName)
 			actual := e.Get()

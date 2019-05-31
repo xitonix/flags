@@ -20,19 +20,19 @@ func TestErrInvalidFlag_Error(t *testing.T) {
 		},
 		{
 			title: "flag with short name only_this should never happen",
-			short: "-short",
+			short: "-s",
 			msg:   "error message",
 		},
 		{
 			title: "flag with long and short names",
 			long:  "--long",
-			short: "-short",
+			short: "-s",
 			msg:   "error message",
 		},
 		{
 			title: "flag with long and short names along with a key",
 			long:  "--long",
-			short: "-short",
+			short: "-s",
 			key:   "FLAG_KEY",
 			msg:   "error message",
 		},

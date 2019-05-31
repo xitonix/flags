@@ -50,11 +50,11 @@ func (r *registry) addShortNameIfValid(shortName string) error {
 		return nil
 	}
 
-	if len(shortName) > 1 {
-		return core.NewInvalidFlagErr("", shortName, "", "can only be a single character")
+	shortName = "-" + shortName
+	if len(shortName) != 2 {
+		return core.NewInvalidFlagErr("", shortName, "", "is not a valid short form. The short form can only be a single character")
 	}
 
-	shortName = "-" + shortName
 	if r.isReserved(shortName) {
 		return core.NewInvalidFlagErr("", shortName, "", "is a reserved flag")
 	}

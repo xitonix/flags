@@ -220,70 +220,70 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 			title:         "default order as declared xa",
 			args:          []string{"--help"},
 			comparer:      by.DeclarationOrder,
-			flags:         []core.Flag{mocks.NewFlag("x-long", "x-short"), mocks.NewFlag("a-long", "a-short")},
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a")},
 			expectedLines: []string{"x-long", "a-long"},
 		},
 		{
 			title:         "default order as declared ax",
 			args:          []string{"--help"},
 			comparer:      by.DeclarationOrder,
-			flags:         []core.Flag{mocks.NewFlag("a-long", "a-short"), mocks.NewFlag("x-long", "x-short")},
+			flags:         []core.Flag{mocks.NewFlag("a-long", "a"), mocks.NewFlag("x-long", "x")},
 			expectedLines: []string{"a-long", "x-long"},
 		},
 		{
 			title:         "sort by long name ascending",
 			args:          []string{"--help"},
 			comparer:      by.LongNameAscending,
-			flags:         []core.Flag{mocks.NewFlag("x-long", "x-short"), mocks.NewFlag("a-long", "a-short")},
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a")},
 			expectedLines: []string{"a-long", "x-long"},
 		},
 		{
 			title:         "sort by long name descending",
 			args:          []string{"--help"},
 			comparer:      by.LongNameDescending,
-			flags:         []core.Flag{mocks.NewFlag("a-long", "a-short"), mocks.NewFlag("x-long", "x-short")},
+			flags:         []core.Flag{mocks.NewFlag("a-long", "a"), mocks.NewFlag("x-long", "x")},
 			expectedLines: []string{"x-long", "a-long"},
 		},
 		{
 			title:         "sort by short name ascending",
 			args:          []string{"--help"},
 			comparer:      by.ShortNameAscending,
-			flags:         []core.Flag{mocks.NewFlag("x-long", "x-short"), mocks.NewFlag("a-long", "a-short")},
-			expectedLines: []string{"a-short", "x-short"},
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a")},
+			expectedLines: []string{"a", "x"},
 		},
 		{
 			title:         "sort by short name descending",
 			args:          []string{"--help"},
 			comparer:      by.ShortNameDescending,
-			flags:         []core.Flag{mocks.NewFlag("a-long", "a-short"), mocks.NewFlag("x-long", "x-short")},
-			expectedLines: []string{"x-short", "a-short"},
+			flags:         []core.Flag{mocks.NewFlag("a-long", "a"), mocks.NewFlag("x-long", "x")},
+			expectedLines: []string{"x", "a"},
 		},
 		{
 			title:         "sort by key ascending",
 			args:          []string{"--help"},
 			comparer:      by.KeyAscending,
-			flags:         []core.Flag{mocks.NewFlagWithKey("x-long", "x-short", "x-key"), mocks.NewFlagWithKey("a-long", "a-short", "a-key")},
+			flags:         []core.Flag{mocks.NewFlagWithKey("x-long", "x", "x-key"), mocks.NewFlagWithKey("a-long", "a", "a-key")},
 			expectedLines: []string{"A_KEY", "X_KEY"},
 		},
 		{
 			title:         "sort by key descending",
 			args:          []string{"--help"},
 			comparer:      by.KeyDescending,
-			flags:         []core.Flag{mocks.NewFlagWithKey("a-long", "a-short", "a-key"), mocks.NewFlagWithKey("x-long", "x-short", "x-key")},
+			flags:         []core.Flag{mocks.NewFlagWithKey("a-long", "a", "a-key"), mocks.NewFlagWithKey("x-long", "x", "x-key")},
 			expectedLines: []string{"X_KEY", "A_KEY"},
 		},
 		{
 			title:         "sort by usage ascending",
 			args:          []string{"--help"},
 			comparer:      by.UsageAscending,
-			flags:         []core.Flag{mocks.NewFlagWithUsage("x-long", "x-short", "x usage"), mocks.NewFlagWithUsage("a-long", "a-short", "a usage")},
+			flags:         []core.Flag{mocks.NewFlagWithUsage("x-long", "x", "x usage"), mocks.NewFlagWithUsage("a-long", "a", "a usage")},
 			expectedLines: []string{"a usage", "x usage"},
 		},
 		{
 			title:         "sort by usage descending",
 			args:          []string{"--help"},
 			comparer:      by.UsageDescending,
-			flags:         []core.Flag{mocks.NewFlagWithUsage("a-long", "a-short", "a usage"), mocks.NewFlagWithUsage("x-long", "x-short", "x usage")},
+			flags:         []core.Flag{mocks.NewFlagWithUsage("a-long", "a", "a usage"), mocks.NewFlagWithUsage("x-long", "x", "x usage")},
 			expectedLines: []string{"x usage", "a usage"},
 		},
 	}
@@ -471,6 +471,133 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 
 			if tc.flag.Get() != tc.expectedValue {
 				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.Get())
+			}
+		})
+	}
+}
+
+func TestBucket_Parse_Chained_Short_Forms(t *testing.T) {
+	testCases := []struct {
+		title              string
+		expectedValue      map[string]interface{}
+		defaultValueSuffix string
+		args               []string
+		flags              []*mocks.Flag
+	}{
+		{
+			title: "chained short forms without value",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g")},
+			args: []string{"-fg"},
+			expectedValue: map[string]interface{}{
+				"flag-1": "",
+				"flag-2": "",
+			},
+		},
+		{
+			title: "chained short forms with value",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g")},
+			args: []string{"-fg", "value"},
+			expectedValue: map[string]interface{}{
+				"flag-1": "",
+				"flag-2": "value",
+			},
+		},
+		{
+			title: "chained short forms with value and equal sign",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g")},
+			args: []string{"-fg=value"},
+			expectedValue: map[string]interface{}{
+				"flag-1": "",
+				"flag-2": "value",
+			},
+		},
+		{
+			title: "chained short forms without value and with default",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g")},
+			args:               []string{"-fg"},
+			defaultValueSuffix: "default",
+			expectedValue: map[string]interface{}{
+				"flag-1": "",
+				"flag-2": "",
+			},
+		},
+		{
+			title: "chained short forms with value and with default",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g")},
+			args:               []string{"-gf", "value"},
+			defaultValueSuffix: "default",
+			expectedValue: map[string]interface{}{
+				"flag-1": "value",
+				"flag-2": "",
+			},
+		},
+		{
+			title: "chained short mixed with long form",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g"),
+				mocks.NewFlag("flag-3", "h")},
+			args:               []string{"-fg", "--flag-3"},
+			defaultValueSuffix: "default",
+			expectedValue: map[string]interface{}{
+				"flag-1": "",
+				"flag-2": "",
+				"flag-3": "",
+			},
+		},
+		{
+			title: "chained short mixed with long form and values",
+			flags: []*mocks.Flag{
+				mocks.NewFlag("flag-1", "f"),
+				mocks.NewFlag("flag-2", "g"),
+				mocks.NewFlag("flag-3", "h")},
+			args:               []string{"-fg", "g-value", "--flag-3=value"},
+			defaultValueSuffix: "default",
+			expectedValue: map[string]interface{}{
+				"flag-1": "",
+				"flag-2": "g-value",
+				"flag-3": "value",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
+
+			lg := &mocks.Logger{}
+			tm := &mocks.Terminator{}
+			env := mocks.NewEnvReader()
+			bucket := newBucket(tc.args, env,
+				config.WithHelpProvider(hp),
+				config.WithLogger(lg),
+				config.WithTerminator(tm))
+
+			bucket.flags = make([]core.Flag, len(tc.flags))
+			for i, flag := range tc.flags {
+				if tc.defaultValueSuffix != "" {
+					flag.SetDefaultValue(flag.LongName() + tc.defaultValueSuffix)
+				}
+				bucket.flags[i] = flag
+			}
+
+			bucket.Parse()
+
+			for _, flag := range tc.flags {
+				actual := flag.Get()
+				if actual != tc.expectedValue[flag.LongName()] {
+					t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue[flag.LongName()], actual)
+				}
 			}
 		})
 	}

@@ -464,7 +464,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 		expectedCount int
 	}{
 		{
-			title: "long form ptr with hyphened value",
+			title: "long form with hyphened value",
 			in:    []string{"--key1=--a=10 --b=20"},
 			expected: []entry{
 				{
@@ -476,7 +476,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form ptr with comma separated value and equal sign",
+			title: "long form with comma separated value and equal sign",
 			in:    []string{"--key1=a,b,c"},
 			expected: []entry{
 				{
@@ -488,7 +488,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form ptr with comma separated value and without equal sign",
+			title: "long form with comma separated value and without equal sign",
 			in:    []string{"--key1", "a,b,c"},
 			expected: []entry{
 				{
@@ -500,7 +500,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form ptr with square braces and equal sign",
+			title: "long form with square braces and equal sign",
 			in:    []string{"--key1=[a,b,c]"},
 			expected: []entry{
 				{
@@ -512,7 +512,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "long form ptr with square braces and without equal sign",
+			title: "long form with square braces and without equal sign",
 			in:    []string{"--key1", "[a,b,c]"},
 			expected: []entry{
 				{
@@ -524,7 +524,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form ptr with hyphened value",
+			title: "short form with hyphened value",
 			in:    []string{"-k=--a=10 --b=20"},
 			expected: []entry{
 				{
@@ -537,7 +537,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 		},
 
 		{
-			title: "short form ptr with comma separated value and equal sign",
+			title: "short form with comma separated value and equal sign",
 			in:    []string{"-k=a,b,c"},
 			expected: []entry{
 				{
@@ -549,7 +549,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form ptr with comma separated value and without equal sign",
+			title: "short form with comma separated value and without equal sign",
 			in:    []string{"-k", "a,b,c"},
 			expected: []entry{
 				{
@@ -561,7 +561,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form ptr with square braces and equal sign",
+			title: "short form with square braces and equal sign",
 			in:    []string{"-k=[a,b,c]"},
 			expected: []entry{
 				{
@@ -573,7 +573,7 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
-			title: "short form ptr with square braces and without equal sign",
+			title: "short form with square braces and without equal sign",
 			in:    []string{"-k", "[a,b,c]"},
 			expected: []entry{
 				{
@@ -583,6 +583,160 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 				},
 			},
 			expectedCount: 1,
+		},
+		{
+			title: "chained short forms without value",
+			in:    []string{"-abc"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-c",
+					value: "",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
+		},
+		{
+			title: "chained short forms with value and no equal sign",
+			in:    []string{"-abc", "value"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-c",
+					value: "value",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
+		},
+		{
+			title: "chained short forms with value and equal sign",
+			in:    []string{"-abc=value"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-c",
+					value: "value",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
+		},
+		{
+			title: "chained short forms followed by a long form",
+			in:    []string{"-ab", "--long"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "--long",
+					value: "",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
+		},
+		{
+			title: "long form followed by chained short forms",
+			in:    []string{"--long", "-ab"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "--long",
+					value: "",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
+		},
+		{
+			title: "long form with value and equal sign followed by chained short forms",
+			in:    []string{"--long=value", "-ab"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "--long",
+					value: "value",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
+		},
+		{
+			title: "long form with value and no equal sign followed by chained short forms",
+			in:    []string{"--long", "value", "-ab"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "--long",
+					value: "value",
+					ok:    true,
+				},
+			},
+			expectedCount: 3,
 		},
 	}
 

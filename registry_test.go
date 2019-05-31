@@ -27,7 +27,7 @@ func TestRegistry_Add(t *testing.T) {
 		},
 		{
 			title:            "with an invalid short name",
-			first:            mocks.NewFlag("long", "short"),
+			first:            mocks.NewFlag("long", "invalid-short"),
 			expectedFirstErr: "can only be a single character",
 		},
 		{

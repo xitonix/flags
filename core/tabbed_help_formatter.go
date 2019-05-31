@@ -6,16 +6,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-type TabbedHelpFormatter struct {
-	DefaultValueFormatString string
-	DeprecatedFlagIndicator  string
-}
+type TabbedHelpFormatter struct{}
 
-func NewTabbedHelpFormatter(defaultValueFormatString string, deprecatedIndicator string) *TabbedHelpFormatter {
-	return &TabbedHelpFormatter{DefaultValueFormatString: defaultValueFormatString, DeprecatedFlagIndicator: deprecatedIndicator}
-}
-
-func (t *TabbedHelpFormatter) Format(f Flag) string {
+func (t *TabbedHelpFormatter) Format(f Flag, deprecationMark, defaultValueFormatString string) string {
 	if f.IsHidden() {
 		return ""
 	}
@@ -24,13 +17,13 @@ func (t *TabbedHelpFormatter) Format(f Flag) string {
 		short = "-" + short + ","
 	}
 	var def string
-	if dv := f.Default(); dv != nil && !internal.IsEmpty(t.DefaultValueFormatString) {
-		def = fmt.Sprintf(" "+t.DefaultValueFormatString, dv)
+	if dv := f.Default(); dv != nil && !internal.IsEmpty(defaultValueFormatString) {
+		def = fmt.Sprintf(" "+defaultValueFormatString, dv)
 	}
 
 	var dep string
-	if f.IsDeprecated() && !internal.IsEmpty(t.DeprecatedFlagIndicator) {
-		dep = " " + t.DeprecatedFlagIndicator
+	if f.IsDeprecated() && !internal.IsEmpty(deprecationMark) {
+		dep = " " + deprecationMark
 	}
 
 	return fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", short, f.LongName(), f.Key().Get(), f.Type(), f.Usage(), def, dep)

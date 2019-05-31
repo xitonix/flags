@@ -121,7 +121,7 @@ func (b *Bucket) Parse() {
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {
-		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag)))
+		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag, b.opts.DeprecationMark, b.opts.DefaultValueFormatString)))
 		if err != nil {
 			return err
 		}

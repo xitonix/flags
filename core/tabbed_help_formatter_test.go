@@ -73,13 +73,13 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := core.NewTabbedHelpFormatter(tc.defaultValueFormatString, tc.deprecatedFormatString)
+			f := core.TabbedHelpFormatter{}
 			tc.flag.SetDeprecated(tc.isDeprecated)
 			tc.flag.SetHidden(tc.isHidden)
 			if tc.setDefault {
 				tc.flag.SetDefaultValue(tc.defaultValue)
 			}
-			actual := f.Format(tc.flag)
+			actual := f.Format(tc.flag, tc.deprecatedFormatString, tc.defaultValueFormatString)
 			if actual != tc.expected {
 				t.Errorf("Expected formatted result: '%s', Actual: %s", tc.expected, actual)
 			}

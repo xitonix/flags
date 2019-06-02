@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -918,6 +919,208 @@ func TestBucket_KeyGeneration(t *testing.T) {
 
 			if tc.autoKeys != bucket.opts.AutoKeys {
 				t.Errorf("Expected Auto Key Generation: %v, Actual: %v", tc.autoKeys, bucket.opts.AutoKeys)
+			}
+		})
+	}
+}
+
+func TestBucket_AddSource(t *testing.T) {
+	testCases := []struct {
+		title          string
+		src            core.Source
+		index          int
+		expected       map[int]core.Source
+		expectedLength int
+	}{
+		{
+			title: "nil source",
+			src:   nil,
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &envVariableSource{},
+			},
+			expectedLength: 2,
+		},
+		{
+			title: "add source to the beginning",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &MemorySource{},
+				1: &argSource{},
+				2: &envVariableSource{},
+			},
+			index:          0,
+			expectedLength: 3,
+		},
+		{
+			title: "add source to the beginning with negative index",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &MemorySource{},
+				1: &argSource{},
+				2: &envVariableSource{},
+			},
+			index:          -1,
+			expectedLength: 3,
+		},
+		{
+			title: "add source to the end",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &envVariableSource{},
+				2: &MemorySource{},
+			},
+			index:          2,
+			expectedLength: 3,
+		},
+		{
+			title: "add source to the end with out of range index",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &envVariableSource{},
+				2: &MemorySource{},
+			},
+			index:          200,
+			expectedLength: 3,
+		},
+		{
+			title: "add source to the middle",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &MemorySource{},
+				2: &envVariableSource{},
+			},
+			index:          1,
+			expectedLength: 3,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			if len(tc.expected) == 0 {
+				t.Error("The expected source list cannot be empty")
+			}
+
+			bucket := NewBucket()
+			bucket.AddSource(tc.src, tc.index)
+
+			if len(bucket.sources) != tc.expectedLength {
+				t.Errorf("Expected Number of Sources: %d, Actual: %d", tc.expectedLength, len(bucket.sources))
+				return
+			}
+
+			for i, expected := range tc.expected {
+				actual := bucket.sources[i]
+				if reflect.TypeOf(actual) != reflect.TypeOf(expected) {
+					t.Errorf("Expected Source at index %d: %T, Actual: %T", i, expected, actual)
+				}
+			}
+		})
+	}
+}
+
+func TestBucket_AppendSource(t *testing.T) {
+	testCases := []struct {
+		title          string
+		src            core.Source
+		expected       map[int]core.Source
+		expectedLength int
+	}{
+		{
+			title: "nil source",
+			src:   nil,
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &envVariableSource{},
+			},
+			expectedLength: 2,
+		},
+		{
+			title: "non nil source",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &envVariableSource{},
+				2: &MemorySource{},
+			},
+			expectedLength: 3,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			if len(tc.expected) == 0 {
+				t.Error("The expected source list cannot be empty")
+			}
+
+			bucket := NewBucket()
+			bucket.AppendSource(tc.src)
+
+			if len(bucket.sources) != tc.expectedLength {
+				t.Errorf("Expected Number of Sources: %d, Actual: %d", tc.expectedLength, len(bucket.sources))
+				return
+			}
+
+			for i, expected := range tc.expected {
+				actual := bucket.sources[i]
+				if reflect.TypeOf(actual) != reflect.TypeOf(expected) {
+					t.Errorf("Expected Source at index %d: %T, Actual: %T", i, expected, actual)
+				}
+			}
+		})
+	}
+}
+
+func TestBucket_PrependSource(t *testing.T) {
+	testCases := []struct {
+		title          string
+		src            core.Source
+		expected       map[int]core.Source
+		expectedLength int
+	}{
+		{
+			title: "nil source",
+			src:   nil,
+			expected: map[int]core.Source{
+				0: &argSource{},
+				1: &envVariableSource{},
+			},
+			expectedLength: 2,
+		},
+		{
+			title: "non nil source",
+			src:   NewMemorySource(),
+			expected: map[int]core.Source{
+				0: &MemorySource{},
+				1: &argSource{},
+				2: &envVariableSource{},
+			},
+			expectedLength: 3,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			if len(tc.expected) == 0 {
+				t.Error("The expected source list cannot be empty")
+			}
+
+			bucket := NewBucket()
+			bucket.PrependSource(tc.src)
+
+			if len(bucket.sources) != tc.expectedLength {
+				t.Errorf("Expected Number of Sources: %d, Actual: %d", tc.expectedLength, len(bucket.sources))
+				return
+			}
+
+			for i, expected := range tc.expected {
+				actual := bucket.sources[i]
+				if reflect.TypeOf(actual) != reflect.TypeOf(expected) {
+					t.Errorf("Expected Source at index %d: %T, Actual: %T", i, expected, actual)
+				}
 			}
 		})
 	}

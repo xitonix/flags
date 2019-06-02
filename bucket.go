@@ -118,6 +118,34 @@ func (b *Bucket) Parse() {
 	}
 }
 
+func (b *Bucket) AppendSource(src core.Source) {
+	if src == nil {
+		return
+	}
+	b.sources = append(b.sources, src)
+}
+
+func (b *Bucket) PrependSource(src core.Source) {
+	if src == nil {
+		return
+	}
+	b.sources = append([]core.Source{src}, b.sources...)
+}
+
+func (b *Bucket) AddSource(src core.Source, index int) {
+	if src == nil {
+		return
+	}
+
+	if index < 0 {
+		index = 0
+	}
+	if index > len(b.sources) {
+		index = len(b.sources)
+	}
+	b.sources = append(b.sources[:index], append([]core.Source{src}, b.sources[index:]...)...)
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

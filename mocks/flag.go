@@ -40,6 +40,11 @@ func NewFlagWithUsage(long, short, usage string) *Flag {
 	}
 }
 
+func (f *Flag) WithKey(keyID string) *Flag {
+	f.key.Set(keyID)
+	return f
+}
+
 func (f *Flag) LongName() string {
 	return f.long
 }

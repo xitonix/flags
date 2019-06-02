@@ -99,7 +99,7 @@ func (b *Bucket) Parse() {
 				}
 			}
 
-			if !found && !isArgs {
+			if !found && !isArgs && f.Key().IsSet() {
 				value, found = src.Read(f.Key().Get())
 			}
 

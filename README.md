@@ -15,5 +15,5 @@ TODOs:
 * ~~Hidden flags~~
 * ~~Deprecated flags~~
 * ~~Env variable source~~
-* Ability to add custom sources
+* ~~Ability to add custom sources~~
 * ~~Sorting help~~

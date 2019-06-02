@@ -805,6 +805,217 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 	}
 }
 
+func TestBucket_Parse_Custom_Source(t *testing.T) {
+	type valueList struct {
+		defaultVal string
+		cli        string
+		env        string
+		custom     string
+	}
+	testCases := []struct {
+		title         string
+		index         int
+		setKey        bool
+		values        valueList
+		expectedValue string
+	}{
+		// Custom Source at the end
+		{
+			title:         "all values provided with custom source at the end",
+			index:         2,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "cli", env: "env", custom: "custom"},
+			expectedValue: "cli",
+		},
+		{
+			title:         "no command line argument with custom source at the end",
+			index:         2,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "env", custom: "custom"},
+			expectedValue: "env",
+		},
+		{
+			title:         "only custom value with custom source at the end",
+			index:         2,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: "custom"},
+			expectedValue: "custom",
+		},
+		{
+			title:         "only default value with custom source at the end",
+			index:         2,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: ""},
+			expectedValue: "default",
+		},
+		{
+			title:         "no values provided with custom source at the end",
+			index:         2,
+			setKey:        true,
+			values:        valueList{defaultVal: "", cli: "", env: "", custom: ""},
+			expectedValue: "",
+		},
+
+		// Custom Source in the middle
+		{
+			title:         "all values provided with custom source in the middle",
+			index:         1,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "cli", env: "env", custom: "custom"},
+			expectedValue: "cli",
+		},
+		{
+			title:         "no command line argument with custom source in the middle",
+			index:         1,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "env", custom: "custom"},
+			expectedValue: "custom",
+		},
+		{
+			title:         "only custom value with custom source in the middle",
+			index:         1,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: "custom"},
+			expectedValue: "custom",
+		},
+		{
+			title:         "only default value with custom source in the middle",
+			index:         1,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: ""},
+			expectedValue: "default",
+		},
+		{
+			title:         "no values provided with custom source in the middle",
+			index:         1,
+			setKey:        true,
+			values:        valueList{defaultVal: "", cli: "", env: "", custom: ""},
+			expectedValue: "",
+		},
+
+		// Custom Source at the beginning
+		{
+			title:         "all values provided with custom source at the beginning",
+			index:         0,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "cli", env: "env", custom: "custom"},
+			expectedValue: "custom",
+		},
+		{
+			title:         "no command line argument with custom source at the beginning",
+			index:         0,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "env", custom: "custom"},
+			expectedValue: "custom",
+		},
+		{
+			title:         "only custom value with custom source at the beginning",
+			index:         0,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: "custom"},
+			expectedValue: "custom",
+		},
+		{
+			title:         "only default value with custom source at the beginning",
+			index:         0,
+			setKey:        true,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: ""},
+			expectedValue: "default",
+		},
+		{
+			title:         "no values provided with custom source at the beginning",
+			index:         0,
+			setKey:        true,
+			values:        valueList{defaultVal: "", cli: "", env: "", custom: ""},
+			expectedValue: "",
+		},
+
+		// Without Key
+		{
+			title:         "all values provided with custom source at the end and no key",
+			index:         2,
+			setKey:        false,
+			values:        valueList{defaultVal: "default", cli: "cli", env: "env", custom: "custom"},
+			expectedValue: "cli",
+		},
+		{
+			title:         "no command line argument with custom source at the end and no key",
+			index:         2,
+			setKey:        false,
+			values:        valueList{defaultVal: "default", cli: "", env: "env", custom: "custom"},
+			expectedValue: "default",
+		},
+		{
+			title:         "only custom value with custom source at the end and no key",
+			index:         2,
+			setKey:        false,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: "custom"},
+			expectedValue: "default",
+		},
+		{
+			title:         "only default value with custom source at the end and no key",
+			index:         2,
+			setKey:        false,
+			values:        valueList{defaultVal: "default", cli: "", env: "", custom: ""},
+			expectedValue: "default",
+		},
+		{
+			title:         "no values provided with custom source at the end and no key",
+			index:         2,
+			setKey:        true,
+			values:        valueList{defaultVal: "", cli: "", env: "", custom: ""},
+			expectedValue: "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
+			lg := &mocks.Logger{}
+			tm := &mocks.Terminator{}
+			env := mocks.NewEnvReader()
+			arguments := make([]string, 0)
+
+			if tc.values.cli != "" {
+				arguments = append(arguments, "--flag", tc.values.cli)
+			}
+
+			flag := mocks.NewFlag("flag", "f")
+			if tc.setKey {
+				flag = flag.WithKey("FLAG")
+			}
+
+			if tc.values.env != "" {
+				env.Set(flag.Key().Get(), tc.values.env)
+			}
+
+			if tc.values.defaultVal != "" {
+				flag.SetDefaultValue(tc.values.defaultVal)
+			}
+
+			bucket := newBucket(arguments, env,
+				config.WithHelpProvider(hp),
+				config.WithLogger(lg),
+				config.WithTerminator(tm))
+
+			bucket.flags = []core.Flag{flag}
+
+			src := NewMemorySource()
+			if tc.values.custom != "" {
+				src.Add(flag.Key().Get(), tc.values.custom)
+			}
+
+			bucket.AddSource(src, tc.index)
+
+			bucket.Parse()
+			actual := flag.Get()
+			if actual != tc.expectedValue {
+				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
+			}
+		})
+	}
+}
+
 func TestBucket_KeyGeneration(t *testing.T) {
 	testCases := []struct {
 		title                string

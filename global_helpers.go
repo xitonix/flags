@@ -30,6 +30,18 @@ func Options() *config.Options {
 	return DefaultBucket.opts
 }
 
+func AppendSource(src core.Source) {
+	DefaultBucket.AppendSource(src)
+}
+
+func PrependSource(src core.Source) {
+	DefaultBucket.PrependSource(src)
+}
+
+func AddSource(src core.Source, index int) {
+	DefaultBucket.AddSource(src, index)
+}
+
 func String(longName, usage string) *StringFlag {
 	return DefaultBucket.String(longName, usage)
 }

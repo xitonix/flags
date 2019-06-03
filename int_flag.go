@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -141,7 +142,7 @@ func (f *IntFlag) Set(value string) error {
 	}
 	v, err := strconv.Atoi(value)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
 	f.set(v)
 	f.isSet = true

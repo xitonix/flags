@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -141,7 +142,7 @@ func (f *Int64Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
 	f.set(int64(v))
 	f.isSet = true

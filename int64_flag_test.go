@@ -388,8 +388,8 @@ func TestInt64Flag_Set(t *testing.T) {
 		},
 		{
 			title:         "invalid value",
-			value:         "invalid",
-			expectedError: "invalid syntax",
+			value:         "abc",
+			expectedError: "is not a valid int64 value",
 			expectedValue: 0,
 		},
 	}

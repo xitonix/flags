@@ -1337,6 +1337,58 @@ func TestBucket_PrependSource(t *testing.T) {
 	}
 }
 
+func TestBucket_String(t *testing.T) {
+	bucket := NewBucket()
+	bucket.String("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringFlag{}, f)
+	}
+}
+
+func TestBucket_StringP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringFlag{}, f)
+	}
+}
+
+func TestBucket_Int(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*IntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &IntFlag{}, f)
+	}
+}
+
+func TestBucket_IntP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.IntP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*IntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &IntFlag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

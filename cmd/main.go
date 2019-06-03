@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+
 	flags.SetKeyPrefix("ALG")
 	flags.EnableAutoKeyGeneration()
 	str := flags.StringP("flag", "usage of name", "A").WithKey("ABC").WithDefault("abc").Var()

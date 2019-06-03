@@ -49,3 +49,11 @@ func String(longName, usage string) *StringFlag {
 func StringP(longName, usage, shortName string) *StringFlag {
 	return DefaultBucket.StringP(longName, usage, shortName)
 }
+
+func Int(longName, usage string) *IntFlag {
+	return DefaultBucket.Int(longName, usage)
+}
+
+func IntP(longName, usage, shortName string) *IntFlag {
+	return DefaultBucket.IntP(longName, usage, shortName)
+}

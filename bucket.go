@@ -46,16 +46,6 @@ func (b *Bucket) Options() *config.Options {
 	return b.opts
 }
 
-func (b *Bucket) String(longName, usage string) *StringFlag {
-	return b.StringP(longName, usage, "")
-}
-
-func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
-	f := newString(longName, usage, shortName)
-	b.flags = append(b.flags, f)
-	return f
-}
-
 func (b *Bucket) Flags() []core.Flag {
 	return b.flags
 }
@@ -144,6 +134,26 @@ func (b *Bucket) AddSource(src core.Source, index int) {
 		index = len(b.sources)
 	}
 	b.sources = append(b.sources[:index], append([]core.Source{src}, b.sources[index:]...)...)
+}
+
+func (b *Bucket) String(longName, usage string) *StringFlag {
+	return b.StringP(longName, usage, "")
+}
+
+func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
+	f := newString(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+func (b *Bucket) Int(longName, usage string) *IntFlag {
+	return b.IntP(longName, usage, "")
+}
+
+func (b *Bucket) IntP(longName, usage, shortName string) *IntFlag {
+	f := newInt(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
 }
 
 func (b *Bucket) help() error {

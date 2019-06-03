@@ -57,3 +57,11 @@ func Int(longName, usage string) *IntFlag {
 func IntP(longName, usage, shortName string) *IntFlag {
 	return DefaultBucket.IntP(longName, usage, shortName)
 }
+
+func Int64(longName, usage string) *Int64Flag {
+	return DefaultBucket.Int64(longName, usage)
+}
+
+func Int64P(longName, usage, shortName string) *Int64Flag {
+	return DefaultBucket.Int64P(longName, usage, shortName)
+}

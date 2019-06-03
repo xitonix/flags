@@ -156,6 +156,16 @@ func (b *Bucket) IntP(longName, usage, shortName string) *IntFlag {
 	return f
 }
 
+func (b *Bucket) Int64(longName, usage string) *Int64Flag {
+	return b.Int64P(longName, usage, "")
+}
+
+func (b *Bucket) Int64P(longName, usage, shortName string) *Int64Flag {
+	f := newInt64(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

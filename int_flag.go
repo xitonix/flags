@@ -1,13 +1,14 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
 	"strconv"
 	"strings"
+
+	"go.xitonix.io/flags/data"
+	"go.xitonix.io/flags/internal"
 )
 
-// IntFlag represents a string flag
+// IntFlag represents an int flag
 type IntFlag struct {
 	key                 *data.Key
 	defaultValue, value int

@@ -7,7 +7,7 @@ import (
 	"go.xitonix.io/flags/test"
 )
 
-func TestInt(t *testing.T) {
+func TestInt64(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long          string
@@ -54,7 +54,7 @@ func TestInt(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int(tc.long, tc.usage)
+			f := flags.Int64(tc.long, tc.usage)
 			if f.LongName() != tc.expectedLong {
 				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
 			}
@@ -82,8 +82,8 @@ func TestInt(t *testing.T) {
 				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
 			}
 
-			if f.Type() != "int" {
-				t.Errorf("The flag type was expected to be 'int', but it was %s", f.Type())
+			if f.Type() != "int64" {
+				t.Errorf("The flag type was expected to be 'int64', but it was %s", f.Type())
 			}
 
 			if f.Get() != 0 {
@@ -97,7 +97,7 @@ func TestInt(t *testing.T) {
 	}
 }
 
-func TestIntP(t *testing.T) {
+func TestInt64P(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -176,7 +176,7 @@ func TestIntP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntP(tc.long, tc.usage, tc.short)
+			f := flags.Int64P(tc.long, tc.usage, tc.short)
 			if f.LongName() != tc.expectedLong {
 				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
 			}
@@ -204,8 +204,8 @@ func TestIntP(t *testing.T) {
 				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
 			}
 
-			if f.Type() != "int" {
-				t.Errorf("The flag type was expected to be 'int', but it was %s", f.Type())
+			if f.Type() != "int64" {
+				t.Errorf("The flag type was expected to be 'int64', but it was %s", f.Type())
 			}
 
 			if f.Get() != 0 {
@@ -219,7 +219,7 @@ func TestIntP(t *testing.T) {
 	}
 }
 
-func TestIntFlag_WithKey(t *testing.T) {
+func TestInt64Flag_WithKey(t *testing.T) {
 	testCases := []struct {
 		title       string
 		key         string
@@ -256,7 +256,7 @@ func TestIntFlag_WithKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int("long", "usage").WithKey(tc.key)
+			f := flags.Int64("long", "usage").WithKey(tc.key)
 			actual := f.Key().Get()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
@@ -265,11 +265,11 @@ func TestIntFlag_WithKey(t *testing.T) {
 	}
 }
 
-func TestIntFlag_WithDefault(t *testing.T) {
+func TestInt64Flag_WithDefault(t *testing.T) {
 	testCases := []struct {
 		title                string
-		defaultValue         int
-		expectedDefaultValue int
+		defaultValue         int64
+		expectedDefaultValue int64
 	}{
 		{
 			title:                "zero default value",
@@ -290,7 +290,7 @@ func TestIntFlag_WithDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int("long", "usage").WithDefault(tc.defaultValue)
+			f := flags.Int64("long", "usage").WithDefault(tc.defaultValue)
 			actual := f.Default()
 			if actual != tc.expectedDefaultValue {
 				t.Errorf("Expected Default Value: %v, Actual: %s", tc.expectedDefaultValue, actual)
@@ -299,7 +299,7 @@ func TestIntFlag_WithDefault(t *testing.T) {
 	}
 }
 
-func TestIntFlag_Hide(t *testing.T) {
+func TestInt64Flag_Hide(t *testing.T) {
 	testCases := []struct {
 		title    string
 		isHidden bool
@@ -315,7 +315,7 @@ func TestIntFlag_Hide(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int("long", "usage")
+			f := flags.Int64("long", "usage")
 			if tc.isHidden {
 				f = f.Hide()
 			}
@@ -327,7 +327,7 @@ func TestIntFlag_Hide(t *testing.T) {
 	}
 }
 
-func TestIntFlag_IsDeprecated(t *testing.T) {
+func TestInt64Flag_IsDeprecated(t *testing.T) {
 	testCases := []struct {
 		title        string
 		isDeprecated bool
@@ -343,7 +343,7 @@ func TestIntFlag_IsDeprecated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int("long", "usage")
+			f := flags.Int64("long", "usage")
 			if tc.isDeprecated {
 				f = f.MarkAsDeprecated()
 			}
@@ -355,11 +355,11 @@ func TestIntFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
-func TestIntFlag_Set(t *testing.T) {
+func TestInt64Flag_Set(t *testing.T) {
 	testCases := []struct {
 		title         string
 		value         string
-		expectedValue int
+		expectedValue int64
 		expectedError string
 	}{
 		{
@@ -377,14 +377,14 @@ func TestIntFlag_Set(t *testing.T) {
 			expectedValue: 100,
 		},
 		{
-			title:         "value with no whitespaces",
-			value:         "100",
-			expectedValue: 100,
-		},
-		{
 			title:         "negative value",
 			value:         "-100",
 			expectedValue: -100,
+		},
+		{
+			title:         "value with no whitespaces",
+			value:         "100",
+			expectedValue: 100,
 		},
 		{
 			title:         "invalid value",
@@ -396,7 +396,7 @@ func TestIntFlag_Set(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int("long", "usage")
+			f := flags.Int64("long", "usage")
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			if !test.ErrorContains(err, tc.expectedError) {
@@ -414,13 +414,13 @@ func TestIntFlag_Set(t *testing.T) {
 	}
 }
 
-func TestIntFlag_ResetToDefault(t *testing.T) {
+func TestInt64Flag_ResetToDefault(t *testing.T) {
 	testCases := []struct {
 		title                   string
 		value                   string
-		expectedValue           int
-		defaultValue            int
-		expectedAfterResetValue int
+		expectedValue           int64
+		defaultValue            int64
+		expectedAfterResetValue int64
 		expectedError           string
 		setDefault              bool
 	}{
@@ -462,7 +462,7 @@ func TestIntFlag_ResetToDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int("long", "usage")
+			f := flags.Int64("long", "usage")
 			if tc.setDefault {
 				f = f.WithDefault(tc.defaultValue)
 			}

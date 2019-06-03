@@ -9,6 +9,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
+// Bucket represents a container that holds a group of flags.
+//
+// Each bucket may contain a set of unique flags.
 type Bucket struct {
 	opts          *config.Options
 	reg           *registry
@@ -18,6 +21,7 @@ type Bucket struct {
 	helpRequested bool
 }
 
+// NewBucket creates a new bucket.
 func NewBucket(opts ...config.Option) *Bucket {
 	return newBucket(os.Args[1:], internal.OSEnvReader{}, opts...)
 }
@@ -42,14 +46,20 @@ func newBucket(args []string, envReader internal.EnvironmentVariableReader, opts
 	}
 }
 
+// Options returns the current configuration values of the bucket.
 func (b *Bucket) Options() *config.Options {
 	return b.opts
 }
 
+// Flags returns a list of all the registered flags within the bucket.
 func (b *Bucket) Flags() []core.Flag {
 	return b.flags
 }
 
+// Help prints the documentation of the currently registered flag.
+//
+// You can customise the default format by overriding the help provider.
+// Check config.WithHelpProvider(...) method for more details.
 func (b *Bucket) Help() {
 	err := b.help()
 	if err != nil {
@@ -58,6 +68,13 @@ func (b *Bucket) Help() {
 	}
 }
 
+// Parse parses the flags and queries all the available sources in order, to fill the value of each flag.
+//
+// If no source offers any value, the flag will be set to the specified Default value (if any).
+// In case no Default value is defined, the flag will be set to the zero value of its type. For example an
+// Int flag will be set to zero.
+//
+// The order of the default sources is Command Line Arguments > Environment Variables > [Default Value]
 func (b *Bucket) Parse() {
 	b.init()
 
@@ -108,6 +125,12 @@ func (b *Bucket) Parse() {
 	}
 }
 
+// AppendSource appends a new source to the end of the chain.
+//
+// With the default configuration for example, the order becomes
+// Command Line Arguments > Environment Variables > src > [Default Value]
+//
+// Note that the Parse method will query the sources in order.
 func (b *Bucket) AppendSource(src core.Source) {
 	if src == nil {
 		return
@@ -115,6 +138,13 @@ func (b *Bucket) AppendSource(src core.Source) {
 	b.sources = append(b.sources, src)
 }
 
+// PrependSource prepends a new source to the beginning of the chain.
+// This is an alias for AddSource(src, 0)
+//
+// With the default configuration for example, the order becomes
+// src > Command Line Arguments > Environment Variables > [Default Value]
+//
+// Note that the Parse method will query the sources in order.
 func (b *Bucket) PrependSource(src core.Source) {
 	if src == nil {
 		return
@@ -122,6 +152,12 @@ func (b *Bucket) PrependSource(src core.Source) {
 	b.sources = append([]core.Source{src}, b.sources...)
 }
 
+// AddSource inserts the new source at the specified index.
+//
+// If the index is <= 0 the new source will get added to the beginning of the chain. If the index is greater than the
+// current number of sources, it will get be appended the end.
+//
+// Note that the Parse method will query the sources in order.
 func (b *Bucket) AddSource(src core.Source, index int) {
 	if src == nil {
 		return
@@ -136,30 +172,51 @@ func (b *Bucket) AddSource(src core.Source, index int) {
 	b.sources = append(b.sources[:index], append([]core.Source{src}, b.sources[index:]...)...)
 }
 
+// String adds a new string flag to the bucket.
+//
+// The long names will be automatically converted to lowercase by the library.
 func (b *Bucket) String(longName, usage string) *StringFlag {
 	return b.StringP(longName, usage, "")
 }
 
+// String adds a new string flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
+// A valid short name is a case sensitive single character string (ie. s or S).
 func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
 	f := newString(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
 }
 
+// Int adds a new Int flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
 func (b *Bucket) Int(longName, usage string) *IntFlag {
 	return b.IntP(longName, usage, "")
 }
 
+// IntP adds a new Int flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
+// A valid short name is a case sensitive single character string (ie. s or S).
 func (b *Bucket) IntP(longName, usage, shortName string) *IntFlag {
 	f := newInt(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
 }
 
+// Int64 adds a new Int64 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
 func (b *Bucket) Int64(longName, usage string) *Int64Flag {
 	return b.Int64P(longName, usage, "")
 }
 
+// Int64P adds a new Int64 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
+// A valid short name is a case sensitive single character string (ie. s or S).
 func (b *Bucket) Int64P(longName, usage, shortName string) *Int64Flag {
 	f := newInt64(longName, usage, shortName)
 	b.flags = append(b.flags, f)

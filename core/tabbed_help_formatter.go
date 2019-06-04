@@ -6,8 +6,10 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
+// TabbedHelpFormatter represents a tab separated help formatter.
 type TabbedHelpFormatter struct{}
 
+// Format returns a tab separated help string for the flag.
 func (t *TabbedHelpFormatter) Format(f Flag, deprecationMark, defaultValueFormatString string) string {
 	if f.IsHidden() {
 		return ""

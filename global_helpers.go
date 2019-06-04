@@ -4,6 +4,7 @@ import (
 	"go.xitonix.io/flags/by"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
+	"io"
 )
 
 var (
@@ -21,14 +22,14 @@ func EnableAutoKeyGeneration() {
 	DefaultBucket.opts.AutoKeys = true
 }
 
-// SetKeyPrefix sets the prefix for all the automatically generated or explicitly defined keys.
+// SetKeyPrefix sets the prefix for all the automatically generated (or explicitly defined) keys.
 //
 // For example 'file-path' with 'Prefix' will result in 'PREFIX_FILE_PATH' as the key.
 func SetKeyPrefix(prefix string) {
 	DefaultBucket.opts.KeyPrefix = internal.SanitiseFlagID(prefix)
 }
 
-// SetLogger sets the internal logger for the default bucket.
+// SetLogger sets the internal logger of the default bucket.
 func SetLogger(logger core.Logger) {
 	DefaultBucket.opts.Logger = logger
 }
@@ -47,18 +48,26 @@ func SetSortOrder(comparer by.Comparer) {
 // SetTerminator sets the internal terminator for the default bucket.
 //
 // The terminator is responsible for terminating the execution of the running tool.
-// For example after printing help, the execution will be terminated. The default terminator
-// will call os.Exit() internally.
+// For example, the execution will be terminated after printing help.
+// The default terminator will call os.Exit() internally.
 func SetTerminator(terminator core.Terminator) {
 	DefaultBucket.opts.Terminator = terminator
 }
 
-// SetHelpProvider sets the help provider for the default bucket.
+// SetHelpFormatter sets the help formatter of the default bucket.
 //
-// The help provider is responsible for formatting and printing the help output.
-// The default help provider generates tabbed output.
-func SetHelpProvider(p core.HelpProvider) {
-	DefaultBucket.opts.HelpProvider = p
+// The help formatter is responsible for formatting the help output.
+// The default help formatter generates tabbed output.
+func SetHelpFormatter(hf core.HelpFormatter) {
+	DefaultBucket.opts.HelpFormatter = hf
+}
+
+// SetHelpWriter sets the help writer of the default bucket.
+//
+// The help writer is responsible for printing the formatted help output.
+// The default help writer writes tabbed output to os.Stdout.
+func SetHelpWriter(hw io.WriteCloser) {
+	DefaultBucket.opts.HelpWriter = hw
 }
 
 // SetDeprecationMark sets the default bucket's deprecation mark.
@@ -70,7 +79,7 @@ func SetDeprecationMark(m string) {
 
 // SetDefaultValueFormatString sets the default bucket's Default value format string.
 //
-// The string is used to format the default value in help output (ie. [Default: %v])
+// The string is used to format the default value in the help output (ie. [Default: %v])
 func SetDefaultValueFormatString(f string) {
 	DefaultBucket.opts.DefaultValueFormatString = f
 }

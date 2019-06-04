@@ -44,12 +44,21 @@ func TestSetSortOrder(t *testing.T) {
 	}
 }
 
-func TestSetHelpProvider(t *testing.T) {
-	expected := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-	SetHelpProvider(expected)
-	actual := DefaultBucket.opts.HelpProvider
+func TestSetHelpFormatter(t *testing.T) {
+	expected := &core.TabbedHelpFormatter{}
+	SetHelpFormatter(expected)
+	actual := DefaultBucket.opts.HelpFormatter
 	if actual != expected {
-		t.Errorf("The default bucket's help provider was expected to be %T, but it was %T", expected, actual)
+		t.Errorf("The default bucket's help formatter was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
+func TestSetHelpWriter(t *testing.T) {
+	expected := mocks.NewInMemoryWriter()
+	SetHelpWriter(expected)
+	actual := DefaultBucket.opts.HelpWriter
+	if actual != expected {
+		t.Errorf("The default bucket's help writer was expected to be %T, but it was %T", expected, actual)
 	}
 }
 
@@ -202,7 +211,7 @@ func TestParse(t *testing.T) {
 	DefaultBucket = NewBucket()
 	DefaultBucket.Options().Terminator = &mocks.Terminator{}
 	DefaultBucket.Options().Logger = &mocks.Logger{}
-	DefaultBucket.Options().HelpProvider.Writer = mocks.NewInMemoryWriter()
+	DefaultBucket.Options().HelpWriter = mocks.NewInMemoryWriter()
 	String("long", "usage")
 	Parse()
 	actual := len(DefaultBucket.Flags())

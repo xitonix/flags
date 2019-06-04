@@ -28,8 +28,8 @@ func TestTabbedHelpWriter_Write(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			w := NewTabbedHelpWriter()
 			buf := &bytes.Buffer{}
+			w := NewTabbedHelpWriter(buf)
 			w.w = w.w.Init(buf, 1, 1, 1, 0, 1)
 			n, err := w.Write(tc.input)
 			if err != nil {

@@ -87,13 +87,12 @@ func TestBucket_Parse_Validation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket(tc.args, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
@@ -112,11 +111,11 @@ func TestBucket_Parse_Validation(t *testing.T) {
 				return
 			}
 
-			if tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter == 0 {
+			if tc.mustPrintHelp && w.WriteCounter == 0 {
 				t.Errorf("Expectced the Help() function to get called, but it did not happen")
 			}
 
-			if !tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter != 0 {
+			if !tc.mustPrintHelp && w.WriteCounter != 0 {
 				t.Errorf("Did not expect the Help() function to get called, but it happened")
 			}
 
@@ -178,13 +177,12 @@ func TestBucket_Parse_Help_Request(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket(tc.args, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
@@ -202,11 +200,11 @@ func TestBucket_Parse_Help_Request(t *testing.T) {
 				t.Errorf("Expected termination code: %d, Actual: %d", tc.expectedTerminationCode, tm.Code)
 			}
 
-			if tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter == 0 {
+			if tc.mustPrintHelp && w.WriteCounter == 0 {
 				t.Errorf("Expectced the Help() function to get called, but it did not happen")
 			}
 
-			if !tc.mustPrintHelp && hp.Writer.(*mocks.InMemoryWriter).WriteCounter != 0 {
+			if !tc.mustPrintHelp && w.WriteCounter != 0 {
 				t.Errorf("Did not expect the Help() function to get called, but it happened")
 			}
 		})
@@ -295,13 +293,12 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket(tc.args, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm),
 				config.WithSortOrder(tc.comparer))
@@ -320,13 +317,11 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 				t.Errorf("Expected termination code: %d, Actual: %d", core.SuccessExitCode, tm.Code)
 			}
 
-			writer := hp.Writer.(*mocks.InMemoryWriter)
-
-			if writer.WriteCounter != 2 {
-				t.Errorf("Expectced to call Help() for 2 flags, Actual: %d", writer.WriteCounter)
+			if w.WriteCounter != 2 {
+				t.Errorf("Expectced to call Help() for 2 flags, Actual: %d", w.WriteCounter)
 			}
 
-			for i, line := range writer.Lines {
+			for i, line := range w.Lines {
 				if !strings.Contains(line, tc.expectedLines[i]) {
 					t.Errorf("Expectced the Help line %d to contain '%s', Actual %s", i+1, tc.expectedLines[i], line)
 				}
@@ -363,13 +358,12 @@ func TestBucket_Parse_Help_Failure(t *testing.T) {
 			w := mocks.NewInMemoryWriter()
 			w.ForceCloseToBreak = tc.forceCloseToFail
 			w.ForceWriteToBreak = tc.forceWriteToFail
-			hp := core.NewHelpProvider(w, &core.TabbedHelpFormatter{})
 
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket([]string{}, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
@@ -385,12 +379,11 @@ func TestBucket_Parse_Help_Failure(t *testing.T) {
 
 func TestFlags(t *testing.T) {
 	w := mocks.NewInMemoryWriter()
-	hp := core.NewHelpProvider(w, &core.TabbedHelpFormatter{})
 	lg := &mocks.Logger{}
 	tm := &mocks.Terminator{}
 	env := mocks.NewEnvReader()
 	bucket := newBucket([]string{}, env,
-		config.WithHelpProvider(hp),
+		config.WithHelpWriter(w),
 		config.WithLogger(lg),
 		config.WithTerminator(tm))
 
@@ -444,13 +437,12 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket(tc.args, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
@@ -578,13 +570,12 @@ func TestBucket_Parse_Chained_Short_Forms(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket(tc.args, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
@@ -762,12 +753,12 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket(tc.args, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm),
 				config.WithKeyPrefix(tc.keyPrefix))
@@ -974,7 +965,7 @@ func TestBucket_Parse_Custom_Source(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
@@ -998,7 +989,7 @@ func TestBucket_Parse_Custom_Source(t *testing.T) {
 			}
 
 			bucket := newBucket(arguments, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithTerminator(tm))
 
@@ -1103,13 +1094,12 @@ func TestBucket_KeyGeneration(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			hp := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
-
+			w := mocks.NewInMemoryWriter()
 			lg := &mocks.Logger{}
 			tm := &mocks.Terminator{}
 			env := mocks.NewEnvReader()
 			bucket := newBucket([]string{}, env,
-				config.WithHelpProvider(hp),
+				config.WithHelpWriter(w),
 				config.WithLogger(lg),
 				config.WithKeyPrefix(tc.keyPrefix),
 				config.WithTerminator(tm))

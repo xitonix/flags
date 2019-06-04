@@ -9,9 +9,22 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Bucket represents a container that holds a group of flags.
+// Bucket represents a container that holds a group of unique flags.
 //
-// Each bucket may contain a set of unique flags.
+// The value of the registered flags will be provided by one of the Sources in the bucket. Each bucket comes with two
+// preconfigured sources by default. A command line argument source which is responsible to parse the provided command
+// line arguments and an Environment Variable source which queries the system's environment variable registry to extract
+// the flag value. By default, the command line argument source has a higher priority over the environment variable source.
+// That means the values provided with command line will override their environment variable counterpart.
+//
+// Apart from the predefined sources, any custom implementation of the `core.Source` interface can be added to the bucket's
+// chain of sources (See `flags.MemorySource` for an example). Custom sources can be added using AddSource(), AppendSource()
+// and PrependSource() methods.
+//
+// The Parse method will query all the available sources for a specified key in order.
+// The querying process will be stopped as soon as a source has provided a value. If none of the sources has a value to offer,
+// the flag will be set to the Default value. In cases where the flag does not have a default value, it will be set to
+// the flag type's zero value (for example 0, for an Int flag).
 type Bucket struct {
 	opts          *config.Options
 	reg           *registry
@@ -58,8 +71,7 @@ func (b *Bucket) Flags() []core.Flag {
 
 // Help prints the documentation of the currently registered flag.
 //
-// You can customise the default format by overriding the help provider.
-// Check config.WithHelpProvider(...) method for more details.
+// You can change the default format by overriding the default HelpFormatter and HelpWriter.
 func (b *Bucket) Help() {
 	err := b.help()
 	if err != nil {
@@ -243,12 +255,12 @@ func (b *Bucket) Int32P(longName, usage, shortName string) *Int32Flag {
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {
-		_, err := b.opts.HelpProvider.Writer.Write([]byte(b.opts.HelpProvider.Formatter.Format(flag, b.opts.DeprecationMark, b.opts.DefaultValueFormatString)))
+		_, err := b.opts.HelpWriter.Write([]byte(b.opts.HelpFormatter.Format(flag, b.opts.DeprecationMark, b.opts.DefaultValueFormatString)))
 		if err != nil {
 			return err
 		}
 	}
-	return b.opts.HelpProvider.Writer.Close()
+	return b.opts.HelpWriter.Close()
 }
 
 func (b *Bucket) checkForUnknownFlags() error {

@@ -101,6 +101,10 @@ func TestBucket_Parse_Validation(t *testing.T) {
 				bucket.flags = append(bucket.flags, flag)
 			}
 
+			if bucket.Options() == nil {
+				t.Error("Bucket options was not supposed to be nil")
+			}
+
 			bucket.Parse()
 
 			if tc.mustTerminate || tm.IsTerminated {
@@ -300,7 +304,7 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 				config.WithHelpProvider(hp),
 				config.WithLogger(lg),
 				config.WithTerminator(tm),
-				config.WithSort(tc.comparer))
+				config.WithSortOrder(tc.comparer))
 
 			for _, flag := range tc.flags {
 				bucket.flags = append(bucket.flags, flag)
@@ -768,7 +772,7 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 				config.WithTerminator(tm),
 				config.WithKeyPrefix(tc.keyPrefix))
 
-			bucket.Options().AutoKeys = tc.autoKey
+			bucket.opts.AutoKeys = tc.autoKey
 
 			tc.flag.SetDefaultValue(tc.defaultValue)
 			tc.flag.MakeSetToFail = tc.MakeSetToFail
@@ -1412,6 +1416,32 @@ func TestBucket_Int64P(t *testing.T) {
 	f := bucket.Flags()[0]
 	if _, ok := f.(*Int64Flag); !ok {
 		t.Errorf("Expected %T, but received %T", &Int64Flag{}, f)
+	}
+}
+
+func TestBucket_Int32(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int32("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Int32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
+	}
+}
+
+func TestBucket_Int32P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int32P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Int32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
 	}
 }
 

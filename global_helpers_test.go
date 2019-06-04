@@ -1,16 +1,17 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/core"
 	"reflect"
 	"testing"
 
+	"go.xitonix.io/flags/by"
+	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/mocks"
 )
 
 func TestEnableAutoKeyGeneration(t *testing.T) {
 	EnableAutoKeyGeneration()
-	if !DefaultBucket.Options().AutoKeys {
+	if !DefaultBucket.opts.AutoKeys {
 		t.Error("The default bucket's auto key generation was expected to be ON")
 	}
 }
@@ -19,7 +20,7 @@ func TestSetKeyPrefix(t *testing.T) {
 	prefix := "prefix"
 	expected := "PREFIX"
 	SetKeyPrefix(prefix)
-	actual := DefaultBucket.Options().KeyPrefix
+	actual := DefaultBucket.opts.KeyPrefix
 	if actual != expected {
 		t.Errorf("The default bucket's key prefix was expected to be %s, but it was %s", expected, actual)
 	}
@@ -28,9 +29,54 @@ func TestSetKeyPrefix(t *testing.T) {
 func TestSetLogger(t *testing.T) {
 	lg := &mocks.Logger{}
 	SetLogger(lg)
-	actual := DefaultBucket.Options().Logger
+	actual := DefaultBucket.opts.Logger
 	if actual != lg {
 		t.Error("The default bucket's logger has not been set as expected")
+	}
+}
+
+func TestSetSortOrder(t *testing.T) {
+	expected := by.KeyAscending
+	SetSortOrder(expected)
+	actual := DefaultBucket.opts.Comparer
+	if actual != expected {
+		t.Errorf("The default bucket's sort order was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
+func TestSetHelpProvider(t *testing.T) {
+	expected := core.NewHelpProvider(mocks.NewInMemoryWriter(), &core.TabbedHelpFormatter{})
+	SetHelpProvider(expected)
+	actual := DefaultBucket.opts.HelpProvider
+	if actual != expected {
+		t.Errorf("The default bucket's help provider was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
+func TestSetTerminator(t *testing.T) {
+	expected := &mocks.Terminator{}
+	SetTerminator(expected)
+	actual := DefaultBucket.opts.Terminator
+	if actual != expected {
+		t.Errorf("The default bucket's terminator was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
+func TestSetDeprecationMark(t *testing.T) {
+	expected := "Deprecation Mark"
+	SetDeprecationMark(expected)
+	actual := DefaultBucket.opts.DeprecationMark
+	if actual != expected {
+		t.Errorf("The default bucket's deprecation mark was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
+func TestSetDefaultValueFormatString(t *testing.T) {
+	expected := "Format String"
+	SetDefaultValueFormatString(expected)
+	actual := DefaultBucket.opts.DefaultValueFormatString
+	if actual != expected {
+		t.Errorf("The default bucket's default value format string was expected to be %T, but it was %T", expected, actual)
 	}
 }
 
@@ -152,27 +198,6 @@ func TestAddSource(t *testing.T) {
 	}
 }
 
-func TestParse(t *testing.T) {
-	DefaultBucket = NewBucket()
-	Options().Terminator = &mocks.Terminator{}
-	Options().Logger = &mocks.Logger{}
-	Options().HelpProvider.Writer = mocks.NewInMemoryWriter()
-	String("long", "usage")
-	Parse()
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-}
-
-func TestOptions(t *testing.T) {
-	tm := &mocks.Terminator{}
-	Options().Terminator = tm
-	if DefaultBucket.Options().Terminator != tm {
-		t.Error("The default bucket's options has not been set as expected")
-	}
-}
-
 func TestGlobalString(t *testing.T) {
 	DefaultBucket = NewBucket()
 	String("long", "usage")
@@ -248,5 +273,31 @@ func TestGlobalInt64P(t *testing.T) {
 	f := DefaultBucket.Flags()[0]
 	if _, ok := f.(*Int64Flag); !ok {
 		t.Errorf("Expected %T, but received %T", &Int64Flag{}, f)
+	}
+}
+
+func TestGlobalInt32(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Int32("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Int32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
+	}
+}
+
+func TestGlobalInt32P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Int32P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Int32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
 	}
 }

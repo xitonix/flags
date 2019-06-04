@@ -122,7 +122,7 @@ func (f *StringFlag) Hide() *StringFlag {
 //
 // Example:
 //
-// 	flags.Options().DeprecationMark = "**DEPRECATED**"
+// 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 //	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *StringFlag) MarkAsDeprecated() *StringFlag {

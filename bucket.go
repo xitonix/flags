@@ -70,7 +70,7 @@ func (b *Bucket) Help() {
 
 // Parse parses the flags and queries all the available sources in order, to fill the value of each flag.
 //
-// If no source offers any value, the flag will be set to the specified Default value (if any).
+// If none of the sources offers any value, the flag will be set to the specified Default value (if any).
 // In case no Default value is defined, the flag will be set to the zero value of its type. For example an
 // Int flag will be set to zero.
 //
@@ -127,7 +127,7 @@ func (b *Bucket) Parse() {
 
 // AppendSource appends a new source to the end of the chain.
 //
-// With the default configuration for example, the order becomes
+// With the default configuration, the order will be:
 // Command Line Arguments > Environment Variables > src > [Default Value]
 //
 // Note that the Parse method will query the sources in order.
@@ -141,7 +141,7 @@ func (b *Bucket) AppendSource(src core.Source) {
 // PrependSource prepends a new source to the beginning of the chain.
 // This is an alias for AddSource(src, 0)
 //
-// With the default configuration for example, the order becomes
+// With the default configuration, the order will be:
 // src > Command Line Arguments > Environment Variables > [Default Value]
 //
 // Note that the Parse method will query the sources in order.
@@ -179,10 +179,10 @@ func (b *Bucket) String(longName, usage string) *StringFlag {
 	return b.StringP(longName, usage, "")
 }
 
-// String adds a new string flag with short name to the bucket.
+// StringP adds a new string flag with short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. file-path).
-// A valid short name is a case sensitive single character string (ie. s or S).
+// A valid short name is a case sensitive single character string (ie. f or F).
 func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
 	f := newString(longName, usage, shortName)
 	b.flags = append(b.flags, f)
@@ -199,7 +199,7 @@ func (b *Bucket) Int(longName, usage string) *IntFlag {
 // IntP adds a new Int flag with short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. file-path).
-// A valid short name is a case sensitive single character string (ie. s or S).
+// A valid short name is a case sensitive single character string (ie. f or F).
 func (b *Bucket) IntP(longName, usage, shortName string) *IntFlag {
 	f := newInt(longName, usage, shortName)
 	b.flags = append(b.flags, f)
@@ -216,9 +216,26 @@ func (b *Bucket) Int64(longName, usage string) *Int64Flag {
 // Int64P adds a new Int64 flag with short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. file-path).
-// A valid short name is a case sensitive single character string (ie. s or S).
+// A valid short name is a case sensitive single character string (ie. f or F).
 func (b *Bucket) Int64P(longName, usage, shortName string) *Int64Flag {
 	f := newInt64(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// Int32 adds a new Int32 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
+func (b *Bucket) Int32(longName, usage string) *Int32Flag {
+	return b.Int32P(longName, usage, "")
+}
+
+// Int32P adds a new Int32 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. file-path).
+// A valid short name is a case sensitive single character string (ie. f or F).
+func (b *Bucket) Int32P(longName, usage, shortName string) *Int32Flag {
+	f := newInt32(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
 }

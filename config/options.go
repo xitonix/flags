@@ -34,7 +34,7 @@ func NewOptions() *Options {
 // Option represents an option function
 type Option func(options *Options)
 
-func WithSort(c by.Comparer) Option {
+func WithSortOrder(c by.Comparer) Option {
 	return func(options *Options) {
 		options.Comparer = c
 	}

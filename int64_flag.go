@@ -126,7 +126,7 @@ func (f *Int64Flag) Hide() *Int64Flag {
 //
 // Example:
 //
-// 	flags.Options().DeprecationMark = "**DEPRECATED**"
+// 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 //	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *Int64Flag) MarkAsDeprecated() *Int64Flag {

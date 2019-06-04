@@ -1,39 +1,59 @@
 package by
 
 import (
+	"reflect"
 	"strings"
 
 	"go.xitonix.io/flags/core"
 )
 
 var (
-	DeclarationOrder    Comparer = nil
-	LongNameAscending            = FlagComparer{Ascending: true, Field: LongName}
-	LongNameDescending           = FlagComparer{Field: LongName}
-	ShortNameAscending           = FlagComparer{Ascending: true, Field: ShortName}
-	ShortNameDescending          = FlagComparer{Field: ShortName}
-	KeyAscending                 = FlagComparer{Ascending: true, Field: Key}
-	KeyDescending                = FlagComparer{Field: Key}
-	UsageAscending               = FlagComparer{Ascending: true, Field: Usage}
-	UsageDescending              = FlagComparer{Field: Usage}
+	// DeclarationOrder the default sort order.
+	// The flags will be printed in the same order as they have been defined.
+	DeclarationOrder Comparer = nil
+	// LongNameAscending sort by long name in ascending order.
+	LongNameAscending = FlagComparer{Ascending: true, Field: LongName}
+	// LongNameDescending sort by long name in descending order.
+	LongNameDescending = FlagComparer{Field: LongName}
+	// ShortNameAscending sort by short name in ascending order.
+	ShortNameAscending = FlagComparer{Ascending: true, Field: ShortName}
+	// ShortNameDescending sort by short name in descending order.
+	ShortNameDescending = FlagComparer{Field: ShortName}
+	// KeyAscending sort by key in ascending order.
+	KeyAscending = FlagComparer{Ascending: true, Field: Key}
+	// KeyDescending sort by key in descending order.
+	KeyDescending = FlagComparer{Field: Key}
+	// UsageAscending sort by usage in ascending order.
+	UsageAscending = FlagComparer{Ascending: true, Field: Usage}
+	// UsageDescending sort by usage in descending order.
+	UsageDescending = FlagComparer{Field: Usage}
 )
 
+// ComparisonField the field the comparison will be based on.
 type ComparisonField int8
 
 const (
+	// LongName long name field
 	LongName ComparisonField = iota
+	// ShortName short name field
 	ShortName
+	// Key key field
 	Key
+	//Usage usage field
 	Usage
 )
 
+// FlagComparer represents an implementation of the by.Comparer interface.
 type FlagComparer struct {
 	Ascending bool
 	Field     ComparisonField
 }
 
+// LessThan returns true if the specified filed of f1 is less than the same field in f2.
+//
+// If Ascending is false, the order will be reversed.
 func (f FlagComparer) LessThan(f1, f2 core.Flag) bool {
-	if f1 == nil || f2 == nil {
+	if reflect.ValueOf(f1).IsNil() || reflect.ValueOf(f2).IsNil() {
 		return false
 	}
 	field1, field2 := f.getFieldsToCompare(f1, f2)

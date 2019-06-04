@@ -45,13 +45,15 @@ const (
 
 // FlagComparer represents an implementation of the by.Comparer interface.
 type FlagComparer struct {
+	// Ascending applies the comparison function in ascending order.
 	Ascending bool
-	Field     ComparisonField
+	// Field specifies the field to compare.
+	Field ComparisonField
 }
 
 // LessThan returns true if the specified filed of f1 is less than the same field in f2.
 //
-// If Ascending is false, the order will be reversed.
+// If Ascending is false, the ordering will be reversed.
 func (f FlagComparer) LessThan(f1, f2 core.Flag) bool {
 	if reflect.ValueOf(f1).IsNil() || reflect.ValueOf(f2).IsNil() {
 		return false

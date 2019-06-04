@@ -198,6 +198,19 @@ func TestAddSource(t *testing.T) {
 	}
 }
 
+func TestParse(t *testing.T) {
+	DefaultBucket = NewBucket()
+	DefaultBucket.Options().Terminator = &mocks.Terminator{}
+	DefaultBucket.Options().Logger = &mocks.Logger{}
+	DefaultBucket.Options().HelpProvider.Writer = mocks.NewInMemoryWriter()
+	String("long", "usage")
+	Parse()
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+}
+
 func TestGlobalString(t *testing.T) {
 	DefaultBucket = NewBucket()
 	String("long", "usage")

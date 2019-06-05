@@ -28,5 +28,5 @@ func (t *TabbedHelpFormatter) Format(f Flag, deprecationMark, defaultValueFormat
 		dep = " " + deprecationMark
 	}
 
-	return fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", short, f.LongName(), f.Key().Get(), f.Type(), f.Usage(), def, dep)
+	return fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", short, f.LongName(), f.Key(), f.Type(), f.Usage(), def, dep)
 }

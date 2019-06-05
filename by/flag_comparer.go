@@ -73,7 +73,7 @@ func (f FlagComparer) getFieldsToCompare(f1, f2 core.Flag) (string, string) {
 	case ShortName:
 		return f1.ShortName(), f2.ShortName()
 	case Key:
-		return f1.Key().Get(), f2.Key().Get()
+		return f1.Key().String(), f2.Key().String()
 	default:
 		return f1.Usage(), f2.Usage()
 	}

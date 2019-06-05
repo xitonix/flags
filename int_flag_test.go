@@ -257,7 +257,7 @@ func TestIntFlag_WithKey(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.Int("long", "usage").WithKey(tc.key)
-			actual := f.Key().Get()
+			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
 			}

@@ -23,7 +23,7 @@ func NewFlag(long, short string) *Flag {
 
 func NewFlagWithKey(long, short, key string) *Flag {
 	k := &data.Key{}
-	k.Set(key)
+	k.SetID(key)
 	return &Flag{
 		long:  long,
 		short: short,
@@ -41,7 +41,7 @@ func NewFlagWithUsage(long, short, usage string) *Flag {
 }
 
 func (f *Flag) WithKey(keyID string) *Flag {
-	f.key.Set(keyID)
+	f.key.SetID(keyID)
 	return f
 }
 

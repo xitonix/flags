@@ -89,7 +89,7 @@ func (r *registry) add(flag core.Flag) error {
 		return err
 	}
 
-	return r.addKeyIfValid(flag.Key().Get())
+	return r.addKeyIfValid(flag.Key().String())
 }
 
 func (r *registry) isRegistered(arg string) bool {

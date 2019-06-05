@@ -1,13 +1,15 @@
 package flags_test
 
 import (
+	"fmt"
+	"math"
+	"testing"
+
 	"go.xitonix.io/flags"
 	"go.xitonix.io/flags/test"
-
-	"testing"
 )
 
-func TestString(t *testing.T) {
+func TestInt16(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long          string
@@ -54,7 +56,7 @@ func TestString(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String(tc.long, tc.usage)
+			f := flags.Int16(tc.long, tc.usage)
 			if f.LongName() != tc.expectedLong {
 				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
 			}
@@ -82,11 +84,11 @@ func TestString(t *testing.T) {
 				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
 			}
 
-			if f.Type() != "string" {
-				t.Errorf("The flag type was expected to be 'string', but it was %s", f.Type())
+			if f.Type() != "int16" {
+				t.Errorf("The flag type was expected to be 'int16', but it was %s", f.Type())
 			}
 
-			if f.Get() != "" {
+			if f.Get() != 0 {
 				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
 			}
 
@@ -97,7 +99,7 @@ func TestString(t *testing.T) {
 	}
 }
 
-func TestStringP(t *testing.T) {
+func TestInt16P(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -176,7 +178,7 @@ func TestStringP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringP(tc.long, tc.usage, tc.short)
+			f := flags.Int16P(tc.long, tc.usage, tc.short)
 			if f.LongName() != tc.expectedLong {
 				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
 			}
@@ -204,11 +206,11 @@ func TestStringP(t *testing.T) {
 				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
 			}
 
-			if f.Type() != "string" {
-				t.Errorf("The flag type was expected to be 'string', but it was %s", f.Type())
+			if f.Type() != "int16" {
+				t.Errorf("The flag type was expected to be 'int16', but it was %s", f.Type())
 			}
 
-			if f.Get() != "" {
+			if f.Get() != 0 {
 				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
 			}
 
@@ -219,7 +221,7 @@ func TestStringP(t *testing.T) {
 	}
 }
 
-func TestStringFlag_WithKey(t *testing.T) {
+func TestInt16Flag_WithKey(t *testing.T) {
 	testCases := []struct {
 		title       string
 		key         string
@@ -256,7 +258,7 @@ func TestStringFlag_WithKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String("long", "usage").WithKey(tc.key)
+			f := flags.Int16("long", "usage").WithKey(tc.key)
 			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
@@ -265,45 +267,51 @@ func TestStringFlag_WithKey(t *testing.T) {
 	}
 }
 
-func TestStringFlag_WithDefault(t *testing.T) {
+func TestInt16Flag_WithDefault(t *testing.T) {
 	testCases := []struct {
 		title                string
-		defaultValue         string
-		expectedDefaultValue string
+		defaultValue         int16
+		expectedDefaultValue int16
 	}{
 		{
-			title:                "empty default value",
-			expectedDefaultValue: "''",
+			title:                "zero default value",
+			defaultValue:         0,
+			expectedDefaultValue: 0,
 		},
 		{
-			title:                "whitespace default value",
-			defaultValue:         "    ",
-			expectedDefaultValue: "    ",
+			title:                "non zero default value",
+			defaultValue:         100,
+			expectedDefaultValue: 100,
 		},
 		{
-			title:                "default value with whitespace",
-			defaultValue:         "  default value  ",
-			expectedDefaultValue: "  default value  ",
+			title:                "negative default value",
+			defaultValue:         -100,
+			expectedDefaultValue: -100,
 		},
 		{
-			title:                "non empty default value",
-			defaultValue:         "default value",
-			expectedDefaultValue: "default value",
+			title:                "max int16",
+			defaultValue:         math.MaxInt16,
+			expectedDefaultValue: math.MaxInt16,
+		},
+		{
+			title:                "min int16",
+			defaultValue:         math.MinInt16,
+			expectedDefaultValue: math.MinInt16,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String("long", "usage").WithDefault(tc.defaultValue)
+			f := flags.Int16("long", "usage").WithDefault(tc.defaultValue)
 			actual := f.Default()
 			if actual != tc.expectedDefaultValue {
-				t.Errorf("Expected Default Value: %s, Actual: %s", tc.expectedDefaultValue, actual)
+				t.Errorf("Expected Default Value: %v, Actual: %s", tc.expectedDefaultValue, actual)
 			}
 		})
 	}
 }
 
-func TestStringFlag_Hide(t *testing.T) {
+func TestInt16Flag_Hide(t *testing.T) {
 	testCases := []struct {
 		title    string
 		isHidden bool
@@ -319,7 +327,7 @@ func TestStringFlag_Hide(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String("long", "usage")
+			f := flags.Int16("long", "usage")
 			if tc.isHidden {
 				f = f.Hide()
 			}
@@ -331,7 +339,7 @@ func TestStringFlag_Hide(t *testing.T) {
 	}
 }
 
-func TestStringFlag_IsDeprecated(t *testing.T) {
+func TestInt16Flag_IsDeprecated(t *testing.T) {
 	testCases := []struct {
 		title        string
 		isDeprecated bool
@@ -347,7 +355,7 @@ func TestStringFlag_IsDeprecated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String("long", "usage")
+			f := flags.Int16("long", "usage")
 			if tc.isDeprecated {
 				f = f.MarkAsDeprecated()
 			}
@@ -359,55 +367,82 @@ func TestStringFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
-func TestStringFlag_Set(t *testing.T) {
+func TestInt16Flag_Set(t *testing.T) {
 	testCases := []struct {
 		title         string
 		value         string
+		expectedValue int16
 		expectedError string
 	}{
 		{
-			title: "no value",
+			title:         "no value",
+			expectedValue: 0,
 		},
 		{
-			title: "whitespace value",
-			value: "   ",
+			title:         "whitespace value",
+			value:         "   ",
+			expectedValue: 0,
 		},
 		{
-			title: "value with whitespace",
-			value: "  value  ",
+			title:         "value with whitespace",
+			value:         "  100  ",
+			expectedValue: 100,
 		},
 		{
-			title: "value with no whitespaces",
-			value: "value",
+			title:         "negative value",
+			value:         "-100",
+			expectedValue: -100,
+		},
+		{
+			title:         "value with no whitespaces",
+			value:         "100",
+			expectedValue: 100,
+		},
+		{
+			title:         "invalid value",
+			value:         "abc",
+			expectedError: "is not a valid int16 value",
+			expectedValue: 0,
+		},
+		{
+			title:         "max int16",
+			value:         fmt.Sprintf("%d", math.MaxInt16),
+			expectedValue: math.MaxInt16,
+		},
+		{
+			title:         "min int16",
+			value:         fmt.Sprintf("%d", math.MinInt16),
+			expectedValue: math.MinInt16,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String("long", "usage")
+			f := flags.Int16("long", "usage")
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			if !test.ErrorContains(err, tc.expectedError) {
 				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
 			}
 			actual := f.Get()
-			if actual != tc.value {
-				t.Errorf("Expected value: %v, Actual: %v", tc.value, actual)
+			if actual != tc.expectedValue {
+				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
 			}
 
-			if *fVar != tc.value {
-				t.Errorf("Expected flag variable: %v, Actual: %v", tc.value, *fVar)
+			if *fVar != tc.expectedValue {
+				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
 			}
 		})
 	}
 }
 
-func TestStringFlag_ResetToDefault(t *testing.T) {
+func TestInt16Flag_ResetToDefault(t *testing.T) {
 	testCases := []struct {
 		title                   string
 		value                   string
-		defaultValue            string
-		expectedAfterResetValue string
+		expectedValue           int16
+		defaultValue            int16
+		expectedAfterResetValue int16
 		expectedError           string
 		setDefault              bool
 	}{
@@ -416,36 +451,40 @@ func TestStringFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset without defining the default value",
-			value:                   "value",
-			expectedAfterResetValue: "value",
+			value:                   "100",
+			expectedValue:           100,
+			expectedAfterResetValue: 100,
 			setDefault:              false,
 		},
 		{
-			title:                   "reset to empty default value",
-			value:                   "value",
-			defaultValue:            "",
-			expectedAfterResetValue: "",
+			title:                   "reset to zero default value",
+			value:                   "100",
+			expectedValue:           100,
+			defaultValue:            0,
+			expectedAfterResetValue: 0,
 			setDefault:              true,
 		},
 		{
-			title:                   "reset to whitespace default value",
-			value:                   "value",
-			defaultValue:            "  ",
-			expectedAfterResetValue: "  ",
+			title:                   "reset to non-zero default value",
+			value:                   "100",
+			expectedValue:           100,
+			defaultValue:            50,
+			expectedAfterResetValue: 50,
 			setDefault:              true,
 		},
 		{
-			title:                   "reset to non-empty default value",
-			value:                   "value",
-			defaultValue:            "Default   Value  ",
-			expectedAfterResetValue: "Default   Value  ",
+			title:                   "reset to negative default value",
+			value:                   "100",
+			expectedValue:           100,
+			defaultValue:            -50,
+			expectedAfterResetValue: -50,
 			setDefault:              true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.String("long", "usage")
+			f := flags.Int16("long", "usage")
 			if tc.setDefault {
 				f = f.WithDefault(tc.defaultValue)
 			}
@@ -455,12 +494,12 @@ func TestStringFlag_ResetToDefault(t *testing.T) {
 				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
 			}
 			actual := f.Get()
-			if actual != tc.value {
-				t.Errorf("Expected value: %v, Actual: %v", tc.value, actual)
+			if actual != tc.expectedValue {
+				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
 			}
 
-			if *fVar != tc.value {
-				t.Errorf("Expected flag variable: %v, Actual: %v", tc.value, *fVar)
+			if *fVar != tc.expectedValue {
+				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
 			}
 
 			f.ResetToDefault()

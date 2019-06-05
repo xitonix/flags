@@ -1,6 +1,8 @@
 package flags_test
 
 import (
+	"fmt"
+	"math"
 	"testing"
 
 	"go.xitonix.io/flags"
@@ -257,7 +259,7 @@ func TestInt32Flag_WithKey(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.Int32("long", "usage").WithKey(tc.key)
-			actual := f.Key().Get()
+			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
 			}
@@ -285,6 +287,16 @@ func TestInt32Flag_WithDefault(t *testing.T) {
 			title:                "negative default value",
 			defaultValue:         -100,
 			expectedDefaultValue: -100,
+		},
+		{
+			title:                "max int32",
+			defaultValue:         math.MaxInt32,
+			expectedDefaultValue: math.MaxInt32,
+		},
+		{
+			title:                "min int32",
+			defaultValue:         math.MinInt32,
+			expectedDefaultValue: math.MinInt32,
 		},
 	}
 
@@ -391,6 +403,16 @@ func TestInt32Flag_Set(t *testing.T) {
 			value:         "abc",
 			expectedError: "is not a valid int32 value",
 			expectedValue: 0,
+		},
+		{
+			title:         "max int32",
+			value:         fmt.Sprintf("%d", math.MaxInt32),
+			expectedValue: math.MaxInt32,
+		},
+		{
+			title:         "min int32",
+			value:         fmt.Sprintf("%d", math.MinInt32),
+			expectedValue: math.MinInt32,
 		},
 	}
 

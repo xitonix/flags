@@ -95,10 +95,12 @@ func (f *Int64Flag) Get() int64 {
 
 // WithKey explicitly defines the key for this flag.
 //
-// Explicit keys will override the automatically generated values,
-// defined at bucket level (if enabled).
+// Explicit keys will override the automatically generated values, defined at bucket level (if enabled).
+//
+// In order for the flag value to be extractable from the environment variables, or all the other custom sources,
+// it MUST have a key associated with it.
 func (f *Int64Flag) WithKey(keyID string) *Int64Flag {
-	f.key.Set(keyID)
+	f.key.SetID(keyID)
 	return f
 }
 

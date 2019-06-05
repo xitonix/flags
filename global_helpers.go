@@ -18,6 +18,9 @@ var (
 // long name. For example 'file-path' will result in 'FILE_PATH' as the key.
 //
 // All the keys are uppercase strings concatenated by underscore character.
+//
+// Note: In order for the flag values to be extractable from the environment variables (or all the other custom sources),
+// each flag MUST have a key associated with it.
 func EnableAutoKeyGeneration() {
 	DefaultBucket.opts.AutoKeys = true
 }
@@ -145,45 +148,75 @@ func StringP(longName, usage, shortName string) *StringFlag {
 
 // Int adds a new Int flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. file-path).
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
 func Int(longName, usage string) *IntFlag {
 	return DefaultBucket.Int(longName, usage)
 }
 
 // IntP adds a new Int flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. file-path).
-// A valid short name is a case sensitive single character string (ie. f or F).
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
 func IntP(longName, usage, shortName string) *IntFlag {
 	return DefaultBucket.IntP(longName, usage, shortName)
 }
 
-// Int64 adds a new Int64 flag to the default bucket.
+// Int8 adds a new Int8 flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. file-path).
-func Int64(longName, usage string) *Int64Flag {
-	return DefaultBucket.Int64(longName, usage)
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func Int8(longName, usage string) *Int8Flag {
+	return DefaultBucket.Int8(longName, usage)
 }
 
-// Int64P adds a new Int64 flag with short name to the default bucket.
+// Int8P adds a new Int8 flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. file-path).
-// A valid short name is a case sensitive single character string (ie. f or F).
-func Int64P(longName, usage, shortName string) *Int64Flag {
-	return DefaultBucket.Int64P(longName, usage, shortName)
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func Int8P(longName, usage, shortName string) *Int8Flag {
+	return DefaultBucket.Int8P(longName, usage, shortName)
+}
+
+// Int16 adds a new Int16 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func Int16(longName, usage string) *Int16Flag {
+	return DefaultBucket.Int16(longName, usage)
+}
+
+// Int16P adds a new Int16 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func Int16P(longName, usage, shortName string) *Int16Flag {
+	return DefaultBucket.Int16P(longName, usage, shortName)
 }
 
 // Int32 adds a new Int32 flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. file-path).
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
 func Int32(longName, usage string) *Int32Flag {
 	return DefaultBucket.Int32(longName, usage)
 }
 
 // Int32P adds a new Int32 flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. file-path).
-// A valid short name is a case sensitive single character string (ie. f or F).
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
 func Int32P(longName, usage, shortName string) *Int32Flag {
 	return DefaultBucket.Int32P(longName, usage, shortName)
+}
+
+// Int64 adds a new Int64 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func Int64(longName, usage string) *Int64Flag {
+	return DefaultBucket.Int64(longName, usage)
+}
+
+// Int64P adds a new Int64 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func Int64P(longName, usage, shortName string) *Int64Flag {
+	return DefaultBucket.Int64P(longName, usage, shortName)
 }

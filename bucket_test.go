@@ -769,7 +769,7 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 			tc.flag.MakeSetToFail = tc.MakeSetToFail
 
 			if tc.explicitKey != "" {
-				tc.flag.Key().Set(tc.explicitKey)
+				tc.flag.Key().SetID(tc.explicitKey)
 			}
 
 			bucket.flags = []core.Flag{tc.flag}
@@ -981,7 +981,7 @@ func TestBucket_Parse_Custom_Source(t *testing.T) {
 			}
 
 			if tc.values.env != "" {
-				env.Set(flag.Key().Get(), tc.values.env)
+				env.Set(flag.Key().String(), tc.values.env)
 			}
 
 			if tc.values.defaultVal != "" {
@@ -997,7 +997,7 @@ func TestBucket_Parse_Custom_Source(t *testing.T) {
 
 			src := NewMemorySource()
 			if tc.values.custom != "" {
-				src.Add(flag.Key().Get(), tc.values.custom)
+				src.Add(flag.Key().String(), tc.values.custom)
 			}
 
 			bucket.AddSource(src, tc.index)
@@ -1107,15 +1107,15 @@ func TestBucket_KeyGeneration(t *testing.T) {
 			bucket.opts.AutoKeys = tc.autoKeys
 
 			if tc.explicitKey != "" {
-				tc.flag.Key().Set(tc.explicitKey)
+				tc.flag.Key().SetID(tc.explicitKey)
 			}
 
 			bucket.flags = []core.Flag{tc.flag}
 
 			bucket.Parse()
 
-			if tc.expectedKeyValue != tc.flag.Key().Get() {
-				t.Errorf("Expected Key: %v, Actual: %v", tc.expectedKeyValue, tc.flag.Key().Get())
+			if tc.expectedKeyValue != tc.flag.Key().String() {
+				t.Errorf("Expected Key: %v, Actual: %s", tc.expectedKeyValue, tc.flag.Key())
 			}
 
 			if tc.expectedBucketPrefix != bucket.opts.KeyPrefix {

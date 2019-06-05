@@ -105,7 +105,7 @@ func TestRegistry_Add(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			tc.first.Key().Set(tc.firstKey)
+			tc.first.Key().SetID(tc.firstKey)
 			reg := newRegistry()
 			err := reg.add(tc.first)
 			if !test.ErrorContains(err, tc.expectedFirstErr) {
@@ -113,7 +113,7 @@ func TestRegistry_Add(t *testing.T) {
 			}
 
 			if tc.second != nil {
-				tc.second.Key().Set(tc.secondKey)
+				tc.second.Key().SetID(tc.secondKey)
 				err = reg.add(tc.second)
 				if !test.ErrorContains(err, tc.expectedSecondErr) {
 					t.Errorf("Second Flag: Expected to get '%v' error, but received '%v'", tc.expectedSecondErr, err)

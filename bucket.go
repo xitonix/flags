@@ -308,6 +308,23 @@ func (b *Bucket) UIntP(longName, usage, shortName string) *UIntFlag {
 	return f
 }
 
+// UInt64 adds a new UInt64 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func (b *Bucket) UInt64(longName, usage string) *UInt64Flag {
+	return b.UInt64P(longName, usage, "")
+}
+
+// UInt64P adds a new UInt64 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func (b *Bucket) UInt64P(longName, usage, shortName string) *UInt64Flag {
+	f := newUInt64(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

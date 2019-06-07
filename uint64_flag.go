@@ -9,12 +9,12 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// UIntFlag represents an uint flag
-type UIntFlag struct {
+// UInt64Flag represents an uint64 flag
+type UInt64Flag struct {
 	key                 *data.Key
-	defaultValue, value uint
+	defaultValue, value uint64
 	hasDefault          bool
-	ptr                 *uint
+	ptr                 *uint64
 	long, short         string
 	usage               string
 	isSet               bool
@@ -22,9 +22,9 @@ type UIntFlag struct {
 	isHidden            bool
 }
 
-func newUInt(name, usage, short string) *UIntFlag {
-	ptr := new(uint)
-	return &UIntFlag{
+func newUInt64(name, usage, short string) *UInt64Flag {
+	ptr := new(uint64)
+	return &UInt64Flag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
@@ -36,40 +36,40 @@ func newUInt(name, usage, short string) *UIntFlag {
 // LongName returns the long name of the flag (ie. --port).
 //
 // Long name is case insensitive and always lower case (ie. --port-number).
-func (f *UIntFlag) LongName() string {
+func (f *UInt64Flag) LongName() string {
 	return f.long
 }
 
 // IsHidden returns true if the flag is hidden.
 //
 // A hidden flag won't be printed in the help output.
-func (f *UIntFlag) IsHidden() bool {
+func (f *UInt64Flag) IsHidden() bool {
 	return f.isHidden
 }
 
 // IsDeprecated returns true if the flag is deprecated.
-func (f *UIntFlag) IsDeprecated() bool {
+func (f *UInt64Flag) IsDeprecated() bool {
 	return f.isDeprecated
 }
 
 // Type returns the string representation of the flag's type.
 //
 // This will be printed in the help output.
-func (f *UIntFlag) Type() string {
-	return "uint"
+func (f *UInt64Flag) Type() string {
+	return "uint64"
 }
 
 // ShortName returns the flag's short name (ie. -p).
 //
 // Short name is a single case sensitive character.
-func (f *UIntFlag) ShortName() string {
+func (f *UInt64Flag) ShortName() string {
 	return f.short
 }
 
 // Usage returns the usage string of the flag.
 //
 // This will be printed in the help output.
-func (f *UIntFlag) Usage() string {
+func (f *UInt64Flag) Usage() string {
 	return f.usage
 }
 
@@ -77,19 +77,19 @@ func (f *UIntFlag) Usage() string {
 //
 // This method returns false if none of the sources has a value to offer, or the value
 // has been set to Default (if specified).
-func (f *UIntFlag) IsSet() bool {
+func (f *UInt64Flag) IsSet() bool {
 	return f.isSet
 }
 
 // Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
-func (f *UIntFlag) Var() *uint {
+func (f *UInt64Flag) Var() *uint64 {
 	return f.ptr
 }
 
 // Get returns the current value of the flag.
-func (f *UIntFlag) Get() uint {
+func (f *UInt64Flag) Get() uint64 {
 	return f.value
 }
 
@@ -99,7 +99,7 @@ func (f *UIntFlag) Get() uint {
 //
 // In order for the flag value to be extractable from the environment variables, or all the other custom sources,
 // it MUST have a key associated with it.
-func (f *UIntFlag) WithKey(keyID string) *UIntFlag {
+func (f *UInt64Flag) WithKey(keyID string) *UInt64Flag {
 	f.key.SetID(keyID)
 	return f
 }
@@ -107,7 +107,7 @@ func (f *UIntFlag) WithKey(keyID string) *UIntFlag {
 // WithDefault sets the default value of the flag.
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
-func (f *UIntFlag) WithDefault(defaultValue uint) *UIntFlag {
+func (f *UInt64Flag) WithDefault(defaultValue uint64) *UInt64Flag {
 	f.defaultValue = defaultValue
 	f.hasDefault = true
 	return f
@@ -116,7 +116,7 @@ func (f *UIntFlag) WithDefault(defaultValue uint) *UIntFlag {
 // Hide marks the flag as hidden.
 //
 // A hidden flag will not be displayed in the help output.
-func (f *UIntFlag) Hide() *UIntFlag {
+func (f *UInt64Flag) Hide() *UInt64Flag {
 	f.isHidden = true
 	return f
 }
@@ -131,13 +131,13 @@ func (f *UIntFlag) Hide() *UIntFlag {
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 //	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
-func (f *UIntFlag) MarkAsDeprecated() *UIntFlag {
+func (f *UInt64Flag) MarkAsDeprecated() *UInt64Flag {
 	f.isDeprecated = true
 	return f
 }
 
 // Set sets the value of this flag.
-func (f *UIntFlag) Set(value string) error {
+func (f *UInt64Flag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
 		value = "0"
@@ -146,7 +146,7 @@ func (f *UIntFlag) Set(value string) error {
 	if err != nil {
 		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
-	f.set(uint(v))
+	f.set(uint64(v))
 	f.isSet = true
 	return nil
 }
@@ -155,7 +155,7 @@ func (f *UIntFlag) Set(value string) error {
 //
 // Calling this method on a flag without a default value will have no effect.
 // The default value can be defined using WithDefault(...) method.
-func (f *UIntFlag) ResetToDefault() {
+func (f *UInt64Flag) ResetToDefault() {
 	if !f.hasDefault {
 		return
 	}
@@ -166,7 +166,7 @@ func (f *UIntFlag) ResetToDefault() {
 // Default returns the default value if specified, otherwise returns nil
 //
 // The default value can be defined using WithDefault(...) method
-func (f *UIntFlag) Default() interface{} {
+func (f *UInt64Flag) Default() interface{} {
 	if !f.hasDefault {
 		return nil
 	}
@@ -179,11 +179,11 @@ func (f *UIntFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *UIntFlag) Key() *data.Key {
+func (f *UInt64Flag) Key() *data.Key {
 	return f.key
 }
 
-func (f *UIntFlag) set(value uint) {
+func (f *UInt64Flag) set(value uint64) {
 	f.value = value
 	*f.ptr = value
 }

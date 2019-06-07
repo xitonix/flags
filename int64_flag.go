@@ -42,7 +42,7 @@ func (f *Int64Flag) LongName() string {
 
 // IsHidden returns true if the flag is hidden.
 //
-// A hidden flag won't be print64ed in the help output.
+// A hidden flag won't be printed in the help output.
 func (f *Int64Flag) IsHidden() bool {
 	return f.isHidden
 }
@@ -54,7 +54,7 @@ func (f *Int64Flag) IsDeprecated() bool {
 
 // Type returns the string representation of the flag's type.
 //
-// This will be print64ed in the help output.
+// This will be printed in the help output.
 func (f *Int64Flag) Type() string {
 	return "int64"
 }
@@ -68,7 +68,7 @@ func (f *Int64Flag) ShortName() string {
 
 // Usage returns the usage string of the flag.
 //
-// This will be print64ed in the help output.
+// This will be printed in the help output.
 func (f *Int64Flag) Usage() string {
 	return f.usage
 }

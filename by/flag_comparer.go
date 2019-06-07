@@ -39,7 +39,7 @@ const (
 	ShortName
 	// Key key field
 	Key
-	//Usage usage field
+	// Usage usage field
 	Usage
 )
 

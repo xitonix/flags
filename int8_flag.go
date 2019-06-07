@@ -42,7 +42,7 @@ func (f *Int8Flag) LongName() string {
 
 // IsHidden returns true if the flag is hidden.
 //
-// A hidden flag won't be print8ed in the help output.
+// A hidden flag won't be printed in the help output.
 func (f *Int8Flag) IsHidden() bool {
 	return f.isHidden
 }
@@ -54,7 +54,7 @@ func (f *Int8Flag) IsDeprecated() bool {
 
 // Type returns the string representation of the flag's type.
 //
-// This will be print8ed in the help output.
+// This will be printed in the help output.
 func (f *Int8Flag) Type() string {
 	return "int8"
 }
@@ -68,7 +68,7 @@ func (f *Int8Flag) ShortName() string {
 
 // Usage returns the usage string of the flag.
 //
-// This will be print8ed in the help output.
+// This will be printed in the help output.
 func (f *Int8Flag) Usage() string {
 	return f.usage
 }

@@ -325,6 +325,57 @@ func (b *Bucket) UInt64P(longName, usage, shortName string) *UInt64Flag {
 	return f
 }
 
+// UInt32 adds a new UInt32 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func (b *Bucket) UInt32(longName, usage string) *UInt32Flag {
+	return b.UInt32P(longName, usage, "")
+}
+
+// UInt32P adds a new UInt32 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func (b *Bucket) UInt32P(longName, usage, shortName string) *UInt32Flag {
+	f := newUInt32(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// UInt16 adds a new UInt16 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func (b *Bucket) UInt16(longName, usage string) *UInt16Flag {
+	return b.UInt16P(longName, usage, "")
+}
+
+// UInt16P adds a new UInt16 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func (b *Bucket) UInt16P(longName, usage, shortName string) *UInt16Flag {
+	f := newUInt16(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// UInt8 adds a new UInt8 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func (b *Bucket) UInt8(longName, usage string) *UInt8Flag {
+	return b.UInt8P(longName, usage, "")
+}
+
+// UInt8P adds a new UInt8 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func (b *Bucket) UInt8P(longName, usage, shortName string) *UInt8Flag {
+	f := newUInt8(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

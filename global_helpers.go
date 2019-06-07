@@ -250,3 +250,48 @@ func UInt64(longName, usage string) *UInt64Flag {
 func UInt64P(longName, usage, shortName string) *UInt64Flag {
 	return DefaultBucket.UInt64P(longName, usage, shortName)
 }
+
+// UInt32 adds a new UInt32 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func UInt32(longName, usage string) *UInt32Flag {
+	return DefaultBucket.UInt32(longName, usage)
+}
+
+// UInt32P adds a new UInt32 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func UInt32P(longName, usage, shortName string) *UInt32Flag {
+	return DefaultBucket.UInt32P(longName, usage, shortName)
+}
+
+// UInt16 adds a new UInt16 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func UInt16(longName, usage string) *UInt16Flag {
+	return DefaultBucket.UInt16(longName, usage)
+}
+
+// UInt16P adds a new UInt16 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func UInt16P(longName, usage, shortName string) *UInt16Flag {
+	return DefaultBucket.UInt16P(longName, usage, shortName)
+}
+
+// UInt8 adds a new UInt8 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func UInt8(longName, usage string) *UInt8Flag {
+	return DefaultBucket.UInt8(longName, usage)
+}
+
+// UInt8P adds a new UInt8 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func UInt8P(longName, usage, shortName string) *UInt8Flag {
+	return DefaultBucket.UInt8P(longName, usage, shortName)
+}

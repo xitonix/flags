@@ -1,10 +1,11 @@
 package flags
 
 import (
+	"io"
+
 	"go.xitonix.io/flags/by"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
-	"io"
 )
 
 var (
@@ -294,4 +295,19 @@ func UInt8(longName, usage string) *UInt8Flag {
 // A valid short name is a case sensitive single character string (ie. p or P).
 func UInt8P(longName, usage, shortName string) *UInt8Flag {
 	return DefaultBucket.UInt8P(longName, usage, shortName)
+}
+
+// Bool adds a new Bool flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func Bool(longName, usage string) *BoolFlag {
+	return DefaultBucket.Bool(longName, usage)
+}
+
+// BoolP adds a new Bool flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func BoolP(longName, usage, shortName string) *BoolFlag {
+	return DefaultBucket.BoolP(longName, usage, shortName)
 }

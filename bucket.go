@@ -376,6 +376,23 @@ func (b *Bucket) UInt8P(longName, usage, shortName string) *UInt8Flag {
 	return f
 }
 
+// Bool adds a new Bool flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+func (b *Bucket) Bool(longName, usage string) *BoolFlag {
+	return b.BoolP(longName, usage, "")
+}
+
+// BoolP adds a new Bool flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// A valid short name is a case sensitive single character string (ie. p or P).
+func (b *Bucket) BoolP(longName, usage, shortName string) *BoolFlag {
+	f := newBool(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

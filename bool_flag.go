@@ -81,7 +81,7 @@ func (f *BoolFlag) IsSet() bool {
 	return f.isSet
 }
 
-// Var returns a point8er to the underlying variable.
+// Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
 func (f *BoolFlag) Var() *bool {
@@ -144,7 +144,7 @@ func (f *BoolFlag) Set(value string) error {
 	}
 	v, err := strconv.ParseBool(value)
 	if err != nil {
-		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
+		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
 	f.set(v)
 	f.isSet = true

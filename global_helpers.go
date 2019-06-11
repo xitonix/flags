@@ -361,3 +361,28 @@ func CounterP(longName, usage, shortName string) *CounterFlag {
 func VerbosityP(usage string) *CounterFlag {
 	return DefaultBucket.CounterP("verbose", usage, "v")
 }
+
+// Duration adds a new Duration flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. ttl).
+//
+// A duration string is a possibly signed sequence of
+// decimal numbers, each with optional fraction and a unit suffix,
+// such as "300ms", "-1.5h" or "2h45m".
+// Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+func Duration(longName, usage string) *DurationFlag {
+	return DefaultBucket.Duration(longName, usage)
+}
+
+// DurationP adds a new Duration flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. ttl).
+// A valid short name is a case sensitive single character string (ie. t or T).
+//
+// A duration string is a possibly signed sequence of
+// decimal numbers, each with optional fraction and a unit suffix,
+// such as "300ms", "-1.5h" or "2h45m".
+// Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+func DurationP(longName, usage, shortName string) *DurationFlag {
+	return DefaultBucket.DurationP(longName, usage, shortName)
+}

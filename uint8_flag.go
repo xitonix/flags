@@ -144,7 +144,7 @@ func (f *UInt8Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseUint(value, 10, 8)
 	if err != nil {
-		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
+		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
 	f.set(uint8(v))
 	f.isSet = true

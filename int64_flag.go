@@ -81,7 +81,7 @@ func (f *Int64Flag) IsSet() bool {
 	return f.isSet
 }
 
-// Var returns a point64er to the underlying variable.
+// Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
 func (f *Int64Flag) Var() *int64 {
@@ -144,7 +144,7 @@ func (f *Int64Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
-		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
+		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
 	f.set(int64(v))
 	f.isSet = true

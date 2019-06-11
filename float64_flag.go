@@ -144,7 +144,7 @@ func (f *Float64Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
+		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
 	f.set(float64(v))
 	f.isSet = true

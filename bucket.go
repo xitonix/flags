@@ -465,6 +465,33 @@ func (b *Bucket) VerbosityP(usage string) *CounterFlag {
 	return b.CounterP("verbose", usage, "v")
 }
 
+// Duration adds a new Duration flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. ttl).
+//
+// A duration string is a possibly signed sequence of
+// decimal numbers, each with optional fraction and a unit suffix,
+// such as "300ms", "-1.5h" or "2h45m".
+// Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+func (b *Bucket) Duration(longName, usage string) *DurationFlag {
+	return b.DurationP(longName, usage, "")
+}
+
+// DurationP adds a new Duration flag with a short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. ttl).
+// A valid short name is a case sensitive single character string (ie. t or T).
+//
+// A duration string is a possibly signed sequence of
+// decimal numbers, each with optional fraction and a unit suffix,
+// such as "300ms", "-1.5h" or "2h45m".
+// Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+func (b *Bucket) DurationP(longName, usage, shortName string) *DurationFlag {
+	f := newDuration(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

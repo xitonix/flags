@@ -13,7 +13,7 @@ TODOs:
     * ~~float32, float64~~
     * ~~bool~~
 * Special flags
-    * Duration
+    * ~~Duration~~
     * Time
     * []string
     * map[string]string

@@ -33,7 +33,7 @@ func newFloat32(name, usage, short string) *Float32Flag {
 	}
 }
 
-// LongName returns the long name of the flag (ie. --port).
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (ie. --port-number).
 func (f *Float32Flag) LongName() string {

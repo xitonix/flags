@@ -1859,6 +1859,116 @@ func TestBucket_Float32P(t *testing.T) {
 	}
 }
 
+func TestBucket_CounterP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CounterP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	}
+}
+
+func TestBucket_Parse_Counter(t *testing.T) {
+	testCases := []struct {
+		title         string
+		expectedValue uint8
+		defaultValue  uint8
+		setDefault    bool
+		args          []string
+		flag          *CounterFlag
+		key           string
+		keyValue      string
+	}{
+		{
+			title:         "long name has been provided",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"--counter"},
+			expectedValue: 1,
+		},
+		{
+			title:         "long name with value has been provided with no equal sign",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"--counter", "10"},
+			expectedValue: 10,
+		},
+		{
+			title:         "long name with value has been provided with equal sign",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"--counter=10"},
+			expectedValue: 10,
+		},
+		{
+			title:         "short name has been provided",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"-c"},
+			expectedValue: 1,
+		},
+		{
+			title:         "short name with value has been provided with no equal sign",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"-c", "10"},
+			expectedValue: 10,
+		},
+		{
+			title:         "short name with value has been provided with equal sign",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"-c=10"},
+			expectedValue: 10,
+		},
+		{
+			title:         "chained short name has been provided",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"-cc"},
+			expectedValue: 2,
+		},
+		{
+			title:         "short name has been provided multiple times",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"-c", "-c", "-c"},
+			expectedValue: 3,
+		},
+		{
+			title:         "long and short names have been provided multiple times",
+			flag:          CounterP("counter", "usage", "c"),
+			args:          []string{"--counter", "--counter", "-c", "-c"},
+			expectedValue: 2,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			w := mocks.NewInMemoryWriter()
+			lg := &mocks.Logger{}
+			tm := &mocks.Terminator{}
+			env := mocks.NewEnvReader()
+			if tc.key != "" {
+				tc.flag = tc.flag.WithKey(tc.key)
+				env.Set(tc.key, tc.keyValue)
+			}
+			bucket := newBucket(tc.args, env,
+				config.WithHelpWriter(w),
+				config.WithLogger(lg),
+				config.WithTerminator(tm))
+
+			if tc.setDefault {
+				tc.flag = tc.flag.WithDefault(tc.defaultValue)
+			}
+
+			bucket.flags = []core.Flag{tc.flag}
+
+			bucket.Parse()
+
+			if tc.flag.Get() != tc.expectedValue {
+				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.Get())
+			}
+		})
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

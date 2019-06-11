@@ -341,3 +341,14 @@ func Float32(longName, usage string) *Float32Flag {
 func Float32P(longName, usage, shortName string) *Float32Flag {
 	return DefaultBucket.Float32P(longName, usage, shortName)
 }
+
+// CounterP adds a new counter flag with a short name to the default bucket.
+//
+// The value of a counter flag can be increased by repeating the short form.
+// For example the presence of -vv command line argument will set the value of the counter to 2.
+//
+// Long names will be automatically converted to lowercase by the library (ie. verbosity).
+// A valid short name is a case sensitive single character string (ie. v or V).
+func CounterP(longName, usage, shortName string) *CounterFlag {
+	return DefaultBucket.CounterP(longName, usage, shortName)
+}

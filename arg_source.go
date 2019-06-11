@@ -7,6 +7,7 @@ import (
 
 type argSource struct {
 	arguments map[string]string
+	counters  map[string]uint64
 }
 
 // creates a new command line argument parser and returns true if one of the arguments is
@@ -14,6 +15,7 @@ type argSource struct {
 func newArgSource(args []string) (*argSource, bool) {
 	src := &argSource{
 		arguments: make(map[string]string),
+		counters:  make(map[string]uint64),
 	}
 	if len(args) == 0 {
 		return src, false
@@ -36,6 +38,9 @@ func newArgSource(args []string) (*argSource, bool) {
 			keys := processKey(parts[0])
 			for i, k := range keys {
 				src.arguments[k] = ""
+				if isShort(k) {
+					src.counters[k]++
+				}
 				if i == len(keys)-1 {
 					src.arguments[k] = strings.Join(parts[1:], "=")
 				}
@@ -48,6 +53,9 @@ func newArgSource(args []string) (*argSource, bool) {
 			keys := processKey(arg)
 			for i, k := range keys {
 				src.arguments[k] = ""
+				if isShort(k) {
+					src.counters[k]++
+				}
 				if i == len(keys)-1 {
 					prevKey = k
 				}
@@ -66,7 +74,7 @@ func newArgSource(args []string) (*argSource, bool) {
 }
 
 func processKey(arg string) []string {
-	isShort := !strings.HasPrefix(arg, "--")
+	isShort := isShort(arg)
 	if !isShort {
 		return []string{arg}
 	}
@@ -78,6 +86,15 @@ func processKey(arg string) []string {
 		args[i] = fmt.Sprintf("-%c", short)
 	}
 	return args
+}
+
+func isShort(arg string) bool {
+	return !strings.HasPrefix(arg, "--")
+}
+
+func (a *argSource) getCounter(short string) (uint64, bool) {
+	c, ok := a.counters["-"+short]
+	return c, ok
 }
 
 func (a *argSource) Read(key string) (string, bool) {

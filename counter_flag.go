@@ -9,12 +9,15 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Int64Flag represents an int64 flag
-type Int64Flag struct {
+// CounterFlag represents a counter flag.
+//
+// The value of a counter flag can be increased by repeating the short form.
+// For example the presence of -vv command line argument will set the value of the counter to 2.
+type CounterFlag struct {
 	key                 *data.Key
-	defaultValue, value int64
+	defaultValue, value uint8
 	hasDefault          bool
-	ptr                 *int64
+	ptr                 *uint8
 	long, short         string
 	usage               string
 	isSet               bool
@@ -22,9 +25,9 @@ type Int64Flag struct {
 	isHidden            bool
 }
 
-func newInt64(name, usage, short string) *Int64Flag {
-	ptr := new(int64)
-	return &Int64Flag{
+func newCounter(name, usage, short string) *CounterFlag {
+	ptr := new(uint8)
+	return &CounterFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
@@ -35,41 +38,41 @@ func newInt64(name, usage, short string) *Int64Flag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
-func (f *Int64Flag) LongName() string {
+// Long name is case insensitive and always lower case (ie. --verbosity).
+func (f *CounterFlag) LongName() string {
 	return f.long
 }
 
 // IsHidden returns true if the flag is hidden.
 //
 // A hidden flag won't be printed in the help output.
-func (f *Int64Flag) IsHidden() bool {
+func (f *CounterFlag) IsHidden() bool {
 	return f.isHidden
 }
 
 // IsDeprecated returns true if the flag is deprecated.
-func (f *Int64Flag) IsDeprecated() bool {
+func (f *CounterFlag) IsDeprecated() bool {
 	return f.isDeprecated
 }
 
 // Type returns the string representation of the flag's type.
 //
 // This will be printed in the help output.
-func (f *Int64Flag) Type() string {
-	return "int64"
+func (f *CounterFlag) Type() string {
+	return "counter"
 }
 
 // ShortName returns the flag's short name (ie. -p).
 //
 // Short name is a single case sensitive character.
-func (f *Int64Flag) ShortName() string {
+func (f *CounterFlag) ShortName() string {
 	return f.short
 }
 
 // Usage returns the usage string of the flag.
 //
 // This will be printed in the help output.
-func (f *Int64Flag) Usage() string {
+func (f *CounterFlag) Usage() string {
 	return f.usage
 }
 
@@ -77,19 +80,19 @@ func (f *Int64Flag) Usage() string {
 //
 // This method returns false if none of the sources has a value to offer, or the value
 // has been set to Default (if specified).
-func (f *Int64Flag) IsSet() bool {
+func (f *CounterFlag) IsSet() bool {
 	return f.isSet
 }
 
-// Var returns a point64er to the underlying variable.
+// Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
-func (f *Int64Flag) Var() *int64 {
+func (f *CounterFlag) Var() *uint8 {
 	return f.ptr
 }
 
 // Get returns the current value of the flag.
-func (f *Int64Flag) Get() int64 {
+func (f *CounterFlag) Get() uint8 {
 	return f.value
 }
 
@@ -99,7 +102,7 @@ func (f *Int64Flag) Get() int64 {
 //
 // In order for the flag value to be extractable from the environment variables, or all the other custom sources,
 // it MUST have a key associated with it.
-func (f *Int64Flag) WithKey(keyID string) *Int64Flag {
+func (f *CounterFlag) WithKey(keyID string) *CounterFlag {
 	f.key.SetID(keyID)
 	return f
 }
@@ -107,7 +110,7 @@ func (f *Int64Flag) WithKey(keyID string) *Int64Flag {
 // WithDefault sets the default value of the flag.
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
-func (f *Int64Flag) WithDefault(defaultValue int64) *Int64Flag {
+func (f *CounterFlag) WithDefault(defaultValue uint8) *CounterFlag {
 	f.defaultValue = defaultValue
 	f.hasDefault = true
 	return f
@@ -116,7 +119,7 @@ func (f *Int64Flag) WithDefault(defaultValue int64) *Int64Flag {
 // Hide marks the flag as hidden.
 //
 // A hidden flag will not be displayed in the help output.
-func (f *Int64Flag) Hide() *Int64Flag {
+func (f *CounterFlag) Hide() *CounterFlag {
 	f.isHidden = true
 	return f
 }
@@ -131,22 +134,22 @@ func (f *Int64Flag) Hide() *Int64Flag {
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 //	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
-func (f *Int64Flag) MarkAsDeprecated() *Int64Flag {
+func (f *CounterFlag) MarkAsDeprecated() *CounterFlag {
 	f.isDeprecated = true
 	return f
 }
 
 // Set sets the value of this flag.
-func (f *Int64Flag) Set(value string) error {
+func (f *CounterFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
 		value = "0"
 	}
-	v, err := strconv.ParseInt(value, 10, 64)
+	v, err := strconv.ParseUint(value, 10, 8)
 	if err != nil {
 		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
-	f.set(int64(v))
+	f.set(uint8(v))
 	f.isSet = true
 	return nil
 }
@@ -155,7 +158,7 @@ func (f *Int64Flag) Set(value string) error {
 //
 // Calling this method on a flag without a default value will have no effect.
 // The default value can be defined using WithDefault(...) method.
-func (f *Int64Flag) ResetToDefault() {
+func (f *CounterFlag) ResetToDefault() {
 	if !f.hasDefault {
 		return
 	}
@@ -166,7 +169,7 @@ func (f *Int64Flag) ResetToDefault() {
 // Default returns the default value if specified, otherwise returns nil
 //
 // The default value can be defined using WithDefault(...) method
-func (f *Int64Flag) Default() interface{} {
+func (f *CounterFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil
 	}
@@ -179,11 +182,16 @@ func (f *Int64Flag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *Int64Flag) Key() *data.Key {
+func (f *CounterFlag) Key() *data.Key {
 	return f.key
 }
 
-func (f *Int64Flag) set(value int64) {
+// TODO: Document me
+func (f *CounterFlag) Multiplier() uint64 {
+	return 1
+}
+
+func (f *CounterFlag) set(value uint8) {
 	f.value = value
 	*f.ptr = value
 }

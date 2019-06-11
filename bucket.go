@@ -3,6 +3,7 @@ package flags
 import (
 	"os"
 	"sort"
+	"strconv"
 
 	"go.xitonix.io/flags/config"
 	"go.xitonix.io/flags/core"
@@ -114,12 +115,24 @@ func (b *Bucket) Parse() {
 				value string
 			)
 
-			_, isArgs := src.(*argSource)
+			argSource, isArgs := src.(*argSource)
 
 			if isArgs {
 				value, found = src.Read("--" + f.LongName())
 				if !found {
 					value, found = src.Read("-" + f.ShortName())
+				}
+
+				if !found || internal.IsEmpty(value) {
+					if repeatable, isRepeatable := f.(core.Repeatable); isRepeatable {
+						val := repeatable.Multiplier()
+						count, ok := argSource.getCounter(f.ShortName())
+						if ok {
+							val *= count
+						}
+						value = strconv.FormatUint(val, 10)
+						found = true
+					}
 				}
 			}
 
@@ -200,7 +213,7 @@ func (b *Bucket) String(longName, usage string) *StringFlag {
 	return b.StringP(longName, usage, "")
 }
 
-// StringP adds a new string flag with short name to the bucket.
+// StringP adds a new string flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. file-path).
 // A valid short name is a case sensitive single character string (ie. f or F).
@@ -217,7 +230,7 @@ func (b *Bucket) Int(longName, usage string) *IntFlag {
 	return b.IntP(longName, usage, "")
 }
 
-// IntP adds a new Int flag with short name to the bucket.
+// IntP adds a new Int flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -234,7 +247,7 @@ func (b *Bucket) Int8(longName, usage string) *Int8Flag {
 	return b.Int8P(longName, usage, "")
 }
 
-// Int8P adds a new Int8 flag with short name to the bucket.
+// Int8P adds a new Int8 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -251,7 +264,7 @@ func (b *Bucket) Int16(longName, usage string) *Int16Flag {
 	return b.Int16P(longName, usage, "")
 }
 
-// Int16P adds a new Int16 flag with short name to the bucket.
+// Int16P adds a new Int16 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -268,7 +281,7 @@ func (b *Bucket) Int32(longName, usage string) *Int32Flag {
 	return b.Int32P(longName, usage, "")
 }
 
-// Int32P adds a new Int32 flag with short name to the bucket.
+// Int32P adds a new Int32 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -285,7 +298,7 @@ func (b *Bucket) Int64(longName, usage string) *Int64Flag {
 	return b.Int64P(longName, usage, "")
 }
 
-// Int64P adds a new Int64 flag with short name to the bucket.
+// Int64P adds a new Int64 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -302,7 +315,7 @@ func (b *Bucket) UInt(longName, usage string) *UIntFlag {
 	return b.UIntP(longName, usage, "")
 }
 
-// UIntP adds a new UInt flag with short name to the bucket.
+// UIntP adds a new UInt flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -319,7 +332,7 @@ func (b *Bucket) UInt64(longName, usage string) *UInt64Flag {
 	return b.UInt64P(longName, usage, "")
 }
 
-// UInt64P adds a new UInt64 flag with short name to the bucket.
+// UInt64P adds a new UInt64 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -336,7 +349,7 @@ func (b *Bucket) UInt32(longName, usage string) *UInt32Flag {
 	return b.UInt32P(longName, usage, "")
 }
 
-// UInt32P adds a new UInt32 flag with short name to the bucket.
+// UInt32P adds a new UInt32 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -353,7 +366,7 @@ func (b *Bucket) UInt16(longName, usage string) *UInt16Flag {
 	return b.UInt16P(longName, usage, "")
 }
 
-// UInt16P adds a new UInt16 flag with short name to the bucket.
+// UInt16P adds a new UInt16 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -370,7 +383,7 @@ func (b *Bucket) UInt8(longName, usage string) *UInt8Flag {
 	return b.UInt8P(longName, usage, "")
 }
 
-// UInt8P adds a new UInt8 flag with short name to the bucket.
+// UInt8P adds a new UInt8 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. port-number).
 // A valid short name is a case sensitive single character string (ie. p or P).
@@ -387,7 +400,7 @@ func (b *Bucket) Bool(longName, usage string) *BoolFlag {
 	return b.BoolP(longName, usage, "")
 }
 
-// BoolP adds a new Bool flag with short name to the bucket.
+// BoolP adds a new Bool flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. enable-write-access).
 // A valid short name is a case sensitive single character string (ie. e or E).
@@ -404,7 +417,7 @@ func (b *Bucket) Float64(longName, usage string) *Float64Flag {
 	return b.Float64P(longName, usage, "")
 }
 
-// Float64P adds a new Float64 flag with short name to the bucket.
+// Float64P adds a new Float64 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
 // A valid short name is a case sensitive single character string (ie. c or C).
@@ -421,12 +434,25 @@ func (b *Bucket) Float32(longName, usage string) *Float32Flag {
 	return b.Float32P(longName, usage, "")
 }
 
-// Float32P adds a new Float32 flag with short name to the bucket.
+// Float32P adds a new Float32 flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
 // A valid short name is a case sensitive single character string (ie. c or C).
 func (b *Bucket) Float32P(longName, usage, shortName string) *Float32Flag {
 	f := newFloat32(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// CounterP adds a new counter flag with a short name to the bucket.
+//
+// The value of a counter flag can be increased by repeating the short form.
+// For example the presence of -vv command line argument will set the value of the counter to 2.
+//
+// Long names will be automatically converted to lowercase by the library (ie. verbosity).
+// A valid short name is a case sensitive single character string (ie. v or V).
+func (b *Bucket) CounterP(longName, usage, shortName string) *CounterFlag {
+	f := newCounter(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
 }

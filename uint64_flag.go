@@ -33,7 +33,7 @@ func newUInt64(name, usage, short string) *UInt64Flag {
 	}
 }
 
-// LongName returns the long name of the flag (ie. --port).
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (ie. --port-number).
 func (f *UInt64Flag) LongName() string {

@@ -33,7 +33,7 @@ func newBool(name, usage, short string) *BoolFlag {
 	}
 }
 
-// LongName returns the long name of the flag (ie. --port).
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (ie. --port-number).
 func (f *BoolFlag) LongName() string {
@@ -178,7 +178,8 @@ func (f *BoolFlag) Default() interface{} {
 // provided a none-empty value.
 //
 // Remember that this is different to Default values in which none of the sources provides any value.
-// For example the presence of --boolean or -b will be enough to set the value of a BoolFlag type to true.
+// For example the presence of --boolean or -b command line argument will be enough to set the value
+// of a BoolFlag type to true.
 func (f *BoolFlag) EmptyValue() string {
 	return "true"
 }

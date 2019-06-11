@@ -1807,6 +1807,58 @@ func TestBucket_Parse_Bool(t *testing.T) {
 	}
 }
 
+func TestBucket_Float64(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Float64("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Float64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float64Flag{}, f)
+	}
+}
+
+func TestBucket_Float64P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Float64P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Float64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float64Flag{}, f)
+	}
+}
+
+func TestBucket_Float32(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Float32("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Float32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
+	}
+}
+
+func TestBucket_Float32P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Float32P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Float32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

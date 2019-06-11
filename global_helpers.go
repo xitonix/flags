@@ -311,3 +311,33 @@ func Bool(longName, usage string) *BoolFlag {
 func BoolP(longName, usage, shortName string) *BoolFlag {
 	return DefaultBucket.BoolP(longName, usage, shortName)
 }
+
+// Float64 adds a new Float64 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+func Float64(longName, usage string) *Float64Flag {
+	return DefaultBucket.Float64(longName, usage)
+}
+
+// Float64P adds a new Float64 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+// A valid short name is a case sensitive single character string (ie. c or C).
+func Float64P(longName, usage, shortName string) *Float64Flag {
+	return DefaultBucket.Float64P(longName, usage, shortName)
+}
+
+// Float32 adds a new Float32 flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+func Float32(longName, usage string) *Float32Flag {
+	return DefaultBucket.Float32(longName, usage)
+}
+
+// Float32P adds a new Float32 flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+// A valid short name is a case sensitive single character string (ie. c or C).
+func Float32P(longName, usage, shortName string) *Float32Flag {
+	return DefaultBucket.Float32P(longName, usage, shortName)
+}

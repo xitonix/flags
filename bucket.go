@@ -382,17 +382,51 @@ func (b *Bucket) UInt8P(longName, usage, shortName string) *UInt8Flag {
 
 // Bool adds a new Bool flag to the bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. port-number).
+// Long names will be automatically converted to lowercase by the library (ie. enable-write-access).
 func (b *Bucket) Bool(longName, usage string) *BoolFlag {
 	return b.BoolP(longName, usage, "")
 }
 
 // BoolP adds a new Bool flag with short name to the bucket.
 //
-// Long names will be automatically converted to lowercase by the library (ie. port-number).
-// A valid short name is a case sensitive single character string (ie. p or P).
+// Long names will be automatically converted to lowercase by the library (ie. enable-write-access).
+// A valid short name is a case sensitive single character string (ie. e or E).
 func (b *Bucket) BoolP(longName, usage, shortName string) *BoolFlag {
 	f := newBool(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// Float64 adds a new Float64 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+func (b *Bucket) Float64(longName, usage string) *Float64Flag {
+	return b.Float64P(longName, usage, "")
+}
+
+// Float64P adds a new Float64 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+// A valid short name is a case sensitive single character string (ie. c or C).
+func (b *Bucket) Float64P(longName, usage, shortName string) *Float64Flag {
+	f := newFloat64(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// Float32 adds a new Float32 flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+func (b *Bucket) Float32(longName, usage string) *Float32Flag {
+	return b.Float32P(longName, usage, "")
+}
+
+// Float32P adds a new Float32 flag with short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. conversion-rate).
+// A valid short name is a case sensitive single character string (ie. c or C).
+func (b *Bucket) Float32P(longName, usage, shortName string) *Float32Flag {
+	f := newFloat32(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
 }

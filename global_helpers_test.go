@@ -323,3 +323,211 @@ func TestGlobalInt32P(t *testing.T) {
 		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
 	}
 }
+
+func TestGlobalInt16(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Int16("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Int16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
+	}
+}
+
+func TestGlobalInt16P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Int16P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Int16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
+	}
+}
+
+func TestGlobalInt8(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Int8("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Int8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
+	}
+}
+
+func TestGlobalInt8P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Int8P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Int8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
+	}
+}
+
+func TestGlobalUInt(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UIntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &UIntFlag{}, f)
+	}
+}
+
+func TestGlobalUIntP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UIntP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UIntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &UIntFlag{}, f)
+	}
+}
+
+func TestGlobalUInt64(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt64("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
+	}
+}
+
+func TestGlobalUInt64P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt64P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
+	}
+}
+
+func TestGlobalUInt32(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt32("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt32Flag{}, f)
+	}
+}
+
+func TestGlobalUInt32P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt32P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt32Flag{}, f)
+	}
+}
+
+func TestGlobalUInt16(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt16("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
+	}
+}
+
+func TestGlobalUInt16P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt16P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
+	}
+}
+
+func TestGlobalUInt8(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt8("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt8Flag{}, f)
+	}
+}
+
+func TestGlobalBool(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Bool("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestGlobalBoolP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestGlobalUInt8P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	UInt8P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*UInt8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt8Flag{}, f)
+	}
+}

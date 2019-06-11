@@ -396,6 +396,16 @@ func TestBoolFlag_Set(t *testing.T) {
 			value:         "0",
 			expectedValue: false,
 		},
+		{
+			title:         "greater than one",
+			value:         "2",
+			expectedError: "is not a valid bool value",
+		},
+		{
+			title:         "negative value",
+			value:         "-1",
+			expectedError: "is not a valid bool value",
+		},
 	}
 
 	for _, tc := range testCases {

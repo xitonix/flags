@@ -84,11 +84,9 @@ func (r *registry) add(flag core.Flag) error {
 	if err := r.addLongNameIfValid(flag.LongName()); err != nil {
 		return err
 	}
-
 	if err := r.addShortNameIfValid(flag.ShortName()); err != nil {
 		return err
 	}
-
 	return r.addKeyIfValid(flag.Key().String())
 }
 

@@ -139,6 +139,9 @@ func (f *BoolFlag) MarkAsDeprecated() *BoolFlag {
 // Set sets the value of this flag.
 func (f *BoolFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
+	if len(value) == 0 {
+		value = "false"
+	}
 	v, err := strconv.ParseBool(value)
 	if err != nil {
 		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
@@ -169,6 +172,15 @@ func (f *BoolFlag) Default() interface{} {
 	}
 
 	return f.defaultValue
+}
+
+// EmptyValue returns the value which will automatically be assigned to the flag if none of the sources has
+// provided a none-empty value.
+//
+// Remember that this is different to Default values in which none of the sources provides any value.
+// For example the presence of --boolean or -b will be enough to set the value of a BoolFlag type to true.
+func (f *BoolFlag) EmptyValue() string {
+	return "true"
 }
 
 // Key returns the current key of the flag.

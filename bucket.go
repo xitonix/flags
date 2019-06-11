@@ -100,13 +100,13 @@ func (b *Bucket) Parse() {
 		b.opts.Terminator.Terminate(core.SuccessExitCode)
 		return
 	}
-
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
 		b.opts.Logger.Print(err)
 		b.opts.Terminator.Terminate(core.FailureExitCode)
 		return
 	}
+
 	for _, f := range b.flags {
 		for _, src := range b.sources {
 			var (
@@ -130,6 +130,10 @@ func (b *Bucket) Parse() {
 			if !found {
 				f.ResetToDefault()
 				continue
+			}
+
+			if p, ok := f.(core.EmptyValueProvider); ok && found && internal.IsEmpty(value) {
+				value = p.EmptyValue()
 			}
 
 			err := f.Set(value)

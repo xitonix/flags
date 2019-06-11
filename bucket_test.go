@@ -1435,6 +1435,378 @@ func TestBucket_Int32P(t *testing.T) {
 	}
 }
 
+func TestBucket_Int16(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int16("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Int16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
+	}
+}
+
+func TestBucket_Int16P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int16P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Int16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
+	}
+}
+
+func TestBucket_Int8(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int8("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Int8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
+	}
+}
+
+func TestBucket_Int8P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Int8P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Int8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
+	}
+}
+
+func TestBucket_UInt(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UIntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &UIntFlag{}, f)
+	}
+}
+
+func TestBucket_UIntP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UIntP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UIntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &UIntFlag{}, f)
+	}
+}
+
+func TestBucket_UInt64(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt64("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
+	}
+}
+
+func TestBucket_UInt64P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt64P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
+	}
+}
+
+func TestBucket_UInt32(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt32("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt32Flag{}, f)
+	}
+}
+
+func TestBucket_UInt32P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt32P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt32Flag{}, f)
+	}
+}
+
+func TestBucket_UInt16(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt16("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
+	}
+}
+
+func TestBucket_UInt16P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt16P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
+	}
+}
+
+func TestBucket_UInt8(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt8("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt8Flag{}, f)
+	}
+}
+
+func TestBucket_UInt8P(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UInt8P("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UInt8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &UInt8Flag{}, f)
+	}
+}
+
+func TestBucket_Bool(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Bool("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestBucket_BoolP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.BoolP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestBucket_Parse_Bool(t *testing.T) {
+	testCases := []struct {
+		title         string
+		expectedValue bool
+		defaultValue  bool
+		setDefault    bool
+		args          []string
+		flag          *BoolFlag
+		key           string
+		keyValue      string
+	}{
+		{
+			title:         "long name has been provided",
+			flag:          Bool("boolean", "usage"),
+			args:          []string{"--boolean"},
+			expectedValue: true,
+		},
+		{
+			title:         "short name has been provided",
+			flag:          BoolP("boolean", "usage", "b"),
+			args:          []string{"-b"},
+			expectedValue: true,
+		},
+		{
+			title:         "both short and long names are provided",
+			flag:          BoolP("boolean", "usage", "b"),
+			args:          []string{"-b", "--boolean"},
+			expectedValue: true,
+		},
+		{
+			title:         "long name with explicit boolean value has been provided no equal sign",
+			flag:          Bool("boolean", "usage"),
+			args:          []string{"--boolean", "false"},
+			expectedValue: false,
+		},
+		{
+			title:         "long name with explicit boolean value has been provided with equal sign",
+			flag:          Bool("boolean", "usage"),
+			args:          []string{"--boolean=false"},
+			expectedValue: false,
+		},
+		{
+			title:         "long name with explicit integer value has been provided no equal sign",
+			flag:          Bool("boolean", "usage"),
+			args:          []string{"--boolean", "0"},
+			expectedValue: false,
+		},
+		{
+			title:         "long name with explicit integer value has been provided with equal sign",
+			flag:          Bool("boolean", "usage"),
+			args:          []string{"--boolean=0"},
+			expectedValue: false,
+		},
+
+		{
+			title:         "short name with explicit boolean value has been provided no equal sign",
+			flag:          BoolP("boolean", "usage", "b"),
+			args:          []string{"-b", "false"},
+			expectedValue: false,
+		},
+		{
+			title:         "short name with explicit boolean value has been provided with equal sign",
+			flag:          BoolP("boolean", "usage", "b"),
+			args:          []string{"-b=false"},
+			expectedValue: false,
+		},
+		{
+			title:         "short name with explicit integer value has been provided no equal sign",
+			flag:          BoolP("boolean", "usage", "b"),
+			args:          []string{"-b", "0"},
+			expectedValue: false,
+		},
+		{
+			title:         "short name with explicit integer value has been provided with equal sign",
+			flag:          BoolP("boolean", "usage", "b"),
+			args:          []string{"-b=0"},
+			expectedValue: false,
+		},
+		{
+			title:         "with true default value",
+			flag:          BoolP("boolean", "usage", "b"),
+			setDefault:    true,
+			defaultValue:  true,
+			expectedValue: true,
+		},
+		{
+			title:         "with false default value",
+			flag:          BoolP("boolean", "usage", "b"),
+			setDefault:    true,
+			defaultValue:  false,
+			expectedValue: false,
+		},
+		{
+			title:         "no default value",
+			flag:          BoolP("boolean", "usage", "b"),
+			setDefault:    false,
+			expectedValue: false,
+		},
+		{
+			title:         "empty key has been provided",
+			flag:          Bool("boolean", "usage"),
+			key:           "BOOLEAN_KEY",
+			expectedValue: true,
+		},
+		{
+			title:         "none empty key with true value has been provided",
+			flag:          Bool("boolean", "usage"),
+			key:           "BOOLEAN_KEY",
+			keyValue:      "true",
+			expectedValue: true,
+		},
+		{
+			title:         "none empty key with false value has been provided",
+			flag:          Bool("boolean", "usage"),
+			key:           "BOOLEAN_KEY",
+			keyValue:      "false",
+			expectedValue: false,
+		},
+		{
+			title:         "none empty key with true numeric value has been provided",
+			flag:          Bool("boolean", "usage"),
+			key:           "BOOLEAN_KEY",
+			keyValue:      "1",
+			expectedValue: true,
+		},
+		{
+			title:         "none empty key with false numeric value has been provided",
+			flag:          Bool("boolean", "usage"),
+			key:           "BOOLEAN_KEY",
+			keyValue:      "0",
+			expectedValue: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			w := mocks.NewInMemoryWriter()
+			lg := &mocks.Logger{}
+			tm := &mocks.Terminator{}
+			env := mocks.NewEnvReader()
+			if tc.key != "" {
+				tc.flag = tc.flag.WithKey(tc.key)
+				env.Set(tc.key, tc.keyValue)
+			}
+			bucket := newBucket(tc.args, env,
+				config.WithHelpWriter(w),
+				config.WithLogger(lg),
+				config.WithTerminator(tm))
+
+			if tc.setDefault {
+				tc.flag = tc.flag.WithDefault(tc.defaultValue)
+			}
+
+			bucket.flags = []core.Flag{tc.flag}
+
+			bucket.Parse()
+
+			if tc.flag.Get() != tc.expectedValue {
+				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.Get())
+			}
+		})
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

@@ -545,6 +545,19 @@ func TestGlobalFloat32(t *testing.T) {
 	}
 }
 
+func TestGlobalFloat32P(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Float32P("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*Float32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
+	}
+}
+
 func TestGlobalCounter(t *testing.T) {
 	DefaultBucket = NewBucket()
 	CounterP("long", "c", "usage")
@@ -558,15 +571,21 @@ func TestGlobalCounter(t *testing.T) {
 	}
 }
 
-func TestGlobalFloat32P(t *testing.T) {
+func TestGlobalVerbosityP(t *testing.T) {
 	DefaultBucket = NewBucket()
-	Float32P("long", "s", "usage")
+	VerbosityP("usage")
 	actual := len(DefaultBucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
+	if _, ok := f.(*CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	}
+	if f.LongName() != "verbose" {
+		t.Errorf("Expected Long Name: verbose, Actual %s", f.LongName())
+	}
+	if f.ShortName() != "v" {
+		t.Errorf("Expected Short Name: v, Actual %s", f.ShortName())
 	}
 }

@@ -115,23 +115,22 @@ func (b *Bucket) Parse() {
 				value string
 			)
 
-			argSource, isArgs := src.(*argSource)
+			argSrc, isArgs := src.(*argSource)
 
 			if isArgs {
 				value, found = src.Read("--" + f.LongName())
 				if !found {
 					value, found = src.Read("-" + f.ShortName())
 				}
-
 				if !found || internal.IsEmpty(value) {
 					if repeatable, isRepeatable := f.(core.Repeatable); isRepeatable {
-						val := repeatable.Multiplier()
-						count, ok := argSource.getCounter(f.ShortName())
-						if ok {
-							val *= count
+						count := argSrc.getNumberOfRepeats(f)
+						if count > 0 {
+							// Either the short form or the long form has been
+							// provided at least once
+							value = strconv.Itoa(count * repeatable.Once())
+							found = true
 						}
-						value = strconv.FormatUint(val, 10)
-						found = true
 					}
 				}
 			}
@@ -446,7 +445,7 @@ func (b *Bucket) Float32P(longName, usage, shortName string) *Float32Flag {
 
 // CounterP adds a new counter flag with a short name to the bucket.
 //
-// The value of a counter flag can be increased by repeating the short form.
+// The value of a counter flag can be increased by repeating the short or the long form.
 // For example the presence of -vv command line argument will set the value of the counter to 2.
 //
 // Long names will be automatically converted to lowercase by the library (ie. verbosity).
@@ -455,6 +454,15 @@ func (b *Bucket) CounterP(longName, usage, shortName string) *CounterFlag {
 	f := newCounter(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
+}
+
+// VerbosityP is an alias for CounterP("verbose", usage, "v").
+//
+// The value of the verbosity flag can be increased by repeating the short or the long form.
+// For example the presence of -vv command line argument will set the verbosity level to 2.
+// Having '--verbose -v', '--verbose --verbose' or '-v -v' would have the same effect.
+func (b *Bucket) VerbosityP(usage string) *CounterFlag {
+	return b.CounterP("verbose", usage, "v")
 }
 
 func (b *Bucket) help() error {

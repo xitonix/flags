@@ -15,9 +15,9 @@ import (
 // For example the presence of -vv command line argument will set the value of the counter to 2.
 type CounterFlag struct {
 	key                 *data.Key
-	defaultValue, value uint8
+	defaultValue, value int
 	hasDefault          bool
-	ptr                 *uint8
+	ptr                 *int
 	long, short         string
 	usage               string
 	isSet               bool
@@ -26,7 +26,7 @@ type CounterFlag struct {
 }
 
 func newCounter(name, usage, short string) *CounterFlag {
-	ptr := new(uint8)
+	ptr := new(int)
 	return &CounterFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
@@ -87,12 +87,12 @@ func (f *CounterFlag) IsSet() bool {
 // Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
-func (f *CounterFlag) Var() *uint8 {
+func (f *CounterFlag) Var() *int {
 	return f.ptr
 }
 
 // Get returns the current value of the flag.
-func (f *CounterFlag) Get() uint8 {
+func (f *CounterFlag) Get() int {
 	return f.value
 }
 
@@ -110,7 +110,7 @@ func (f *CounterFlag) WithKey(keyID string) *CounterFlag {
 // WithDefault sets the default value of the flag.
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
-func (f *CounterFlag) WithDefault(defaultValue uint8) *CounterFlag {
+func (f *CounterFlag) WithDefault(defaultValue int) *CounterFlag {
 	f.defaultValue = defaultValue
 	f.hasDefault = true
 	return f
@@ -145,11 +145,11 @@ func (f *CounterFlag) Set(value string) error {
 	if len(value) == 0 {
 		value = "0"
 	}
-	v, err := strconv.ParseUint(value, 10, 8)
+	v, err := strconv.Atoi(value)
 	if err != nil {
 		return fmt.Errorf("%s is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
-	f.set(uint8(v))
+	f.set(v)
 	f.isSet = true
 	return nil
 }
@@ -186,12 +186,20 @@ func (f *CounterFlag) Key() *data.Key {
 	return f.key
 }
 
-// TODO: Document me
-func (f *CounterFlag) Multiplier() uint64 {
+// Once defines the weight of each repeat of the associated names (long/short) in setting the final value via command
+// line arguments.
+//
+// Example,
+//
+// counter := CounterP("count", "usage","c")
+//
+// providing '-ccc' as command line argument will set the final value of the flag to 3.
+// '--count -cc', '--count --count --count' or '-c --count --count' would result in the same final value.
+func (f *CounterFlag) Once() int {
 	return 1
 }
 
-func (f *CounterFlag) set(value uint8) {
+func (f *CounterFlag) set(value int) {
 	f.value = value
 	*f.ptr = value
 }

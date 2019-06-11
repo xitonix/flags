@@ -3,11 +3,13 @@ package flags
 import (
 	"fmt"
 	"strings"
+
+	"go.xitonix.io/flags/core"
 )
 
 type argSource struct {
 	arguments map[string]string
-	counters  map[string]uint64
+	repeats   map[string]int
 }
 
 // creates a new command line argument parser and returns true if one of the arguments is
@@ -15,7 +17,7 @@ type argSource struct {
 func newArgSource(args []string) (*argSource, bool) {
 	src := &argSource{
 		arguments: make(map[string]string),
-		counters:  make(map[string]uint64),
+		repeats:   make(map[string]int),
 	}
 	if len(args) == 0 {
 		return src, false
@@ -38,9 +40,7 @@ func newArgSource(args []string) (*argSource, bool) {
 			keys := processKey(parts[0])
 			for i, k := range keys {
 				src.arguments[k] = ""
-				if isShort(k) {
-					src.counters[k]++
-				}
+				src.repeats[k]++
 				if i == len(keys)-1 {
 					src.arguments[k] = strings.Join(parts[1:], "=")
 				}
@@ -53,9 +53,7 @@ func newArgSource(args []string) (*argSource, bool) {
 			keys := processKey(arg)
 			for i, k := range keys {
 				src.arguments[k] = ""
-				if isShort(k) {
-					src.counters[k]++
-				}
+				src.repeats[k]++
 				if i == len(keys)-1 {
 					prevKey = k
 				}
@@ -68,13 +66,12 @@ func newArgSource(args []string) (*argSource, bool) {
 		// argument won't be a key anymore
 		src.arguments[prevKey] = arg
 		prevKey = ""
-
 	}
 	return src, isHelpRequested
 }
 
 func processKey(arg string) []string {
-	isShort := isShort(arg)
+	isShort := !strings.HasPrefix(arg, "--")
 	if !isShort {
 		return []string{arg}
 	}
@@ -88,13 +85,8 @@ func processKey(arg string) []string {
 	return args
 }
 
-func isShort(arg string) bool {
-	return !strings.HasPrefix(arg, "--")
-}
-
-func (a *argSource) getCounter(short string) (uint64, bool) {
-	c, ok := a.counters["-"+short]
-	return c, ok
+func (a *argSource) getNumberOfRepeats(f core.Flag) int {
+	return a.repeats["-"+f.ShortName()] + a.repeats["--"+f.LongName()]
 }
 
 func (a *argSource) Read(key string) (string, bool) {

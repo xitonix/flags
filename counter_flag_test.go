@@ -127,6 +127,10 @@ func TestCounterP(t *testing.T) {
 			if f.Var() == nil {
 				t.Error("The initial flag variable should not be nil")
 			}
+
+			if f.Once() != 1 {
+				t.Errorf("Once(), Expected 1, Actual: %d", f.Once())
+			}
 		})
 	}
 }
@@ -180,8 +184,8 @@ func TestCounterFlag_WithKey(t *testing.T) {
 func TestCounterFlag_WithDefault(t *testing.T) {
 	testCases := []struct {
 		title                string
-		defaultValue         uint8
-		expectedDefaultValue uint8
+		defaultValue         int
+		expectedDefaultValue int
 	}{
 		{
 			title:                "zero default value",
@@ -194,9 +198,14 @@ func TestCounterFlag_WithDefault(t *testing.T) {
 			expectedDefaultValue: 100,
 		},
 		{
-			title:                "max uint8",
-			defaultValue:         math.MaxUint8,
-			expectedDefaultValue: math.MaxUint8,
+			title:                "max int",
+			defaultValue:         math.MaxInt64,
+			expectedDefaultValue: math.MaxInt64,
+		},
+		{
+			title:                "min int",
+			defaultValue:         math.MinInt64,
+			expectedDefaultValue: math.MinInt64,
 		},
 	}
 
@@ -271,7 +280,7 @@ func TestCounterFlag_Set(t *testing.T) {
 	testCases := []struct {
 		title         string
 		value         string
-		expectedValue uint8
+		expectedValue int
 		expectedError string
 	}{
 		{
@@ -300,9 +309,14 @@ func TestCounterFlag_Set(t *testing.T) {
 			expectedValue: 0,
 		},
 		{
-			title:         "max uint8",
-			value:         fmt.Sprintf("%d", uint8(math.MaxUint8)),
-			expectedValue: math.MaxUint8,
+			title:         "max int",
+			value:         fmt.Sprintf("%d", int(math.MaxInt64)),
+			expectedValue: math.MaxInt64,
+		},
+		{
+			title:         "min int",
+			value:         fmt.Sprintf("%d", int(math.MinInt64)),
+			expectedValue: math.MinInt64,
 		},
 	}
 
@@ -330,9 +344,9 @@ func TestCounterFlag_ResetToDefault(t *testing.T) {
 	testCases := []struct {
 		title                   string
 		value                   string
-		expectedValue           uint8
-		defaultValue            uint8
-		expectedAfterResetValue uint8
+		expectedValue           int
+		defaultValue            int
+		expectedAfterResetValue int
 		expectedError           string
 		setDefault              bool
 	}{

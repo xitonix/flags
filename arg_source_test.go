@@ -1,6 +1,10 @@
 package flags
 
-import "testing"
+import (
+	"testing"
+
+	"go.xitonix.io/flags/mocks"
+)
 
 func TestArgSource_Read(t *testing.T) {
 	type entry struct {
@@ -717,6 +721,18 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 3,
 		},
 		{
+			title: "chained repeated short forms",
+			in:    []string{"-cc", "-c"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
 			title: "long form with value and no equal sign followed by chained short forms",
 			in:    []string{"--long", "value", "-ab"},
 			expected: []entry{
@@ -738,6 +754,54 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			},
 			expectedCount: 3,
 		},
+		{
+			title: "last value of the repeated long forms overrides the previous values",
+			in:    []string{"--long", "--long=10", "--long", "1000"},
+			expected: []entry{
+				{
+					key:   "--long",
+					value: "1000",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			title: "last value of the repeated short forms overrides the previous values",
+			in:    []string{"-s", "-s=10", "-s", "1000"},
+			expected: []entry{
+				{
+					key:   "-s",
+					value: "1000",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			title: "the value of the last repeated short form overrides the previous values without equal sign",
+			in:    []string{"-sss", "10"},
+			expected: []entry{
+				{
+					key:   "-s",
+					value: "10",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			title: "the value of the last repeated short form overrides the previous values with equal sign",
+			in:    []string{"-sss=10"},
+			expected: []entry{
+				{
+					key:   "-s",
+					value: "10",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -754,6 +818,91 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 				if tc.expectedCount != len(src.arguments) {
 					t.Errorf("Count, Expected: %v, Actual: %v", tc.expectedCount, len(src.arguments))
 				}
+			}
+		})
+	}
+}
+
+func TestRepeatCounts(t *testing.T) {
+	testCases := []struct {
+		title         string
+		flag          *mocks.Flag
+		in            []string
+		expectedCount int
+	}{
+		{
+			title:         "nil input",
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 0,
+		},
+		{
+			title:         "empty input",
+			in:            []string{},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 0,
+		},
+		{
+			title:         "single short form",
+			in:            []string{"-s"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 1,
+		},
+		{
+			title:         "repeated short form",
+			in:            []string{"-sss"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 3,
+		},
+		{
+			title:         "repeated short form mixed with other short arguments",
+			in:            []string{"-ssa", "-xys", "-s"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 4,
+		},
+		{
+			title:         "single long form",
+			in:            []string{"--long"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 1,
+		},
+		{
+			title:         "repeated long form",
+			in:            []string{"--long", "--long"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 2,
+		},
+		{
+			title:         "long and short forms",
+			in:            []string{"--long", "-s"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 2,
+		},
+		{
+			title:         "long and short forms repeated",
+			in:            []string{"-s", "--long", "-ss", "--long", "-s"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 6,
+		},
+		{
+			title:         "repeated long form with value",
+			in:            []string{"--long", "v1", "--long=v2"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 2,
+		},
+		{
+			title:         "repeated short form with value",
+			in:            []string{"-ss", "v1", "-s=v2"},
+			flag:          mocks.NewFlag("long", "s"),
+			expectedCount: 3,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			src, _ := newArgSource(tc.in)
+			actual := src.getNumberOfRepeats(tc.flag)
+			if actual != tc.expectedCount {
+				t.Errorf("Expected Number of Repeats: %v, Actual: %v", tc.expectedCount, actual)
 			}
 		})
 	}

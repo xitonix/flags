@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"go.xitonix.io/flags"
 )
 

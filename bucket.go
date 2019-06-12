@@ -492,6 +492,27 @@ func (b *Bucket) DurationP(longName, usage, shortName string) *DurationFlag {
 	return f
 }
 
+// Time adds a new Time flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. birthday).
+//
+// A time string must be in `2006-01-02T15:04:05.999999999Z07:00` format
+func (b *Bucket) Time(longName, usage string) *TimeFlag {
+	return b.TimeP(longName, usage, "")
+}
+
+// TimeP adds a new Time flag with a short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. birthday).
+// A valid short name is a case sensitive single character string (ie. b or B).
+//
+// A time string must be in `2006-01-02T15:04:05.999999999Z07:00` format
+func (b *Bucket) TimeP(longName, usage, shortName string) *TimeFlag {
+	f := newTime(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

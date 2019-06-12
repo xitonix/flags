@@ -386,3 +386,22 @@ func Duration(longName, usage string) *DurationFlag {
 func DurationP(longName, usage, shortName string) *DurationFlag {
 	return DefaultBucket.DurationP(longName, usage, shortName)
 }
+
+// Time adds a new Time flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. birthday).
+//
+// A time string must be in `2006-01-02T15:04:05.999999999Z07:00` format
+func Time(longName, usage string) *TimeFlag {
+	return DefaultBucket.Time(longName, usage)
+}
+
+// TimeP adds a new Time flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (ie. birthday).
+// A valid short name is a case sensitive single character string (ie. b or B).
+//
+// A time string must be in `2006-01-02T15:04:05.999999999Z07:00` format
+func TimeP(longName, usage, shortName string) *TimeFlag {
+	return DefaultBucket.TimeP(longName, usage, shortName)
+}

@@ -14,7 +14,7 @@ TODOs:
     * ~~bool~~
 * Special flags
     * ~~Duration~~
-    * Time
+    * ~~Time~~
     * []string
     * map[string]string
     * ~~Counters (with Verbose alias)~~

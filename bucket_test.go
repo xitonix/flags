@@ -2051,6 +2051,25 @@ func TestBucket_Parse_Counter(t *testing.T) {
 	}
 }
 
+func TestBucket_VerbosityP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.VerbosityP("usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	}
+	if f.LongName() != "verbose" {
+		t.Errorf("Expected Long Name: verbose, Actual %s", f.LongName())
+	}
+	if f.ShortName() != "v" {
+		t.Errorf("Expected Short Name: v, Actual %s", f.ShortName())
+	}
+}
+
 func TestBucket_Duration(t *testing.T) {
 	bucket := NewBucket()
 	bucket.Duration("long", "usage")
@@ -2077,22 +2096,29 @@ func TestBucket_DurationP(t *testing.T) {
 	}
 }
 
-func TestBucket_VerbosityP(t *testing.T) {
+func TestBucket_Time(t *testing.T) {
 	bucket := NewBucket()
-	bucket.VerbosityP("usage")
+	bucket.Time("long", "usage")
 	actual := len(bucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*CounterFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	if _, ok := f.(*TimeFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &TimeFlag{}, f)
 	}
-	if f.LongName() != "verbose" {
-		t.Errorf("Expected Long Name: verbose, Actual %s", f.LongName())
+}
+
+func TestBucket_TimeP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.TimeP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
-	if f.ShortName() != "v" {
-		t.Errorf("Expected Short Name: v, Actual %s", f.ShortName())
+	f := bucket.Flags()[0]
+	if _, ok := f.(*TimeFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &TimeFlag{}, f)
 	}
 }
 

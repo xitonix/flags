@@ -720,6 +720,10 @@ func TestTimeFlag_Set(t *testing.T) {
 				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
 			}
 
+			if !f.IsSet() {
+				t.Error("IsSet(), Expected value: true, Actual: false")
+			}
+
 			if !tc.expectedValue.Equal(*fVar) {
 				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
 			}

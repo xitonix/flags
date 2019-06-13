@@ -463,3 +463,18 @@ func Time(longName, usage string) *TimeFlag {
 func TimeP(longName, usage, shortName string) *TimeFlag {
 	return DefaultBucket.TimeP(longName, usage, shortName)
 }
+
+// StringSlice adds a new string slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. week-days).
+func StringSlice(longName, usage string) *StringSliceFlag {
+	return DefaultBucket.StringSlice(longName, usage)
+}
+
+// StringSliceP adds a new string slice flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. week-days).
+// A valid short name is a case sensitive single character string (i.e. w or W).
+func StringSliceP(longName, usage, shortName string) *StringSliceFlag {
+	return DefaultBucket.StringSliceP(longName, usage, shortName)
+}

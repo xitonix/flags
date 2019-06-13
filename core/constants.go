@@ -4,3 +4,7 @@ const (
 	SuccessExitCode = 0
 	FailureExitCode = 1
 )
+
+const (
+	DefaultSliceDelimiter = ","
+)

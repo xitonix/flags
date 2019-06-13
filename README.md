@@ -16,6 +16,10 @@ TODOs:
     * ~~Duration~~
     * ~~Time~~
     * []string
+    * []int
+    * []float64
+    * []Duration
+    * []Time
     * map[string]string
     * ~~Counters (with Verbose alias)~~
 * ~~Hidden flags~~

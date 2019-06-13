@@ -571,6 +571,23 @@ func (b *Bucket) TimeP(longName, usage, shortName string) *TimeFlag {
 	return f
 }
 
+// StringSlice adds a new string slice flag to the bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. week-days)
+func (b *Bucket) StringSlice(longName, usage string) *StringSliceFlag {
+	return b.StringSliceP(longName, usage, "")
+}
+
+// StringSliceP adds a new string slice flag with a short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. week-days).
+// A valid short name is a case sensitive single character string (i.e. w or W).
+func (b *Bucket) StringSliceP(longName, usage, shortName string) *StringSliceFlag {
+	f := newStringSlice(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

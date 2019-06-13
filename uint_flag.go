@@ -35,7 +35,7 @@ func newUInt(name, usage, short string) *UIntFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UIntFlag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *UIntFlag) Type() string {
 	return "uint"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *UIntFlag) ShortName() string {
@@ -136,7 +136,7 @@ func (f *UIntFlag) MarkAsDeprecated() *UIntFlag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *UIntFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {

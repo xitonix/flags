@@ -35,7 +35,7 @@ func newUInt8(name, usage, short string) *UInt8Flag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UInt8Flag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *UInt8Flag) Type() string {
 	return "uint8"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *UInt8Flag) ShortName() string {
@@ -136,7 +136,7 @@ func (f *UInt8Flag) MarkAsDeprecated() *UInt8Flag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *UInt8Flag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {

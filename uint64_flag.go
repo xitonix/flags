@@ -35,7 +35,7 @@ func newUInt64(name, usage, short string) *UInt64Flag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UInt64Flag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *UInt64Flag) Type() string {
 	return "uint64"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *UInt64Flag) ShortName() string {
@@ -136,7 +136,7 @@ func (f *UInt64Flag) MarkAsDeprecated() *UInt64Flag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *UInt64Flag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {

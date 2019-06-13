@@ -35,7 +35,7 @@ func newInt16(name, usage, short string) *Int16Flag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *Int16Flag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *Int16Flag) Type() string {
 	return "int16"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *Int16Flag) ShortName() string {
@@ -136,7 +136,7 @@ func (f *Int16Flag) MarkAsDeprecated() *Int16Flag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *Int16Flag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {

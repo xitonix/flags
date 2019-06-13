@@ -35,7 +35,7 @@ func newBool(name, usage, short string) *BoolFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *BoolFlag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *BoolFlag) Type() string {
 	return "bool"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *BoolFlag) ShortName() string {
@@ -136,7 +136,7 @@ func (f *BoolFlag) MarkAsDeprecated() *BoolFlag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *BoolFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {

@@ -35,7 +35,7 @@ func newTime(name, usage, short string) *TimeFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *TimeFlag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *TimeFlag) Type() string {
 	return "time"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *TimeFlag) ShortName() string {
@@ -136,21 +136,91 @@ func (f *TimeFlag) MarkAsDeprecated() *TimeFlag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 //
-// A time string must be in `2006-01-02T15:04:05.999999999Z07:00` format
+// Supported layouts are:
+//
+// Full Date and Time
+//
+//  dd-MM-yyyyThh:mm:SS[.999999999] (24 hrs, i.e. 27-08-1980T14:22:20)
+//  dd-MM-yyyy hh:mm:SS[.999999999] (24 hrs, i.e. 27-08-1980 14:22:20)
+//  dd-MM-yyyyThh:mm:SS[.999999999] AM/PM (i.e. 27-08-1980T02:22:20 PM)
+//  dd-MM-yyyy hh:mm:SS[.999999999] AM/PM (i.e. 27-08-1980 02:22:20 PM)
+//
+//  dd/MM/yyyyThh:mm:SS[.999999999] (24 hrs)
+//  dd/MM/yyyy hh:mm:SS[.999999999] (24 hrs)
+//  dd/MM/yyyyThh:mm:SS[.999999999] AM/PM
+//  dd/MM/yyyy hh:mm:SS[.999999999] AM/PM
+//
+// Date
+//
+//  dd-MM-yyyy
+//  dd/MM/yyyy
+//
+// Timestamp
+//
+//  MMM dd hh:mm:ss[.999999999] (24 hrs, i.e. Aug 27 14:22:20)
+//  MMM dd hh:mm:ss[.999999999] AM/PM (i.e. Aug 27 02:22:20 PM)
+//
+// Time
+//
+//  hh:mm:ss[.999999999] (24 hrs, i.e. 14:22:20)
+//  hh:mm:ss[.999999999] AM/PM (i.e. 02:22:20 PM)
+//
+// [.999999999] is the optional nano second component for time.
 func (f *TimeFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
-		value = time.Time{}.Format(time.RFC3339Nano)
+		value = time.Time{}.Format("02-01-2006T15:4:5")
 	}
-	t, err := time.Parse(time.RFC3339Nano, value)
-	if err != nil {
-		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
+	layouts := []string{
+		"02-01-2006T15:4:5",
+		"02-01-2006T3:4:5PM",
+		"02-01-2006T3:4:5 PM",
+		"02-01-2006T3:4:5pm",
+		"02-01-2006T3:4:5 pm",
+
+		"02-01-2006 15:4:5",
+		"02-01-2006 3:4:5PM",
+		"02-01-2006 3:4:5 PM",
+		"02-01-2006 3:4:5pm",
+		"02-01-2006 3:4:5 pm",
+
+		"02/01/2006T15:4:5",
+		"02/01/2006T3:4:5PM",
+		"02/01/2006T3:4:5 PM",
+		"02/01/2006T3:4:5pm",
+		"02/01/2006T3:4:5 pm",
+
+		"02/01/2006 15:4:5",
+		"02/01/2006 3:4:5PM",
+		"02/01/2006 3:4:5 PM",
+		"02/01/2006 3:4:5pm",
+		"02/01/2006 3:4:5 pm",
+
+		"02-01-2006",
+		"02/01/2006",
+
+		"Jan _2 15:4:5",
+		"Jan _2 3:4:5PM",
+		"Jan _2 3:4:5 PM",
+		"Jan _2 3:4:5pm",
+		"Jan _2 3:4:5 pm",
+
+		"15:4:5",
+		"3:4:5 PM",
+		"3:4:5 pm",
+		"3:4:5PM",
+		"3:4:5pm",
 	}
-	f.set(t)
-	f.isSet = true
-	return nil
+	for _, layout := range layouts {
+		if t, err := time.Parse(layout, value); err == nil {
+			f.set(t)
+			f.isSet = true
+			return nil
+		}
+	}
+	return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
 }
 
 // ResetToDefault resets the value of this flag to default if a default value is specified.

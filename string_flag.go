@@ -29,9 +29,9 @@ func newString(name, usage, short string) *StringFlag {
 	}
 }
 
-// LongName returns the long name of the flag (ie. --file).
+// LongName returns the long name of the flag (i.e. --file).
 //
-// Long name is case insensitive and always lower case (ie. --file-path).
+// Long name is case insensitive and always lower case (i.e. --file-path).
 func (f *StringFlag) LongName() string {
 	return f.long
 }
@@ -55,7 +55,7 @@ func (f *StringFlag) Type() string {
 	return "string"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *StringFlag) ShortName() string {
@@ -132,7 +132,7 @@ func (f *StringFlag) MarkAsDeprecated() *StringFlag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *StringFlag) Set(value string) error {
 	f.set(value)
 	f.isSet = true

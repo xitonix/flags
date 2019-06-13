@@ -35,7 +35,7 @@ func newDuration(name, usage, short string) *DurationFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --port-number).
+// Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *DurationFlag) LongName() string {
 	return f.long
 }
@@ -59,7 +59,7 @@ func (f *DurationFlag) Type() string {
 	return "duration"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *DurationFlag) ShortName() string {
@@ -136,7 +136,7 @@ func (f *DurationFlag) MarkAsDeprecated() *DurationFlag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 //
 // A duration string is a possibly signed sequence of
 // decimal numbers, each with optional fraction and a unit suffix,

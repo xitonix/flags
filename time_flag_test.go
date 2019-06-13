@@ -371,19 +371,321 @@ func TestTimeFlag_Set(t *testing.T) {
 		},
 		{
 			title:         "value with whitespace",
-			value:         "  2020-01-15T00:00:00.000000000Z00:00  ",
-			expectedValue: time.Date(2020, 1, 15, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			title:         "value with no whitespaces",
-			value:         "2020-01-15",
-			expectedValue: time.Date(2020, 1, 15, 0, 0, 0, 0, time.UTC),
+			value:         "  27/08/1980  ",
+			expectedValue: time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			title:         "invalid value",
 			value:         "abc",
 			expectedError: "is not a valid time value",
 			expectedValue: zero,
+		},
+		// Full date and time with dash
+		{
+			title:         "full dash separated date and time with 24 hrs format and time indicator",
+			value:         "27-08-1980T14:22:20",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and time with 24 hrs format and no time indicator",
+			value:         "27-08-1980 14:22:20",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 24 hrs format and time indicator",
+			value:         "27-08-1980T14:22:20.027081980",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 24 hrs format and no time indicator",
+			value:         "27-08-1980 14:22:20.027081980",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full dash separated date and time with 12 hrs upper case spaced and time indicator",
+			value:         "27-08-1980T02:22:20 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and time with 12 hrs upper case spaced and no time indicator",
+			value:         "27-08-1980 02:22:20 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs upper case spaced and time indicator",
+			value:         "27-08-1980T02:22:20.027081980 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs upper case spaced and no time indicator",
+			value:         "27-08-1980 02:22:20.027081980 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full dash separated date and time with 12 hrs upper case no space and time indicator",
+			value:         "27-08-1980T02:22:20PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and time with 12 hrs upper case no space and no time indicator",
+			value:         "27-08-1980 02:22:20PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs upper case no space and time indicator",
+			value:         "27-08-1980T02:22:20.027081980PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs upper case no space and no time indicator",
+			value:         "27-08-1980 02:22:20.027081980PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full dash separated date and time with 12 hrs lower case spaced and time indicator",
+			value:         "27-08-1980T02:22:20 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and time with 12 hrs lower case spaced and no time indicator",
+			value:         "27-08-1980 02:22:20 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs lower case spaced and time indicator",
+			value:         "27-08-1980T02:22:20.027081980 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs lower case spaced and no time indicator",
+			value:         "27-08-1980 02:22:20.027081980 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full dash separated date and time with 12 hrs lower case no space and time indicator",
+			value:         "27-08-1980T02:22:20pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and time with 12 hrs lower case no space and no time indicator",
+			value:         "27-08-1980 02:22:20pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs lower case no space and time indicator",
+			value:         "27-08-1980T02:22:20.027081980pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full dash separated date and nano time with 12 hrs lower case no space and no time indicator",
+			value:         "27-08-1980 02:22:20.027081980pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		// Full date and time with forward slash
+		{
+			title:         "full forward slash separated date and time with 24 hrs format and time indicator",
+			value:         "27/08/1980T14:22:20",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and time with 24 hrs format and no time indicator",
+			value:         "27/08/1980 14:22:20",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 24 hrs format and time indicator",
+			value:         "27/08/1980T14:22:20.027081980",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 24 hrs format and no time indicator",
+			value:         "27/08/1980 14:22:20.027081980",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full forward slash separated date and time with 12 hrs upper case spaced and time indicator",
+			value:         "27/08/1980T02:22:20 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and time with 12 hrs upper case spaced and no time indicator",
+			value:         "27/08/1980 02:22:20 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs upper case spaced and time indicator",
+			value:         "27/08/1980T02:22:20.027081980 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs upper case spaced and no time indicator",
+			value:         "27/08/1980 02:22:20.027081980 PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and time with 12 hrs upper case no space and time indicator",
+			value:         "27/08/1980T02:22:20PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and time with 12 hrs upper case no space and no time indicator",
+			value:         "27/08/1980 02:22:20PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs upper case no space and time indicator",
+			value:         "27/08/1980T02:22:20.027081980PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs upper case no space and no time indicator",
+			value:         "27/08/1980 02:22:20.027081980PM",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full forward slash separated date and time with 12 hrs lower case spaced and time indicator",
+			value:         "27/08/1980T02:22:20 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and time with 12 hrs lower case spaced and no time indicator",
+			value:         "27/08/1980 02:22:20 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs lower case spaced and time indicator",
+			value:         "27/08/1980T02:22:20.027081980 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs lower case spaced and no time indicator",
+			value:         "27/08/1980 02:22:20.027081980 pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+
+		{
+			title:         "full forward slash separated date and time with 12 hrs lower case no space and time indicator",
+			value:         "27/08/1980T02:22:20pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and time with 12 hrs lower case no space and no time indicator",
+			value:         "27/08/1980 02:22:20pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs lower case no space and time indicator",
+			value:         "27/08/1980T02:22:20.027081980pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		{
+			title:         "full forward slash separated date and nano time with 12 hrs lower case no space and no time indicator",
+			value:         "27/08/1980 02:22:20.027081980pm",
+			expectedValue: time.Date(1980, 8, 27, 14, 22, 20, 27081980, time.UTC),
+		},
+		// Date Only
+		{
+			title:         "full forward slash separated date only",
+			value:         "27/08/1980",
+			expectedValue: time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+		},
+		{
+			title:         "full dash separated date only",
+			value:         "27-08-1980",
+			expectedValue: time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+		},
+		// Timestamp
+		{
+			title:         "time stamp with 24 hrs time format and no nano seconds",
+			value:         "Aug 27 14:22:20",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "lowercase time stamp with 24 hrs time format and no nano seconds",
+			value:         "aug 27 14:22:20",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "time stamp with 24 hrs time format and nano seconds",
+			value:         "Aug 27 14:22:20.000000876",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 876, time.UTC),
+		},
+		{
+			title:         "time stamp with uppercase 12 hrs spaced time format and nano seconds",
+			value:         "Aug 27 02:22:20.000000876 PM",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 876, time.UTC),
+		},
+		{
+			title:         "time stamp with uppercase 12 hrs time format and nano seconds",
+			value:         "Aug 27 02:22:20.000000876PM",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 876, time.UTC),
+		},
+		{
+			title:         "time stamp with lowercase 12 hrs spaced time format and nano seconds",
+			value:         "Aug 27 02:22:20.000000876 pm",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 876, time.UTC),
+		},
+		{
+			title:         "time stamp with lowercase 12 hrs time format and nano seconds",
+			value:         "Aug 27 02:22:20.000000876pm",
+			expectedValue: time.Date(0, 8, 27, 14, 22, 20, 876, time.UTC),
+		},
+		// Time only
+		{
+			title:         "24 hrs time format and no nano seconds",
+			value:         "14:22:20",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "24 hrs time format and nano seconds",
+			value:         "14:22:20.999999999",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title:         "spaced 12 hrs uppercase time format and no nano seconds",
+			value:         "02:22:20 PM",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "spaced 12 hrs uppercase time format and nano seconds",
+			value:         "02:22:20.999999999 PM",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title:         "12 hrs uppercase time format and no nano seconds",
+			value:         "02:22:20PM",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "12 hrs uppercase time format and nano seconds",
+			value:         "02:22:20.999999999PM",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title:         "spaced 12 hrs lowercase time format and no nano seconds",
+			value:         "02:22:20 pm",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "spaced 12 hrs lowercase time format and nano seconds",
+			value:         "02:22:20.999999999 pm",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title:         "12 hrs lowercase time format and no nano seconds",
+			value:         "02:22:20pm",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title:         "12 hrs lowercase time format and nano seconds",
+			value:         "02:22:20.999999999pm",
+			expectedValue: time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
 		},
 	}
 
@@ -396,11 +698,11 @@ func TestTimeFlag_Set(t *testing.T) {
 				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
 			}
 			actual := f.Get()
-			if actual != tc.expectedValue {
+			if !actual.Equal(tc.expectedValue) {
 				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
 			}
 
-			if *fVar != tc.expectedValue {
+			if !tc.expectedValue.Equal(*fVar) {
 				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
 			}
 		})
@@ -422,25 +724,25 @@ func TestTimeFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset without defining the default value",
-			value:                   "2020-01-15",
-			expectedValue:           time.Date(2020, 1, 15, 0, 0, 0, 0, time.UTC),
-			expectedAfterResetValue: time.Date(2020, 1, 15, 0, 0, 0, 0, time.UTC),
+			value:                   "27/08/1980T14:22:20.999999999",
+			expectedValue:           time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedAfterResetValue: time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
 			setDefault:              false,
 		},
 		{
 			title:                   "reset to zero default value",
-			value:                   "2020-01-15",
-			expectedValue:           time.Date(2020, 1, 15, 0, 0, 0, 0, time.UTC),
+			value:                   "27/08/1980T14:22:20.999999999",
+			expectedValue:           time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
 			defaultValue:            time.Time{},
 			expectedAfterResetValue: time.Time{},
 			setDefault:              true,
 		},
 		{
 			title:                   "reset to non-zero default value",
-			value:                   "2020-01-15",
-			expectedValue:           time.Date(2020, 1, 15, 0, 0, 0, 0, time.UTC),
-			defaultValue:            time.Date(2020, 10, 17, 0, 0, 0, 0, time.UTC),
-			expectedAfterResetValue: time.Date(2020, 10, 17, 0, 0, 0, 0, time.UTC),
+			value:                   "27/08/1980T14:22:20.999999999",
+			expectedValue:           time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			defaultValue:            time.Date(2020, 10, 17, 8, 9, 10, 11, time.UTC),
+			expectedAfterResetValue: time.Date(2020, 10, 17, 8, 9, 10, 11, time.UTC),
 			setDefault:              true,
 		},
 	}
@@ -457,11 +759,11 @@ func TestTimeFlag_ResetToDefault(t *testing.T) {
 				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
 			}
 			actual := f.Get()
-			if actual != tc.expectedValue {
+			if !actual.Equal(tc.expectedValue) {
 				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
 			}
 
-			if *fVar != tc.expectedValue {
+			if !tc.expectedValue.Equal(*fVar) {
 				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
 			}
 
@@ -472,11 +774,11 @@ func TestTimeFlag_ResetToDefault(t *testing.T) {
 			}
 
 			actual = f.Get()
-			if actual != tc.expectedAfterResetValue {
+			if !actual.Equal(tc.expectedAfterResetValue) {
 				t.Errorf("Expected value after reset: %v, Actual: %v", tc.expectedAfterResetValue, actual)
 			}
 
-			if *fVar != tc.expectedAfterResetValue {
+			if !tc.expectedAfterResetValue.Equal(*fVar) {
 				t.Errorf("Expected flag variable after reset: %v, Actual: %v", tc.expectedAfterResetValue, *fVar)
 			}
 		})

@@ -48,7 +48,7 @@ type Options struct {
 	DeprecationMark string
 	// DefaultValueFormatString is the flags' Default value format string within the bucket (default: config.DefaultValueFormatStringDefault).
 	//
-	// The string is used to format the default value in help output (ie. [Default: %v])
+	// The string is used to format the default value in help output (i.e. [Default: %v])
 	DefaultValueFormatString string
 }
 
@@ -94,7 +94,7 @@ func WithDeprecationMark(deprecationMark string) Option {
 
 // WithDefaultValueFormatString sets the bucket's Default value format string.
 //
-// The string is used to format the default value in the help output (ie. [Default: %v])
+// The string is used to format the default value in the help output (i.e. [Default: %v])
 func WithDefaultValueFormatString(defaultValueFormatString string) Option {
 	return func(options *Options) {
 		options.DefaultValueFormatString = defaultValueFormatString

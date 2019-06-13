@@ -38,7 +38,7 @@ func newCounter(name, usage, short string) *CounterFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (ie. --verbosity).
+// Long name is case insensitive and always lower case (i.e. --verbosity).
 func (f *CounterFlag) LongName() string {
 	return f.long
 }
@@ -62,7 +62,7 @@ func (f *CounterFlag) Type() string {
 	return "counter"
 }
 
-// ShortName returns the flag's short name (ie. -p).
+// ShortName returns the flag's short name (i.e. -p).
 //
 // Short name is a single case sensitive character.
 func (f *CounterFlag) ShortName() string {
@@ -139,7 +139,7 @@ func (f *CounterFlag) MarkAsDeprecated() *CounterFlag {
 	return f
 }
 
-// Set sets the value of this flag.
+// Set sets the flag value.
 func (f *CounterFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {

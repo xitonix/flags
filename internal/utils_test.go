@@ -17,7 +17,7 @@ func TestIsEmpty(t *testing.T) {
 			expected: true,
 		},
 		{
-			title:    "whitespace input",
+			title:    "white space input",
 			input:    "   ",
 			expected: true,
 		},
@@ -27,7 +27,7 @@ func TestIsEmpty(t *testing.T) {
 			expected: true,
 		},
 		{
-			title:    "tab and whitespace input",
+			title:    "tab and white space input",
 			input:    "  \t   \t    ",
 			expected: true,
 		},
@@ -58,7 +58,7 @@ func TestSanitiseFlagID(t *testing.T) {
 			title: "empty input",
 		},
 		{
-			title: "whitespace input",
+			title: "white space input",
 			input: "   ",
 		},
 		{
@@ -108,7 +108,7 @@ func TestSanitiseLongName(t *testing.T) {
 			title: "empty input",
 		},
 		{
-			title: "whitespace input",
+			title: "white space input",
 			input: "   ",
 		},
 		{
@@ -168,7 +168,7 @@ func TestSanitiseShortName(t *testing.T) {
 			title: "empty input",
 		},
 		{
-			title: "whitespace input",
+			title: "white space input",
 			input: "   ",
 		},
 		{

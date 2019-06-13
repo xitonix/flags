@@ -31,21 +31,21 @@ func TestDuration(t *testing.T) {
 			expectedUsage: " I must Stay Unchanged   ",
 		},
 		{
-			title:         "whitespace usage",
+			title:         "white space usage",
 			long:          "long",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "long name with whitespace",
+			title:         "long name with white space",
 			long:          "   long  ",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "whitespace long name will be validated at parse time",
+			title:         "white space long name will be validated at parse time",
 			long:          "   ",
 			expectedLong:  "",
 			usage:         "",
@@ -125,21 +125,21 @@ func TestDurationP(t *testing.T) {
 			expectedUsage: " I must Stay Unchanged   ",
 		},
 		{
-			title:         "whitespace usage",
+			title:         "white space usage",
 			long:          "long",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "long name with whitespace",
+			title:         "long name with white space",
 			long:          "   long  ",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "whitespace long name will be validated at parse time",
+			title:         "white space long name will be validated at parse time",
 			long:          "   ",
 			expectedLong:  "",
 			usage:         "",
@@ -160,14 +160,14 @@ func TestDurationP(t *testing.T) {
 			expectedShort: "Short",
 		},
 		{
-			title:         "long and short names with whitespace",
+			title:         "long and short names with white space",
 			long:          " Long ",
 			expectedLong:  "long",
 			short:         " Short ",
 			expectedShort: "Short",
 		},
 		{
-			title:         "whitespace long and short names will be validated at parse time",
+			title:         "white space long and short names will be validated at parse time",
 			long:          "  ",
 			expectedLong:  "",
 			short:         "    ",
@@ -230,7 +230,7 @@ func TestDurationFlag_WithKey(t *testing.T) {
 			title: "empty key",
 		},
 		{
-			title: "whitespace key",
+			title: "white space key",
 			key:   "      ",
 		},
 		{
@@ -239,14 +239,14 @@ func TestDurationFlag_WithKey(t *testing.T) {
 			expectedKey: "KEY",
 		},
 		{
-			title:       "key with whitespace",
+			title:       "key with white space",
 			key:         "   key   ",
 			expectedKey: "KEY",
 		},
 		{
-			title:       "key with whitespace in the middle",
-			key:         "   key with whitespace  ",
-			expectedKey: "KEY_WITH_WHITESPACE",
+			title:       "key with white space in the middle",
+			key:         "   key with white space  ",
+			expectedKey: "KEY_WITH_WHITE_SPACE",
 		},
 		{
 			title:       "key with hyphens",
@@ -368,12 +368,12 @@ func TestDurationFlag_Set(t *testing.T) {
 			expectedValue: 0,
 		},
 		{
-			title:         "whitespace value",
+			title:         "white space value",
 			value:         "   ",
 			expectedValue: 0,
 		},
 		{
-			title:         "value with whitespace",
+			title:         "value with white space",
 			value:         "  10s  ",
 			expectedValue: 10 * time.Second,
 		},
@@ -384,7 +384,7 @@ func TestDurationFlag_Set(t *testing.T) {
 			expectedValue: 0,
 		},
 		{
-			title:         "value with no whitespaces",
+			title:         "value with no white space",
 			value:         "2s",
 			expectedValue: 2 * time.Second,
 		},

@@ -21,7 +21,7 @@ func TestMemorySource_Add(t *testing.T) {
 			expectedOk:    false,
 		},
 		{
-			title:         "whitespace key",
+			title:         "white space key",
 			key:           "    ",
 			value:         "value",
 			expectedValue: "",
@@ -35,7 +35,7 @@ func TestMemorySource_Add(t *testing.T) {
 			expectedOk:    true,
 		},
 		{
-			title:         "whitespace value",
+			title:         "white space value",
 			key:           "key",
 			value:         "    ",
 			expectedValue: "    ",
@@ -85,7 +85,7 @@ func TestMemorySource_AddRange(t *testing.T) {
 			},
 		},
 		{
-			title: "whitespace key",
+			title: "white space key",
 			kv:    map[string]string{"   ": "value"},
 			expected: map[string]struct {
 				ok    bool
@@ -111,7 +111,7 @@ func TestMemorySource_AddRange(t *testing.T) {
 			},
 		},
 		{
-			title: "whitespace value",
+			title: "white space value",
 			kv:    map[string]string{"key": "  "},
 			expected: map[string]struct {
 				ok    bool

@@ -30,21 +30,21 @@ func TestString(t *testing.T) {
 			expectedUsage: " I must Stay Unchanged   ",
 		},
 		{
-			title:         "whitespace usage",
+			title:         "white space usage",
 			long:          "long",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "long name with whitespace",
+			title:         "long name with white space",
 			long:          "   long  ",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "whitespace long name will be validated at parse time",
+			title:         "white space long name will be validated at parse time",
 			long:          "   ",
 			expectedLong:  "",
 			usage:         "",
@@ -124,21 +124,21 @@ func TestStringP(t *testing.T) {
 			expectedUsage: " I must Stay Unchanged   ",
 		},
 		{
-			title:         "whitespace usage",
+			title:         "white space usage",
 			long:          "long",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "long name with whitespace",
+			title:         "long name with white space",
 			long:          "   long  ",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "whitespace long name will be validated at parse time",
+			title:         "white space long name will be validated at parse time",
 			long:          "   ",
 			expectedLong:  "",
 			usage:         "",
@@ -159,14 +159,14 @@ func TestStringP(t *testing.T) {
 			expectedShort: "Short",
 		},
 		{
-			title:         "long and short names with whitespace",
+			title:         "long and short names with white space",
 			long:          " Long ",
 			expectedLong:  "long",
 			short:         " Short ",
 			expectedShort: "Short",
 		},
 		{
-			title:         "whitespace long and short names will be validated at parse time",
+			title:         "white space long and short names will be validated at parse time",
 			long:          "  ",
 			expectedLong:  "",
 			short:         "    ",
@@ -229,7 +229,7 @@ func TestStringFlag_WithKey(t *testing.T) {
 			title: "empty key",
 		},
 		{
-			title: "whitespace key",
+			title: "white space key",
 			key:   "      ",
 		},
 		{
@@ -238,14 +238,14 @@ func TestStringFlag_WithKey(t *testing.T) {
 			expectedKey: "KEY",
 		},
 		{
-			title:       "key with whitespace",
+			title:       "key with white space",
 			key:         "   key   ",
 			expectedKey: "KEY",
 		},
 		{
-			title:       "key with whitespace in the middle",
-			key:         "   key with whitespace  ",
-			expectedKey: "KEY_WITH_WHITESPACE",
+			title:       "key with white space in the middle",
+			key:         "   key with white space  ",
+			expectedKey: "KEY_WITH_WHITE_SPACE",
 		},
 		{
 			title:       "key with hyphens",
@@ -276,12 +276,12 @@ func TestStringFlag_WithDefault(t *testing.T) {
 			expectedDefaultValue: "''",
 		},
 		{
-			title:                "whitespace default value",
+			title:                "white space default value",
 			defaultValue:         "    ",
 			expectedDefaultValue: "    ",
 		},
 		{
-			title:                "default value with whitespace",
+			title:                "default value with white space",
 			defaultValue:         "  default value  ",
 			expectedDefaultValue: "  default value  ",
 		},
@@ -369,15 +369,15 @@ func TestStringFlag_Set(t *testing.T) {
 			title: "no value",
 		},
 		{
-			title: "whitespace value",
+			title: "white space value",
 			value: "   ",
 		},
 		{
-			title: "value with whitespace",
+			title: "value with white space",
 			value: "  value  ",
 		},
 		{
-			title: "value with no whitespaces",
+			title: "value with no white space",
 			value: "value",
 		},
 	}
@@ -428,7 +428,7 @@ func TestStringFlag_ResetToDefault(t *testing.T) {
 			setDefault:              true,
 		},
 		{
-			title:                   "reset to whitespace default value",
+			title:                   "reset to white space default value",
 			value:                   "value",
 			defaultValue:            "  ",
 			expectedAfterResetValue: "  ",

@@ -9,7 +9,38 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// TimeFlag represents a Time flag
+// TimeFlag represents a time flag.
+//
+// Supported layouts for time flags are:
+//
+// Full Date and Time
+//
+//  dd-MM-yyyyThh:mm:SS[.999999999] (24 hrs, i.e. 27-08-1980T14:22:20)
+//  dd-MM-yyyy hh:mm:SS[.999999999] (24 hrs, i.e. 27-08-1980 14:22:20)
+//  dd-MM-yyyyThh:mm:SS[.999999999] AM/PM (i.e. 27-08-1980T02:22:20 PM)
+//  dd-MM-yyyy hh:mm:SS[.999999999] AM/PM (i.e. 27-08-1980 02:22:20 PM)
+//
+//  dd/MM/yyyyThh:mm:SS[.999999999] (24 hrs)
+//  dd/MM/yyyy hh:mm:SS[.999999999] (24 hrs)
+//  dd/MM/yyyyThh:mm:SS[.999999999] AM/PM
+//  dd/MM/yyyy hh:mm:SS[.999999999] AM/PM
+//
+// Date
+//
+//  dd-MM-yyyy
+//  dd/MM/yyyy
+//
+// Timestamp
+//
+//  MMM dd hh:mm:ss[.999999999] (24 hrs, i.e. Aug 27 14:22:20)
+//  MMM dd hh:mm:ss[.999999999] AM/PM (i.e. Aug 27 02:22:20 PM)
+//
+// Time
+//
+//  hh:mm:ss[.999999999] (24 hrs, i.e. 14:22:20)
+//  hh:mm:ss[.999999999] AM/PM (i.e. 02:22:20 PM)
+//
+// [.999999999] is the optional nano second component for time.
 type TimeFlag struct {
 	key                 *data.Key
 	defaultValue, value time.Time

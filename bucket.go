@@ -574,6 +574,16 @@ func (b *Bucket) TimeP(longName, usage, shortName string) *TimeFlag {
 // StringSlice adds a new string slice flag to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. week-days)
+//
+// The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
+// For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
 func (b *Bucket) StringSlice(longName, usage string) *StringSliceFlag {
 	return b.StringSliceP(longName, usage, "")
 }
@@ -582,6 +592,16 @@ func (b *Bucket) StringSlice(longName, usage string) *StringSliceFlag {
 //
 // Long names will be automatically converted to lowercase by the library (i.e. week-days).
 // A valid short name is a case sensitive single character string (i.e. w or W).
+//
+// The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
+// For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
 func (b *Bucket) StringSliceP(longName, usage, shortName string) *StringSliceFlag {
 	f := newStringSlice(longName, usage, shortName)
 	b.flags = append(b.flags, f)

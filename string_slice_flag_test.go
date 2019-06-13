@@ -30,21 +30,21 @@ func TestStringSlice(t *testing.T) {
 			expectedUsage: " I must Stay Unchanged   ",
 		},
 		{
-			title:         "whitespace usage",
+			title:         "white space usage",
 			long:          "long",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "long name with whitespace",
+			title:         "long name with white space",
 			long:          "   long  ",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "whitespace long name will be validated at parse time",
+			title:         "white space long name will be validated at parse time",
 			long:          "   ",
 			expectedLong:  "",
 			usage:         "",
@@ -124,21 +124,21 @@ func TestStringSliceP(t *testing.T) {
 			expectedUsage: " I must Stay Unchanged   ",
 		},
 		{
-			title:         "whitespace usage",
+			title:         "white space usage",
 			long:          "long",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "long name with whitespace",
+			title:         "long name with white space",
 			long:          "   long  ",
 			expectedLong:  "long",
 			usage:         "     ",
 			expectedUsage: "     ",
 		},
 		{
-			title:         "whitespace long name will be validated at parse time",
+			title:         "white space long name will be validated at parse time",
 			long:          "   ",
 			expectedLong:  "",
 			usage:         "",
@@ -159,14 +159,14 @@ func TestStringSliceP(t *testing.T) {
 			expectedShort: "Short",
 		},
 		{
-			title:         "long and short names with whitespace",
+			title:         "long and short names with white space",
 			long:          " Long ",
 			expectedLong:  "long",
 			short:         " Short ",
 			expectedShort: "Short",
 		},
 		{
-			title:         "whitespace long and short names will be validated at parse time",
+			title:         "white space long and short names will be validated at parse time",
 			long:          "  ",
 			expectedLong:  "",
 			short:         "    ",
@@ -229,7 +229,7 @@ func TestStringSliceFlag_WithKey(t *testing.T) {
 			title: "empty key",
 		},
 		{
-			title: "whitespace key",
+			title: "white space key",
 			key:   "      ",
 		},
 		{
@@ -238,14 +238,14 @@ func TestStringSliceFlag_WithKey(t *testing.T) {
 			expectedKey: "KEY",
 		},
 		{
-			title:       "key with whitespace",
+			title:       "key with white space",
 			key:         "   key   ",
 			expectedKey: "KEY",
 		},
 		{
-			title:       "key with whitespace in the middle",
-			key:         "   key with whitespace  ",
-			expectedKey: "KEY_WITH_WHITESPACE",
+			title:       "key with white space in the middle",
+			key:         "   key with white space  ",
+			expectedKey: "KEY_WITH_WHITE_SPACE",
 		},
 		{
 			title:       "key with hyphens",
@@ -363,19 +363,19 @@ func TestStringSliceFlag_WithDelimiter(t *testing.T) {
 			expectedValue: []string{"abc", "xyz"},
 		},
 		{
-			title:         "whitespace delimiter with white spaced input",
+			title:         "white space delimiter with white spaced input",
 			value:         "abc xyz",
 			delimiter:     " ",
 			expectedValue: []string{"abc", "xyz"},
 		},
 		{
-			title:         "whitespace delimiter with none white spaced input",
+			title:         "white space delimiter with none white spaced input",
 			value:         "abc,xyz",
 			delimiter:     " ",
 			expectedValue: []string{"abc,xyz"},
 		},
 		{
-			title:         "none whitespace delimiter",
+			title:         "none white space delimiter",
 			value:         "abc|xyz",
 			delimiter:     "|",
 			expectedValue: []string{"abc", "xyz"},
@@ -385,6 +385,62 @@ func TestStringSliceFlag_WithDelimiter(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.StringSlice("long", "usage").WithDelimiter(tc.delimiter)
+			fVar := f.Var()
+			err := f.Set(tc.value)
+			if err != nil {
+				t.Errorf("Did not expect to receive an error, but received %s", err)
+			}
+			actual := f.Get()
+			if !test.StringsEqual(actual, tc.expectedValue) {
+				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
+			}
+
+			if !test.StringsEqual(actual, tc.expectedValue) {
+				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
+			}
+		})
+	}
+}
+
+func TestStringSliceFlag_WithTrimming(t *testing.T) {
+	testCases := []struct {
+		title          string
+		value          string
+		enableTrimming bool
+		expectedValue  []string
+	}{
+		{
+			title:          "without trimming",
+			enableTrimming: false,
+			value:          "  abc  ,  xyz  ",
+			expectedValue:  []string{"  abc  ", "  xyz  "},
+		},
+		{
+			title:          "with trimming",
+			enableTrimming: true,
+			value:          "  abc  ,  xyz  ",
+			expectedValue:  []string{"abc", "xyz"},
+		},
+		{
+			title:          "only white space input without trimming",
+			enableTrimming: false,
+			value:          "   ",
+			expectedValue:  []string{"   "},
+		},
+		{
+			title:          "only white space input with trimming",
+			enableTrimming: true,
+			value:          "   ,   ",
+			expectedValue:  []string{"", ""},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.StringSlice("long", "usage")
+			if tc.enableTrimming {
+				f = f.WithTrimming()
+			}
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			if err != nil {
@@ -415,27 +471,27 @@ func TestStringSliceFlag_Set(t *testing.T) {
 			expectedValue: empty,
 		},
 		{
-			title:         "whitespace value",
+			title:         "white space value",
 			value:         "   ",
 			expectedValue: []string{"   "},
 		},
 		{
-			title:         "value with whitespace",
+			title:         "value with white space",
 			value:         "  abc  ",
 			expectedValue: []string{"  abc  "},
 		},
 		{
-			title:         "value with no whitespaces",
+			title:         "value with no white space",
 			value:         "abc",
 			expectedValue: []string{"abc"},
 		},
 		{
-			title:         "comma separated value with no whitespace",
+			title:         "comma separated value with no white space",
 			value:         "abc,efg",
 			expectedValue: []string{"abc", "efg"},
 		},
 		{
-			title:         "comma separated value with whitespaces",
+			title:         "comma separated value with white space",
 			value:         " abc , efg ",
 			expectedValue: []string{" abc ", " efg "},
 		},

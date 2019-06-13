@@ -380,6 +380,24 @@ func TestTimeFlag_Set(t *testing.T) {
 			expectedError: "is not a valid time value",
 			expectedValue: zero,
 		},
+		{
+			title:         "12hr time format with 24hr time only value",
+			value:         "14:22:20AM",
+			expectedError: "is not a valid time value",
+			expectedValue: zero,
+		},
+		{
+			title:         "12hr time format with 24hr full date value",
+			value:         "27-08-1980T14:22:20 PM",
+			expectedError: "is not a valid time value",
+			expectedValue: zero,
+		},
+		{
+			title:         "12hr time format with 24hr timestamp value",
+			value:         "Aug 27 14:22:20 PM",
+			expectedError: "is not a valid time value",
+			expectedValue: zero,
+		},
 		// Full date and time with dash
 		{
 			title:         "full dash separated date and time with 24 hrs format and time indicator",

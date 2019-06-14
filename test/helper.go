@@ -1,6 +1,8 @@
 package test
 
-import "strings"
+import (
+	"strings"
+)
 
 func ErrorContains(err error, desired string) bool {
 	if err == nil {

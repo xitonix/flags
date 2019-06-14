@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"go.xitonix.io/flags"
-	"go.xitonix.io/flags/test"
 )
 
 func TestCounterP(t *testing.T) {
@@ -67,15 +66,15 @@ func TestCounterP(t *testing.T) {
 			title:         "uppercase long and short names",
 			long:          "Long",
 			expectedLong:  "long",
-			short:         "Short",
-			expectedShort: "Short",
+			short:         "S",
+			expectedShort: "S",
 		},
 		{
 			title:         "long and short names with white space",
 			long:          " Long ",
 			expectedLong:  "long",
-			short:         " Short ",
-			expectedShort: "Short",
+			short:         " S ",
+			expectedShort: "S",
 		},
 		{
 			title:         "white space long and short names will be validated at parse time",
@@ -89,44 +88,8 @@ func TestCounterP(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.CounterP(tc.long, tc.usage, tc.short)
-			if f.LongName() != tc.expectedLong {
-				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
-			}
-			if f.Usage() != tc.expectedUsage {
-				t.Errorf("Expected Usage: %s, Actual: %s", tc.expectedUsage, f.Usage())
-			}
-
-			if f.IsDeprecated() {
-				t.Error("The flag must not be marked as deprecated by default")
-			}
-
-			if f.IsHidden() {
-				t.Error("The flag must not be marked as hidden by default")
-			}
-
-			if f.IsSet() {
-				t.Error("The flag value must not be set initially")
-			}
-
-			if f.ShortName() != tc.expectedShort {
-				t.Errorf("The short name was expected to be %s but it was %s", tc.expectedShort, f.ShortName())
-			}
-
-			if f.Default() != nil {
-				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
-			}
-
-			if f.Type() != "counter" {
-				t.Errorf("The flag type was expected to be 'counter', but it was %s", f.Type())
-			}
-
-			if f.Get() != 0 {
-				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
-			}
-
-			if f.Var() == nil {
-				t.Error("The initial flag variable should not be nil")
-			}
+			checkFlagInitialState(t, f, "counter", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
+			checkFlagValues(t, 0, f.Get(), f.Var())
 
 			if f.Once() != 1 {
 				t.Errorf("Once(), Expected 1, Actual: %d", f.Once())
@@ -325,17 +288,7 @@ func TestCounterFlag_Set(t *testing.T) {
 			f := flags.CounterP("long", "usage", "s")
 			fVar := f.Var()
 			err := f.Set(tc.value)
-			if !test.ErrorContains(err, tc.expectedError) {
-				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
-			}
-			actual := f.Get()
-			if actual != tc.expectedValue {
-				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
-			}
-
-			if *fVar != tc.expectedValue {
-				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
-			}
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})
 	}
 }
@@ -386,17 +339,7 @@ func TestCounterFlag_ResetToDefault(t *testing.T) {
 			}
 			fVar := f.Var()
 			err := f.Set(tc.value)
-			if !test.ErrorContains(err, tc.expectedError) {
-				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
-			}
-			actual := f.Get()
-			if actual != tc.expectedValue {
-				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
-			}
-
-			if *fVar != tc.expectedValue {
-				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
-			}
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 
 			f.ResetToDefault()
 
@@ -404,14 +347,7 @@ func TestCounterFlag_ResetToDefault(t *testing.T) {
 				t.Error("IsSet() Expected: false, Actual: true")
 			}
 
-			actual = f.Get()
-			if actual != tc.expectedAfterResetValue {
-				t.Errorf("Expected value after reset: %v, Actual: %v", tc.expectedAfterResetValue, actual)
-			}
-
-			if *fVar != tc.expectedAfterResetValue {
-				t.Errorf("Expected flag variable after reset: %v, Actual: %v", tc.expectedAfterResetValue, *fVar)
-			}
+			checkFlagValues(t, tc.expectedAfterResetValue, f.Get(), fVar)
 		})
 	}
 }

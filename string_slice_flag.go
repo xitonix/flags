@@ -72,9 +72,9 @@ func (f *StringSliceFlag) Type() string {
 	return "[]string"
 }
 
-// ShortName returns the flag's short name (i.e. -p).
+// ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character.
+// Short name is a single case sensitive character (i.e. -P).
 func (f *StringSliceFlag) ShortName() string {
 	return f.short
 }

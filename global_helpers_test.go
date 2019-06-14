@@ -667,3 +667,29 @@ func TestGlobalStringSliceP(t *testing.T) {
 		t.Errorf("Expected %T, but received %T", &StringSliceFlag{}, f)
 	}
 }
+
+func TestGlobalIntSlice(t *testing.T) {
+	DefaultBucket = NewBucket()
+	IntSlice("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*IntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &IntSliceFlag{}, f)
+	}
+}
+
+func TestGlobalIntSliceP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	IntSliceP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*IntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &IntSliceFlag{}, f)
+	}
+}

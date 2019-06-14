@@ -59,9 +59,9 @@ func (f *UInt16Flag) Type() string {
 	return "uint16"
 }
 
-// ShortName returns the flag's short name (i.e. -p).
+// ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character.
+// Short name is a single case sensitive character (i.e. -P).
 func (f *UInt16Flag) ShortName() string {
 	return f.short
 }

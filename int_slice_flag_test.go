@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/test"
 )
 
-func TestStringSlice(t *testing.T) {
+func TestIntSlice(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long          string
@@ -55,7 +55,7 @@ func TestStringSlice(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice(tc.long, tc.usage)
+			f := flags.IntSlice(tc.long, tc.usage)
 			if f.LongName() != tc.expectedLong {
 				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
 			}
@@ -83,11 +83,11 @@ func TestStringSlice(t *testing.T) {
 				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
 			}
 
-			if f.Type() != "[]string" {
-				t.Errorf("The flag type was expected to be '[]string', but it was %s", f.Type())
+			if f.Type() != "[]int" {
+				t.Errorf("The flag type was expected to be '[]int', but it was %s", f.Type())
 			}
 
-			if !reflect.DeepEqual(f.Get(), []string{}) {
+			if !reflect.DeepEqual(f.Get(), []int{}) {
 				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
 			}
 
@@ -98,7 +98,7 @@ func TestStringSlice(t *testing.T) {
 	}
 }
 
-func TestStringSliceP(t *testing.T) {
+func TestIntSliceP(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -177,7 +177,7 @@ func TestStringSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSliceP(tc.long, tc.usage, tc.short)
+			f := flags.IntSliceP(tc.long, tc.usage, tc.short)
 			if f.LongName() != tc.expectedLong {
 				t.Errorf("Expected Long Name: %s, Actual: %s", tc.expectedLong, f.LongName())
 			}
@@ -205,11 +205,11 @@ func TestStringSliceP(t *testing.T) {
 				t.Errorf("The initial default value was expected to be nil, but it was %v", f.Default())
 			}
 
-			if f.Type() != "[]string" {
-				t.Errorf("The flag type was expected to be '[]string', but it was %s", f.Type())
+			if f.Type() != "[]int" {
+				t.Errorf("The flag type was expected to be '[]int', but it was %s", f.Type())
 			}
 
-			if !reflect.DeepEqual(f.Get(), []string{}) {
+			if !reflect.DeepEqual(f.Get(), []int{}) {
 				t.Errorf("The flag value was expected to be empty, but it was %v", f.Get())
 			}
 
@@ -220,7 +220,7 @@ func TestStringSliceP(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithKey(t *testing.T) {
+func TestIntSliceFlag_WithKey(t *testing.T) {
 	testCases := []struct {
 		title       string
 		key         string
@@ -257,7 +257,7 @@ func TestStringSliceFlag_WithKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage").WithKey(tc.key)
+			f := flags.IntSlice("long", "usage").WithKey(tc.key)
 			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
@@ -266,36 +266,36 @@ func TestStringSliceFlag_WithKey(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithDefault(t *testing.T) {
+func TestIntSliceFlag_WithDefault(t *testing.T) {
 	testCases := []struct {
 		title                string
-		defaultValue         []string
-		expectedDefaultValue []string
+		defaultValue         []int
+		expectedDefaultValue []int
 	}{
 		{
 			title:                "empty default value",
-			defaultValue:         []string{},
-			expectedDefaultValue: []string{},
+			defaultValue:         []int{},
+			expectedDefaultValue: []int{},
 		},
 		{
 			title:                "non empty default value",
-			defaultValue:         []string{"abc"},
-			expectedDefaultValue: []string{"abc"},
+			defaultValue:         []int{100},
+			expectedDefaultValue: []int{100},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage").WithDefault(tc.defaultValue)
+			f := flags.IntSlice("long", "usage").WithDefault(tc.defaultValue)
 			actual := f.Default()
-			if !reflect.DeepEqual(actual.([]string), tc.expectedDefaultValue) {
+			if !reflect.DeepEqual(actual.([]int), tc.expectedDefaultValue) {
 				t.Errorf("Expected Default Value: %v, Actual: %s", tc.expectedDefaultValue, actual)
 			}
 		})
 	}
 }
 
-func TestStringSliceFlag_Hide(t *testing.T) {
+func TestIntSliceFlag_Hide(t *testing.T) {
 	testCases := []struct {
 		title    string
 		isHidden bool
@@ -311,7 +311,7 @@ func TestStringSliceFlag_Hide(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.IntSlice("long", "usage")
 			if tc.isHidden {
 				f = f.Hide()
 			}
@@ -323,7 +323,7 @@ func TestStringSliceFlag_Hide(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_IsDeprecated(t *testing.T) {
+func TestIntSliceFlag_IsDeprecated(t *testing.T) {
 	testCases := []struct {
 		title        string
 		isDeprecated bool
@@ -339,7 +339,7 @@ func TestStringSliceFlag_IsDeprecated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.IntSlice("long", "usage")
 			if tc.isDeprecated {
 				f = f.MarkAsDeprecated()
 			}
@@ -351,41 +351,41 @@ func TestStringSliceFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithDelimiter(t *testing.T) {
+func TestIntSliceFlag_WithDelimiter(t *testing.T) {
 	testCases := []struct {
 		title         string
 		value         string
 		delimiter     string
-		expectedValue []string
+		expectedValue []int
 	}{
 		{
 			title:         "empty delimiter",
-			value:         "abc,xyz",
-			expectedValue: []string{"abc", "xyz"},
+			value:         "100,200",
+			expectedValue: []int{100, 200},
 		},
 		{
 			title:         "white space delimiter with white spaced input",
-			value:         "abc xyz",
+			value:         "100 200",
 			delimiter:     " ",
-			expectedValue: []string{"abc", "xyz"},
-		},
-		{
-			title:         "white space delimiter with none white spaced input",
-			value:         "abc,xyz",
-			delimiter:     " ",
-			expectedValue: []string{"abc,xyz"},
+			expectedValue: []int{100, 200},
 		},
 		{
 			title:         "none white space delimiter",
-			value:         "abc|xyz",
+			value:         "100|200",
 			delimiter:     "|",
-			expectedValue: []string{"abc", "xyz"},
+			expectedValue: []int{100, 200},
+		},
+		{
+			title:         "no delimited input",
+			value:         "100",
+			delimiter:     "|",
+			expectedValue: []int{100},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage").WithDelimiter(tc.delimiter)
+			f := flags.IntSlice("long", "usage").WithDelimiter(tc.delimiter)
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			if err != nil {
@@ -403,68 +403,13 @@ func TestStringSliceFlag_WithDelimiter(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithTrimming(t *testing.T) {
-	testCases := []struct {
-		title          string
-		value          string
-		enableTrimming bool
-		expectedValue  []string
-	}{
-		{
-			title:          "without trimming",
-			enableTrimming: false,
-			value:          "  abc  ,  xyz  ",
-			expectedValue:  []string{"  abc  ", "  xyz  "},
-		},
-		{
-			title:          "with trimming",
-			enableTrimming: true,
-			value:          "  abc  ,  xyz  ",
-			expectedValue:  []string{"abc", "xyz"},
-		},
-		{
-			title:          "only white space input without trimming",
-			enableTrimming: false,
-			value:          "   ",
-			expectedValue:  []string{"   "},
-		},
-		{
-			title:          "only white space input with trimming",
-			enableTrimming: true,
-			value:          "   ,   ",
-			expectedValue:  []string{"", ""},
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
-			if tc.enableTrimming {
-				f = f.WithTrimming()
-			}
-			fVar := f.Var()
-			err := f.Set(tc.value)
-			if err != nil {
-				t.Errorf("Did not expect to receive an error, but received %s", err)
-			}
-			actual := f.Get()
-			if !reflect.DeepEqual(actual, tc.expectedValue) {
-				t.Errorf("Expected value: %v, Actual: %v", tc.expectedValue, actual)
-			}
-
-			if !reflect.DeepEqual(actual, tc.expectedValue) {
-				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
-			}
-		})
-	}
-}
-
-func TestStringSliceFlag_Set(t *testing.T) {
-	empty := make([]string, 0)
+func TestIntSliceFlag_Set(t *testing.T) {
+	empty := make([]int, 0)
 	testCases := []struct {
 		title         string
 		value         string
-		expectedValue []string
+		expectedValue []int
+		expectedError string
 	}{
 		{
 			title:         "empty value",
@@ -474,37 +419,64 @@ func TestStringSliceFlag_Set(t *testing.T) {
 		{
 			title:         "white space value",
 			value:         "   ",
-			expectedValue: []string{"   "},
+			expectedValue: empty,
 		},
 		{
-			title:         "value with white space",
-			value:         "  abc  ",
-			expectedValue: []string{"  abc  "},
+			title:         "single value with white space",
+			value:         "  100  ",
+			expectedValue: []int{100},
 		},
 		{
-			title:         "value with no white space",
-			value:         "abc",
-			expectedValue: []string{"abc"},
+			title:         "single value with no white space",
+			value:         "100",
+			expectedValue: []int{100},
 		},
 		{
 			title:         "comma separated value with no white space",
-			value:         "abc,efg",
-			expectedValue: []string{"abc", "efg"},
+			value:         "100,200",
+			expectedValue: []int{100, 200},
 		},
 		{
 			title:         "comma separated value with white space",
-			value:         " abc , efg ",
-			expectedValue: []string{" abc ", " efg "},
+			value:         " 100 , 200 ",
+			expectedValue: []int{100, 200},
+		},
+		{
+			title:         "comma separated empty string",
+			value:         ",,",
+			expectedValue: empty,
+		},
+		{
+			title:         "comma separated white space string",
+			value:         " , , ",
+			expectedValue: empty,
+		},
+		{
+			title:         "invalid value",
+			value:         " invalid ",
+			expectedError: "is not a valid []int value",
+			expectedValue: empty,
+		},
+		{
+			title:         "partially invalid value",
+			value:         "100,invalid,200",
+			expectedError: "is not a valid []int value",
+			expectedValue: empty,
+		},
+		{
+			title:         "comma separated negative values",
+			value:         "-100,-200,0,100,200",
+			expectedValue: []int{-100, -200, 0, 100, 200},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.IntSlice("long", "usage")
 			fVar := f.Var()
 			err := f.Set(tc.value)
-			if err != nil {
-				t.Errorf("Did not expect to receive an error, but received %s", err)
+			if !test.ErrorContains(err, tc.expectedError) {
+				t.Errorf("Expected to receive an error with '%s', but received %s", tc.expectedError, err)
 			}
 			actual := f.Get()
 			if !reflect.DeepEqual(actual, tc.expectedValue) {
@@ -518,30 +490,30 @@ func TestStringSliceFlag_Set(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_ResetToDefault(t *testing.T) {
-	empty := make([]string, 0)
+func TestIntSliceFlag_ResetToDefault(t *testing.T) {
+	empty := make([]int, 0)
 	testCases := []struct {
 		title                   string
 		value                   string
-		expectedValue           []string
-		defaultValue            []string
-		expectedAfterResetValue []string
+		expectedValue           []int
+		defaultValue            []int
+		expectedAfterResetValue []int
 		expectedError           string
 		setDefault              bool
 		expectedIsSetAfterReset bool
 	}{
 		{
 			title:                   "reset without defining the default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
-			expectedAfterResetValue: []string{"abc"},
+			value:                   "100",
+			expectedValue:           []int{100},
+			expectedAfterResetValue: []int{100},
 			setDefault:              false,
 			expectedIsSetAfterReset: true,
 		},
 		{
 			title:                   "reset to empty default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
+			value:                   "100",
+			expectedValue:           []int{100},
 			defaultValue:            empty,
 			expectedAfterResetValue: empty,
 			setDefault:              true,
@@ -549,19 +521,19 @@ func TestStringSliceFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset to nil default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
+			value:                   "100",
+			expectedValue:           []int{100},
 			defaultValue:            nil,
-			expectedAfterResetValue: []string{"abc"},
+			expectedAfterResetValue: []int{100},
 			setDefault:              true,
 			expectedIsSetAfterReset: true,
 		},
 		{
 			title:                   "reset to non-empty default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
-			defaultValue:            []string{"abc", "efg"},
-			expectedAfterResetValue: []string{"abc", "efg"},
+			value:                   "100",
+			expectedValue:           []int{100},
+			defaultValue:            []int{100, 200},
+			expectedAfterResetValue: []int{100, 200},
 			setDefault:              true,
 			expectedIsSetAfterReset: false,
 		},
@@ -569,7 +541,7 @@ func TestStringSliceFlag_ResetToDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.IntSlice("long", "usage")
 			if tc.setDefault {
 				f = f.WithDefault(tc.defaultValue)
 			}

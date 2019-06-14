@@ -9,7 +9,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Float64Flag represents an float64 flag
+// Float64Flag represents a float64 flag
 type Float64Flag struct {
 	key                 *data.Key
 	defaultValue, value float64
@@ -59,9 +59,9 @@ func (f *Float64Flag) Type() string {
 	return "float64"
 }
 
-// ShortName returns the flag's short name (i.e. -p).
+// ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character.
+// Short name is a single case sensitive character (i.e. -P).
 func (f *Float64Flag) ShortName() string {
 	return f.short
 }

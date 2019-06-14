@@ -9,7 +9,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Float32Flag represents an float32 flag
+// Float32Flag represents a float32 flag
 type Float32Flag struct {
 	key                 *data.Key
 	defaultValue, value float32
@@ -59,9 +59,9 @@ func (f *Float32Flag) Type() string {
 	return "float32"
 }
 
-// ShortName returns the flag's short name (i.e. -p).
+// ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character.
+// Short name is a single case sensitive character (i.e. -P).
 func (f *Float32Flag) ShortName() string {
 	return f.short
 }

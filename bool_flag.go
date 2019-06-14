@@ -9,7 +9,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// BoolFlag represents an bool flag
+// BoolFlag represents a boolean flag.
 type BoolFlag struct {
 	key                 *data.Key
 	defaultValue, value bool
@@ -59,9 +59,9 @@ func (f *BoolFlag) Type() string {
 	return "bool"
 }
 
-// ShortName returns the flag's short name (i.e. -p).
+// ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character.
+// Short name is a single case sensitive character (i.e. -P).
 func (f *BoolFlag) ShortName() string {
 	return f.short
 }

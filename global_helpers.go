@@ -498,3 +498,28 @@ func StringSlice(longName, usage string) *StringSliceFlag {
 func StringSliceP(longName, usage, shortName string) *StringSliceFlag {
 	return DefaultBucket.StringSliceP(longName, usage, shortName)
 }
+
+// IntSlice adds a new string slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+//
+// The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// For example --numbers "1,8,70,60,100"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func IntSlice(longName, usage string) *IntSliceFlag {
+	return DefaultBucket.IntSlice(longName, usage)
+}
+
+// IntSliceP adds a new string slice flag with a short name to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+// A valid short name is a case sensitive single character string (i.e. n or N).
+//
+// The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// For example --numbers "1,8,70,60,100"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func IntSliceP(longName, usage, shortName string) *IntSliceFlag {
+	return DefaultBucket.IntSliceP(longName, usage, shortName)
+}

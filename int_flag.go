@@ -59,9 +59,9 @@ func (f *IntFlag) Type() string {
 	return "int"
 }
 
-// ShortName returns the flag's short name (i.e. -p).
+// ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character.
+// Short name is a single case sensitive character (i.e. -P).
 func (f *IntFlag) ShortName() string {
 	return f.short
 }

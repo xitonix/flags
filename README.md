@@ -15,8 +15,8 @@ TODOs:
 * Special flags
     * ~~Duration~~
     * ~~Time~~
-    * []string
-    * []int
+    * ~~[]string~~
+    * ~~[]int~~
     * []float64
     * []Duration
     * []Time

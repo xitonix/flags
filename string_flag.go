@@ -21,7 +21,7 @@ type StringFlag struct {
 	isHidden            bool
 	validate            func(in string) error
 	validM              map[string]interface{}
-	valid               []string
+	valid               string
 	ignoreCase          bool
 }
 
@@ -139,23 +139,39 @@ func (f *StringFlag) MarkAsDeprecated() *StringFlag {
 	return f
 }
 
-func (f *StringFlag) WithValidationFunc(validate func(in string) error) *StringFlag {
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *StringFlag) WithValidationCallback(validate func(in string) error) *StringFlag {
 	f.validate = validate
 	return f
 }
 
-func (f *StringFlag) WithValidRange(valid []string, ignoreCase bool) *StringFlag {
-	if len(valid) > 0 {
-		f.ignoreCase = ignoreCase
-		f.validM = make(map[string]interface{})
-		f.valid = valid
-		for _, v := range valid {
-			item := v
-			if ignoreCase {
-				item = strings.ToLower(v)
-			}
-			f.validM[item] = nil
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *StringFlag) WithValidRange(ignoreCase bool, valid ...string) *StringFlag {
+	if len(valid) == 0 {
+		return f
+	}
+	f.ignoreCase = ignoreCase
+	f.validM = make(map[string]interface{})
+	for i, v := range valid {
+		item := v
+		if ignoreCase {
+			item = strings.ToLower(v)
 		}
+		f.valid += v
+		if i == len(valid)-2 {
+			f.valid += " and "
+		} else {
+			f.valid += ", "
+		}
+		f.validM[item] = nil
 	}
 	return f
 }
@@ -169,13 +185,14 @@ func (f *StringFlag) Set(value string) error {
 		}
 	}
 
+	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		item := value
 		if f.ignoreCase {
 			item = strings.ToLower(item)
 		}
 		if _, ok := f.validM[item]; !ok {
-			return fmt.Errorf("'%s' is not an acceptable value for --%s. Valid values are: %s", value, f.long, strings.Join(f.valid, ","))
+			return fmt.Errorf("'%s' is not an acceptable value for --%s. Expected value(s): %s", value, f.long, f.valid[:len(f.valid)-2])
 		}
 	}
 	f.set(value)

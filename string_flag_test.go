@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"testing"
 
 	"go.xitonix.io/flags"
@@ -315,6 +316,132 @@ func TestStringFlag_Set(t *testing.T) {
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			checkFlag(t, f, err, tc.expectedError, tc.value, f.Get(), fVar)
+		})
+	}
+}
+
+func TestStringFlag_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     string
+		validationCB      func(in string) error
+		setValidationCB   bool
+		validationList    []string
+		setValidationList bool
+		ignoreCase        bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback",
+			setValidationCB: true,
+			value:           "value",
+			expectedValue:   "value",
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list",
+			setValidationList: true,
+			value:             "value",
+			expectedValue:     "value",
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "value",
+			expectedValue:     "value",
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list",
+			validationList:    make([]string, 0),
+			setValidationList: true,
+			value:             "value",
+			expectedValue:     "value",
+			expectedError:     "",
+		},
+		{
+			title:             "case sensitive validation list",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "green",
+			expectedError:     "'green' is not an acceptable value for --colours. Expected value(s): Green and Red",
+		},
+		{
+			title:             "case insensitive validation list",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        true,
+			setValidationList: true,
+			value:             "green",
+			expectedValue:     "green",
+		},
+		{
+			title:             "single item in the validation list",
+			validationList:    []string{"Green"},
+			setValidationList: true,
+			value:             "blue",
+			expectedError:     "'blue' is not an acceptable value for --colours. Expected value(s): Green",
+		},
+		{
+			title:             "two items in the validation list",
+			validationList:    []string{"Green", "Pink"},
+			setValidationList: true,
+			value:             "blue",
+			expectedError:     "'blue' is not an acceptable value for --colours. Expected value(s): Green and Pink",
+		},
+		{
+			title:             "three items in the validation list",
+			validationList:    []string{"Green", "Pink", "Yellow"},
+			setValidationList: true,
+			value:             "blue",
+			expectedError:     "'blue' is not an acceptable value for --colours. Expected value(s): Green, Pink and Yellow",
+		},
+		{
+			title: "validation callback with no validation error",
+			validationCB: func(in string) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "blue",
+			expectedValue:   "blue",
+		},
+		{
+			title: "validation callback with validation error",
+			validationCB: func(in string) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "blue",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list",
+			validationCB: func(in string) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB:   true,
+			validationList:    []string{"Green", "Pink", "Yellow"},
+			setValidationList: true,
+			value:             "blue",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.String("colours", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.ignoreCase, tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})
 	}
 }

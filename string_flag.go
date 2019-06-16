@@ -1,6 +1,9 @@
 package flags
 
 import (
+	"fmt"
+	"strings"
+
 	"go.xitonix.io/flags/data"
 	"go.xitonix.io/flags/internal"
 )
@@ -16,6 +19,10 @@ type StringFlag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in string) error
+	validM              map[string]interface{}
+	valid               []string
+	ignoreCase          bool
 }
 
 func newString(name, usage, short string) *StringFlag {
@@ -132,8 +139,45 @@ func (f *StringFlag) MarkAsDeprecated() *StringFlag {
 	return f
 }
 
+func (f *StringFlag) WithValidationFunc(validate func(in string) error) *StringFlag {
+	f.validate = validate
+	return f
+}
+
+func (f *StringFlag) WithValidRange(valid []string, ignoreCase bool) *StringFlag {
+	if len(valid) > 0 {
+		f.ignoreCase = ignoreCase
+		f.validM = make(map[string]interface{})
+		f.valid = valid
+		for _, v := range valid {
+			item := v
+			if ignoreCase {
+				item = strings.ToLower(v)
+			}
+			f.validM[item] = nil
+		}
+	}
+	return f
+}
+
 // Set sets the flag value.
 func (f *StringFlag) Set(value string) error {
+	if f.validate != nil {
+		err := f.validate(value)
+		if err != nil {
+			return err
+		}
+	}
+
+	if f.validate == nil && f.validM != nil {
+		item := value
+		if f.ignoreCase {
+			item = strings.ToLower(item)
+		}
+		if _, ok := f.validM[item]; !ok {
+			return fmt.Errorf("'%s' is not an acceptable value for --%s. Valid values are: %s", value, f.long, strings.Join(f.valid, ","))
+		}
+	}
 	f.set(value)
 	f.isSet = true
 	return nil

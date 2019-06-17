@@ -27,14 +27,17 @@ func SanitiseShortName(name string) string {
 }
 
 func GetExpectedValueString(entry interface{}, i, total int) string {
-	if i == total-2 {
+	switch i {
+	case total - 2:
 		return fmt.Sprintf("%v and ", entry)
+	case total - 1:
+		return fmt.Sprintf("%v", entry)
+	default:
+		return fmt.Sprintf("%v, ", entry)
 	}
-	return fmt.Sprintf("%v, ", entry)
 }
 
 func OutOfRangeErr(value interface{}, longName string, valid string, validCount int) error {
-	valid = strings.TrimRight(valid, ", ")
 	if IsEmpty(valid) {
 		return fmt.Errorf("%v is not an acceptable value for --%s.", value, longName)
 	}

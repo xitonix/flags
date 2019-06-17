@@ -19,6 +19,9 @@ type Int64Flag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in int64) error
+	validM              map[int64]interface{}
+	valid               string
 }
 
 func newInt64(name, usage, short string) *Int64Flag {
@@ -135,6 +138,34 @@ func (f *Int64Flag) MarkAsDeprecated() *Int64Flag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *Int64Flag) WithValidationCallback(validate func(in int64) error) *Int64Flag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *Int64Flag) WithValidRange(valid ...int64) *Int64Flag {
+	l := len(valid)
+	if l == 0 {
+		return f
+	}
+	f.validM = make(map[int64]interface{})
+	for i, v := range valid {
+		f.valid += internal.GetExpectedValueString(v, i, l)
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 func (f *Int64Flag) Set(value string) error {
 	value = strings.TrimSpace(value)
@@ -145,6 +176,21 @@ func (f *Int64Flag) Set(value string) error {
 	if err != nil {
 		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
+
+	if f.validate != nil {
+		err := f.validate(int64(v))
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validation callback takes priority over validation list
+	if f.validate == nil && f.validM != nil {
+		if _, ok := f.validM[int64(v)]; !ok {
+			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+		}
+	}
+
 	f.set(int64(v))
 	f.isSet = true
 	return nil

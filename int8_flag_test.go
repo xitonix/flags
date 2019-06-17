@@ -417,6 +417,13 @@ func TestInt8Flag_Validation(t *testing.T) {
 			expectedError:     "104 is not an acceptable value for --long. The expected values are 100, 101 and 102.",
 		},
 		{
+			title:             "min and max",
+			validationList:    []int8{math.MinInt8, math.MaxInt8},
+			setValidationList: true,
+			value:             "104",
+			expectedError:     fmt.Sprintf("104 is not an acceptable value for --long. The expected values are %v and %v.", math.MinInt8, math.MaxInt8),
+		},
+		{
 			title: "validation callback with no validation error",
 			validationCB: func(in int8) error {
 				return nil

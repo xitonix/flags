@@ -417,6 +417,13 @@ func TestInt16Flag_Validation(t *testing.T) {
 			expectedError:     "104 is not an acceptable value for --long. The expected values are 100, 101 and 102.",
 		},
 		{
+			title:             "min and max",
+			validationList:    []int16{math.MinInt16, math.MaxInt16},
+			setValidationList: true,
+			value:             "104",
+			expectedError:     fmt.Sprintf("104 is not an acceptable value for --long. The expected values are %v and %v.", math.MinInt16, math.MaxInt16),
+		},
+		{
 			title: "validation callback with no validation error",
 			validationCB: func(in int16) error {
 				return nil

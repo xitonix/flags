@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -133,7 +132,7 @@ func (f *IntFlag) Hide() *IntFlag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *IntFlag) MarkAsDeprecated() *IntFlag {
 	f.isDeprecated = true
 	return f
@@ -155,17 +154,13 @@ func (f *IntFlag) WithValidationCallback(validate func(in int) error) *IntFlag {
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *IntFlag) WithValidRange(valid ...int) *IntFlag {
-	if len(valid) == 0 {
+	l := len(valid)
+	if l == 0 {
 		return f
 	}
 	f.validM = make(map[int]interface{})
 	for i, v := range valid {
-		f.valid += strconv.Itoa(v)
-		if i == len(valid)-2 {
-			f.valid += " and "
-		} else {
-			f.valid += ", "
-		}
+		f.valid += internal.GetExpectedValueString(v, i, l)
 		f.validM[v] = nil
 	}
 	return f
@@ -179,7 +174,7 @@ func (f *IntFlag) Set(value string) error {
 	}
 	v, err := strconv.Atoi(value)
 	if err != nil {
-		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
+		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
 
 	if f.validate != nil {
@@ -192,7 +187,7 @@ func (f *IntFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		if _, ok := f.validM[v]; !ok {
-			return fmt.Errorf("%d is not an acceptable value for --%s. Expected value(s): %s", v, f.long, f.valid[:len(f.valid)-2])
+			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
 		}
 	}
 

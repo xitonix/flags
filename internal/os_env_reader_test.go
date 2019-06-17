@@ -1,9 +1,10 @@
 package internal_test
 
 import (
-	"go.xitonix.io/flags/internal"
 	"os"
 	"testing"
+
+	"go.xitonix.io/flags/internal"
 )
 
 func TestOSEnvReader_Get(t *testing.T) {

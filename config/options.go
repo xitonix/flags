@@ -1,11 +1,12 @@
 package config
 
 import (
+	"io"
+	"os"
+
 	"go.xitonix.io/flags/by"
 	"go.xitonix.io/flags/core"
 	"go.xitonix.io/flags/internal"
-	"io"
-	"os"
 )
 
 // Options holds the configuration settings of a bucket

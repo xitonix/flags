@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -130,7 +129,7 @@ func (f *Float64Flag) Hide() *Float64Flag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *Float64Flag) MarkAsDeprecated() *Float64Flag {
 	f.isDeprecated = true
 	return f
@@ -144,7 +143,7 @@ func (f *Float64Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
+		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
 	f.set(float64(v))
 	f.isSet = true

@@ -368,7 +368,7 @@ func TestStringFlag_Validation(t *testing.T) {
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "green",
-			expectedError:     "'green' is not an acceptable value for --colours. Expected value(s): Green and Red",
+			expectedError:     "green is not an acceptable value for --colours. The expected values are Green and Red.",
 		},
 		{
 			title:             "case insensitive validation list",
@@ -383,21 +383,21 @@ func TestStringFlag_Validation(t *testing.T) {
 			validationList:    []string{"Green"},
 			setValidationList: true,
 			value:             "blue",
-			expectedError:     "'blue' is not an acceptable value for --colours. Expected value(s): Green",
+			expectedError:     "blue is not an acceptable value for --colours. The expected value is Green.",
 		},
 		{
 			title:             "two items in the validation list",
 			validationList:    []string{"Green", "Pink"},
 			setValidationList: true,
 			value:             "blue",
-			expectedError:     "'blue' is not an acceptable value for --colours. Expected value(s): Green and Pink",
+			expectedError:     "blue is not an acceptable value for --colours. The expected values are Green and Pink.",
 		},
 		{
 			title:             "three items in the validation list",
 			validationList:    []string{"Green", "Pink", "Yellow"},
 			setValidationList: true,
 			value:             "blue",
-			expectedError:     "'blue' is not an acceptable value for --colours. Expected value(s): Green, Pink and Yellow",
+			expectedError:     "blue is not an acceptable value for --colours. The expected values are Green, Pink and Yellow.",
 		},
 		{
 			title: "validation callback with no validation error",

@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -161,7 +160,7 @@ func (f *TimeFlag) Hide() *TimeFlag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *TimeFlag) MarkAsDeprecated() *TimeFlag {
 	f.isDeprecated = true
 	return f
@@ -251,7 +250,7 @@ func (f *TimeFlag) Set(value string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
+	return internal.InvalidValueErr(value, f.long, f.Type())
 }
 
 // ResetToDefault resets the value of this flag to default if a default value is specified.

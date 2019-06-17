@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -135,7 +134,7 @@ func (f *DurationFlag) Hide() *DurationFlag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *DurationFlag) MarkAsDeprecated() *DurationFlag {
 	f.isDeprecated = true
 	return f
@@ -154,7 +153,7 @@ func (f *DurationFlag) Set(value string) error {
 	}
 	dur, err := time.ParseDuration(value)
 	if err != nil {
-		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
+		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
 	f.set(dur)
 	f.isSet = true

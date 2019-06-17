@@ -98,6 +98,75 @@ func TestSanitiseFlagID(t *testing.T) {
 	}
 }
 
+func TestOutOfRangeErr(t *testing.T) {
+	testCases := []struct {
+		title       string
+		value       interface{}
+		longName    string
+		valid       string
+		rangeLength int
+		expectedErr string
+	}{
+		{
+			title:       "list with single item",
+			value:       "abc",
+			longName:    "long",
+			valid:       "A, ",
+			rangeLength: 1,
+			expectedErr: "abc is not an acceptable value for --long. The expected value is A.",
+		},
+		{
+			title:       "list with more than one items",
+			value:       "abc",
+			longName:    "long",
+			valid:       "A, B and C, ",
+			rangeLength: 2,
+			expectedErr: "abc is not an acceptable value for --long. The expected values are A, B and C.",
+		},
+		{
+			title:       "empty valid range string with more than two items in the list",
+			value:       "abc",
+			longName:    "long",
+			valid:       "",
+			rangeLength: 2,
+			expectedErr: "abc is not an acceptable value for --long.",
+		},
+		{
+			title:       "empty valid range string with one item in the list",
+			value:       "abc",
+			longName:    "long",
+			valid:       "",
+			rangeLength: 1,
+			expectedErr: "abc is not an acceptable value for --long.",
+		},
+		{
+			title:       "white space valid range string with more than two items in the list",
+			value:       "abc",
+			longName:    "long",
+			valid:       "   ",
+			rangeLength: 2,
+			expectedErr: "abc is not an acceptable value for --long.",
+		},
+		{
+			title:       "white space valid range string with one item in the list",
+			value:       "abc",
+			longName:    "long",
+			valid:       "   ",
+			rangeLength: 1,
+			expectedErr: "abc is not an acceptable value for --long.",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			err := internal.OutOfRangeErr(tc.value, tc.longName, tc.valid, tc.rangeLength)
+			if err.Error() != tc.expectedErr {
+				t.Errorf("Expected error: '%v', Actual: '%v'", tc.expectedErr, err)
+			}
+		})
+	}
+}
+
 func TestSanitiseLongName(t *testing.T) {
 	testCases := []struct {
 		title    string

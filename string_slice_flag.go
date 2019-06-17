@@ -145,7 +145,7 @@ func (f *StringSliceFlag) Hide() *StringSliceFlag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *StringSliceFlag) MarkAsDeprecated() *StringSliceFlag {
 	f.isDeprecated = true
 	return f

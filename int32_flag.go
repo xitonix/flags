@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -130,7 +129,7 @@ func (f *Int32Flag) Hide() *Int32Flag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *Int32Flag) MarkAsDeprecated() *Int32Flag {
 	f.isDeprecated = true
 	return f
@@ -144,7 +143,7 @@ func (f *Int32Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
+		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
 	f.set(int32(v))
 	f.isSet = true

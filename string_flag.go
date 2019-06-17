@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"fmt"
 	"strings"
 
 	"go.xitonix.io/flags/data"
@@ -133,7 +132,7 @@ func (f *StringFlag) Hide() *StringFlag {
 //
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
-//	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
+// 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *StringFlag) MarkAsDeprecated() *StringFlag {
 	f.isDeprecated = true
 	return f
@@ -155,23 +154,18 @@ func (f *StringFlag) WithValidationCallback(validate func(in string) error) *Str
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *StringFlag) WithValidRange(ignoreCase bool, valid ...string) *StringFlag {
+	l := len(valid)
 	if len(valid) == 0 {
 		return f
 	}
 	f.ignoreCase = ignoreCase
 	f.validM = make(map[string]interface{})
 	for i, v := range valid {
-		item := v
+		f.valid += internal.GetExpectedValueString(v, i, l)
 		if ignoreCase {
-			item = strings.ToLower(v)
+			v = strings.ToLower(v)
 		}
-		f.valid += v
-		if i == len(valid)-2 {
-			f.valid += " and "
-		} else {
-			f.valid += ", "
-		}
-		f.validM[item] = nil
+		f.validM[v] = nil
 	}
 	return f
 }
@@ -192,7 +186,7 @@ func (f *StringFlag) Set(value string) error {
 			item = strings.ToLower(item)
 		}
 		if _, ok := f.validM[item]; !ok {
-			return fmt.Errorf("'%s' is not an acceptable value for --%s. Expected value(s): %s", value, f.long, f.valid[:len(f.valid)-2])
+			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
 		}
 	}
 	f.set(value)

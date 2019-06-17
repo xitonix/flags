@@ -20,6 +20,9 @@ type IntFlag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in int) error
+	validM              map[int]interface{}
+	valid               string
 }
 
 func newInt(name, usage, short string) *IntFlag {
@@ -136,6 +139,38 @@ func (f *IntFlag) MarkAsDeprecated() *IntFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *IntFlag) WithValidationCallback(validate func(in int) error) *IntFlag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *IntFlag) WithValidRange(valid ...int) *IntFlag {
+	if len(valid) == 0 {
+		return f
+	}
+	f.validM = make(map[int]interface{})
+	for i, v := range valid {
+		f.valid += strconv.Itoa(v)
+		if i == len(valid)-2 {
+			f.valid += " and "
+		} else {
+			f.valid += ", "
+		}
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 func (f *IntFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
@@ -146,6 +181,21 @@ func (f *IntFlag) Set(value string) error {
 	if err != nil {
 		return fmt.Errorf("'%s' is not a valid %s value for --%s", value, f.Type(), f.long)
 	}
+
+	if f.validate != nil {
+		err := f.validate(v)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validation callback takes priority over validation list
+	if f.validate == nil && f.validM != nil {
+		if _, ok := f.validM[v]; !ok {
+			return fmt.Errorf("%d is not an acceptable value for --%s. Expected value(s): %s", v, f.long, f.valid[:len(f.valid)-2])
+		}
+	}
+
 	f.set(v)
 	f.isSet = true
 	return nil

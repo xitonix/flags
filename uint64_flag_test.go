@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"testing"
@@ -327,6 +328,122 @@ func TestUInt64Flag_Set(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.UInt64("long", "usage")
 			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestUInt64Flag_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     uint64
+		validationCB      func(in uint64) error
+		setValidationCB   bool
+		validationList    []uint64
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback",
+			setValidationCB: true,
+			value:           "100",
+			expectedValue:   100,
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list",
+			setValidationList: true,
+			value:             "100",
+			expectedValue:     100,
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "100",
+			expectedValue:     100,
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list",
+			validationList:    make([]uint64, 0),
+			setValidationList: true,
+			value:             "100",
+			expectedValue:     100,
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list",
+			validationList:    []uint64{100},
+			setValidationList: true,
+			value:             "101",
+			expectedError:     "101 is not an acceptable value for --long. The expected value is 100.",
+		},
+		{
+			title:             "two items in the validation list",
+			validationList:    []uint64{100, 101},
+			setValidationList: true,
+			value:             "102",
+			expectedError:     "102 is not an acceptable value for --long. The expected values are 100 and 101.",
+		},
+		{
+			title:             "three items in the validation list",
+			validationList:    []uint64{100, 101, 102},
+			setValidationList: true,
+			value:             "104",
+			expectedError:     "104 is not an acceptable value for --long. The expected values are 100, 101 and 102.",
+		},
+		{
+			title:             "min and max",
+			validationList:    []uint64{0, math.MaxUint64},
+			setValidationList: true,
+			value:             "104",
+			expectedError:     fmt.Sprintf("104 is not an acceptable value for --long. The expected values are %v and %v.", 0, uint64(math.MaxUint64)),
+		},
+		{
+			title: "validation callback with no validation error",
+			validationCB: func(in uint64) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "100",
+			expectedValue:   100,
+		},
+		{
+			title: "validation callback with validation error",
+			validationCB: func(in uint64) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "100",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list",
+			validationCB: func(in uint64) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB:   true,
+			validationList:    []uint64{100, 101, 102},
+			setValidationList: true,
+			value:             "100",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.UInt64("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
 			err := f.Set(tc.value)
 			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})

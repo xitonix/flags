@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -327,6 +328,115 @@ func TestDurationFlag_Set(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.Duration("long", "usage")
 			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestDurationFlag_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Duration
+		validationCB      func(in time.Duration) error
+		setValidationCB   bool
+		validationList    []time.Duration
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback",
+			setValidationCB: true,
+			value:           "100s",
+			expectedValue:   100 * time.Second,
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list",
+			setValidationList: true,
+			value:             "100s",
+			expectedValue:     100 * time.Second,
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "100s",
+			expectedValue:     100 * time.Second,
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list",
+			validationList:    make([]time.Duration, 0),
+			setValidationList: true,
+			value:             "100s",
+			expectedValue:     100 * time.Second,
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list",
+			validationList:    []time.Duration{1 * time.Second},
+			setValidationList: true,
+			value:             "200s",
+			expectedError:     "200s is not an acceptable value for --long. The expected value is 1s.",
+		},
+		{
+			title:             "two items in the validation list",
+			validationList:    []time.Duration{1 * time.Second, 2 * time.Second},
+			setValidationList: true,
+			value:             "300s",
+			expectedError:     "300s is not an acceptable value for --long. The expected values are 1s and 2s.",
+		},
+		{
+			title:             "three items in the validation list",
+			validationList:    []time.Duration{1 * time.Second, 2 * time.Second, 3 * time.Second},
+			setValidationList: true,
+			value:             "400s",
+			expectedError:     "400s is not an acceptable value for --long. The expected values are 1s, 2s and 3s.",
+		},
+		{
+			title: "validation callback with no validation error",
+			validationCB: func(in time.Duration) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "100s",
+			expectedValue:   100 * time.Second,
+		},
+		{
+			title: "validation callback with validation error",
+			validationCB: func(in time.Duration) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "100s",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list",
+			validationCB: func(in time.Duration) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB:   true,
+			validationList:    []time.Duration{100 * time.Second, 200 * time.Second, 300 * time.Second},
+			setValidationList: true,
+			value:             "100s",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Duration("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
 			err := f.Set(tc.value)
 			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})

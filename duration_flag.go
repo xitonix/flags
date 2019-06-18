@@ -24,6 +24,9 @@ type DurationFlag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in time.Duration) error
+	validM              map[time.Duration]interface{}
+	valid               string
 }
 
 func newDuration(name, usage, short string) *DurationFlag {
@@ -140,6 +143,34 @@ func (f *DurationFlag) MarkAsDeprecated() *DurationFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *DurationFlag) WithValidationCallback(validate func(in time.Duration) error) *DurationFlag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *DurationFlag) WithValidRange(valid ...time.Duration) *DurationFlag {
+	l := len(valid)
+	if l == 0 {
+		return f
+	}
+	f.validM = make(map[time.Duration]interface{})
+	for i, v := range valid {
+		f.valid += internal.GetExpectedValueString(v, i, l)
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 //
 // A duration string is a possibly signed sequence of
@@ -155,6 +186,21 @@ func (f *DurationFlag) Set(value string) error {
 	if err != nil {
 		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
+
+	if f.validate != nil {
+		err := f.validate(dur)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validation callback takes priority over validation list
+	if f.validate == nil && f.validM != nil {
+		if _, ok := f.validM[dur]; !ok {
+			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+		}
+	}
+
 	f.set(dur)
 	f.isSet = true
 	return nil

@@ -22,6 +22,9 @@ type CounterFlag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in int) error
+	validM              map[int]interface{}
+	valid               string
 }
 
 func newCounter(name, usage, short string) *CounterFlag {
@@ -138,6 +141,34 @@ func (f *CounterFlag) MarkAsDeprecated() *CounterFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *CounterFlag) WithValidationCallback(validate func(in int) error) *CounterFlag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *CounterFlag) WithValidRange(valid ...int) *CounterFlag {
+	l := len(valid)
+	if l == 0 {
+		return f
+	}
+	f.validM = make(map[int]interface{})
+	for i, v := range valid {
+		f.valid += internal.GetExpectedValueString(v, i, l)
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 func (f *CounterFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
@@ -148,6 +179,21 @@ func (f *CounterFlag) Set(value string) error {
 	if err != nil {
 		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
+
+	if f.validate != nil {
+		err := f.validate(v)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validation callback takes priority over validation list
+	if f.validate == nil && f.validM != nil {
+		if _, ok := f.validM[v]; !ok {
+			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+		}
+	}
+
 	f.set(v)
 	f.isSet = true
 	return nil

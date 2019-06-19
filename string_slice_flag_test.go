@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -514,6 +515,162 @@ func TestStringSliceFlag_Set(t *testing.T) {
 			if !reflect.DeepEqual(actual, tc.expectedValue) {
 				t.Errorf("Expected flag variable: %v, Actual: %v", tc.expectedValue, *fVar)
 			}
+		})
+	}
+}
+
+func TestStringSliceFlag_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     []string
+		validationCB      func(in string) error
+		setValidationCB   bool
+		validationList    []string
+		setValidationList bool
+		ignoreCase        bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback",
+			setValidationCB: true,
+			value:           "value",
+			expectedValue:   []string{"value"},
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list",
+			setValidationList: true,
+			value:             "value",
+			expectedValue:     []string{"value"},
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "value",
+			expectedValue:     []string{"value"},
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list",
+			validationList:    make([]string, 0),
+			setValidationList: true,
+			value:             "value",
+			expectedValue:     []string{"value"},
+			expectedError:     "",
+		},
+		{
+			title:             "invalid case sensitive validation list with single item",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "green",
+			expectedError:     "green is not an acceptable value for --colours. The expected values are Green and Red.",
+		},
+		{
+			title:             "valid case sensitive validation list with multiple items",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "Green,Red",
+			expectedError:     "",
+			expectedValue:     []string{"Green", "Red"},
+		},
+		{
+			title:             "empty value",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "",
+			expectedError:     "",
+			expectedValue:     []string{},
+		},
+		{
+			title:             "white space value",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "  ",
+			expectedError:     "'  ' is not an acceptable value for --colours. The expected values are Green and Red.",
+			expectedValue:     []string{},
+		},
+		{
+			title:             "acceptable white space value",
+			validationList:    []string{"Green", "Red", "  "},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "  ",
+			expectedError:     "",
+			expectedValue:     []string{"  "},
+		},
+		{
+			title:             "invalid case insensitive validation list with multiple items",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        true,
+			setValidationList: true,
+			value:             "Green,Red,Pink",
+			expectedError:     "Pink is not an acceptable value for --colours. The expected values are Green and Red.",
+		},
+		{
+			title:             "valid case insensitive validation list with multiple items",
+			validationList:    []string{"Green", "Red"},
+			ignoreCase:        true,
+			setValidationList: true,
+			value:             "green,red",
+			expectedValue:     []string{"green", "red"},
+		},
+		{
+			title:             "three items in the validation list",
+			validationList:    []string{"Green", "Pink", "Yellow"},
+			setValidationList: true,
+			value:             "blue",
+			expectedError:     "blue is not an acceptable value for --colours. The expected values are Green, Pink and Yellow.",
+		},
+		{
+			title: "validation callback with no validation error",
+			validationCB: func(in string) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "blue",
+			expectedValue:   []string{"blue"},
+		},
+		{
+			title: "validation callback with validation error",
+			validationCB: func(in string) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "blue",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list",
+			validationCB: func(in string) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB:   true,
+			validationList:    []string{"Green", "Pink", "Yellow"},
+			setValidationList: true,
+			value:             "blue",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.StringSlice("colours", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.ignoreCase, tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkSliceFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})
 	}
 }

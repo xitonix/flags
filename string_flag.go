@@ -186,6 +186,9 @@ func (f *StringFlag) Set(value string) error {
 			item = strings.ToLower(item)
 		}
 		if _, ok := f.validM[item]; !ok {
+			if internal.IsEmpty(value) {
+				value = "'" + value + "'"
+			}
 			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
 		}
 	}

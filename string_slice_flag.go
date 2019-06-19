@@ -31,6 +31,10 @@ type StringSliceFlag struct {
 	isHidden            bool
 	delimiter           string
 	trimSpaces          bool
+	validate            func(in string) error
+	validM              map[string]interface{}
+	valid               string
+	ignoreCase          bool
 }
 
 func newStringSlice(name, usage, short string) *StringSliceFlag {
@@ -166,6 +170,38 @@ func (f *StringSliceFlag) WithTrimming() *StringSliceFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *StringSliceFlag) WithValidationCallback(validate func(in string) error) *StringSliceFlag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *StringSliceFlag) WithValidRange(ignoreCase bool, valid ...string) *StringSliceFlag {
+	l := len(valid)
+	if len(valid) == 0 {
+		return f
+	}
+	f.ignoreCase = ignoreCase
+	f.validM = make(map[string]interface{})
+	for i, v := range valid {
+		f.valid += internal.GetExpectedValueString(v, i, l)
+		if ignoreCase {
+			v = strings.ToLower(v)
+		}
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 //
 // The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
@@ -184,6 +220,31 @@ func (f *StringSliceFlag) Set(value string) error {
 	} else {
 		parts = strings.Split(value, f.delimiter)
 	}
+
+	if f.validate != nil {
+		for _, item := range parts {
+			err := f.validate(item)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Validation callback takes priority over validation list
+	if f.validate == nil && f.validM != nil {
+		for _, item := range parts {
+			if f.ignoreCase {
+				item = strings.ToLower(item)
+			}
+			if _, ok := f.validM[item]; !ok {
+				if internal.IsEmpty(value) {
+					value = "'" + value + "'"
+				}
+				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+			}
+		}
+	}
+
 	f.set(parts)
 	f.isSet = true
 	return nil

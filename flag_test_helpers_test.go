@@ -8,6 +8,32 @@ import (
 	"go.xitonix.io/flags/test"
 )
 
+func checkSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual, actualVar interface{}) {
+	t.Helper()
+	if !test.ErrorContains(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkFlagSliceValues(t, expectedValue, actual, actualVar)
+}
+
+func checkFlagSliceValues(t *testing.T, expectedValue, actual, actualVar interface{}) {
+	t.Helper()
+	expected := reflect.TypeOf(expectedValue).Elem()
+	if !reflect.DeepEqual(reflect.TypeOf(actual).Elem(), expected) {
+		t.Errorf("Expected value: %v, Actual: %v", expectedValue, actual)
+	}
+
+	fVar := reflect.ValueOf(actualVar).Elem().Interface()
+	if !reflect.DeepEqual(reflect.TypeOf(fVar).Elem(), expected) {
+		t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue, fVar)
+	}
+}
+
 func checkFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual, actualVar interface{}) {
 	t.Helper()
 	if !test.ErrorContains(err, expectedErr) {

@@ -1,11 +1,55 @@
 package flags
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
 	"go.xitonix.io/flags/data"
 	"go.xitonix.io/flags/internal"
+)
+
+var (
+	layouts = []string{
+		"02-01-2006T15:04:05.999999999",
+		"02-01-2006T03:04:05.999999999PM",
+		"02-01-2006T03:04:05.999999999 PM",
+		"02-01-2006T03:04:05.999999999pm",
+		"02-01-2006T03:04:05.999999999 pm",
+
+		"02-01-2006 15:04:05.999999999",
+		"02-01-2006 03:04:05.999999999PM",
+		"02-01-2006 03:04:05.999999999 PM",
+		"02-01-2006 03:04:05.999999999pm",
+		"02-01-2006 03:04:05.999999999 pm",
+
+		"02/01/2006T15:04:05.999999999",
+		"02/01/2006T03:04:05.999999999PM",
+		"02/01/2006T03:04:05.999999999 PM",
+		"02/01/2006T03:04:05.999999999pm",
+		"02/01/2006T03:04:05.999999999 pm",
+
+		"02/01/2006 15:04:05.999999999",
+		"02/01/2006 03:04:05.999999999PM",
+		"02/01/2006 03:04:05.999999999 PM",
+		"02/01/2006 03:04:05.999999999pm",
+		"02/01/2006 03:04:05.999999999 pm",
+
+		"02-01-2006",
+		"02/01/2006",
+
+		"Jan _2 15:04:05.999999999",
+		"Jan _2 03:04:05.999999999PM",
+		"Jan _2 03:04:05.999999999 PM",
+		"Jan _2 03:04:05.999999999pm",
+		"Jan _2 03:04:05.999999999 pm",
+
+		"15:04:05.999999999",
+		"03:04:05.999999999 PM",
+		"03:04:05.999999999 pm",
+		"03:04:05.999999999PM",
+		"03:04:05.999999999pm",
+	}
 )
 
 // TimeFlag represents a time flag.
@@ -50,6 +94,9 @@ type TimeFlag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in time.Time) error
+	validM              map[time.Time]interface{}
+	valid               []time.Time
 }
 
 func newTime(name, usage, short string) *TimeFlag {
@@ -166,6 +213,34 @@ func (f *TimeFlag) MarkAsDeprecated() *TimeFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *TimeFlag) WithValidationCallback(validate func(in time.Time) error) *TimeFlag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *TimeFlag) WithValidRange(valid ...time.Time) *TimeFlag {
+	l := len(valid)
+	if l == 0 {
+		return f
+	}
+	f.validM = make(map[time.Time]interface{})
+	for _, v := range valid {
+		f.valid = valid
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 //
 // Supported layouts are:
@@ -201,50 +276,26 @@ func (f *TimeFlag) MarkAsDeprecated() *TimeFlag {
 func (f *TimeFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
-		value = time.Time{}.Format("02-01-2006T15:4:5")
+		value = time.Time{}.Format("02-01-2006T15:04:05.999999999")
 	}
-	layouts := []string{
-		"02-01-2006T15:4:5",
-		"02-01-2006T3:4:5PM",
-		"02-01-2006T3:4:5 PM",
-		"02-01-2006T3:4:5pm",
-		"02-01-2006T3:4:5 pm",
 
-		"02-01-2006 15:4:5",
-		"02-01-2006 3:4:5PM",
-		"02-01-2006 3:4:5 PM",
-		"02-01-2006 3:4:5pm",
-		"02-01-2006 3:4:5 pm",
-
-		"02/01/2006T15:4:5",
-		"02/01/2006T3:4:5PM",
-		"02/01/2006T3:4:5 PM",
-		"02/01/2006T3:4:5pm",
-		"02/01/2006T3:4:5 pm",
-
-		"02/01/2006 15:4:5",
-		"02/01/2006 3:4:5PM",
-		"02/01/2006 3:4:5 PM",
-		"02/01/2006 3:4:5pm",
-		"02/01/2006 3:4:5 pm",
-
-		"02-01-2006",
-		"02/01/2006",
-
-		"Jan _2 15:4:5",
-		"Jan _2 3:4:5PM",
-		"Jan _2 3:4:5 PM",
-		"Jan _2 3:4:5pm",
-		"Jan _2 3:4:5 pm",
-
-		"15:4:5",
-		"3:4:5 PM",
-		"3:4:5 pm",
-		"3:4:5PM",
-		"3:4:5pm",
-	}
 	for _, layout := range layouts {
 		if t, err := time.Parse(layout, value); err == nil {
+
+			if f.validate != nil {
+				err := f.validate(t)
+				if err != nil {
+					return err
+				}
+			}
+
+			// Validation callback takes priority over validation list
+			if f.validate == nil && f.validM != nil {
+				if _, ok := f.validM[t]; !ok {
+					return fmt.Errorf("%v is not an acceptable value for --%s. You must pick a value from %s.", t.Format(layout), f.long, f.getValidRangeString(layout))
+				}
+			}
+
 			f.set(t)
 			f.isSet = true
 			return nil
@@ -288,4 +339,12 @@ func (f *TimeFlag) Key() *data.Key {
 func (f *TimeFlag) set(value time.Time) {
 	f.value = value
 	*f.ptr = value
+}
+
+func (f *TimeFlag) getValidRangeString(layout string) string {
+	v := make([]string, 0)
+	for _, t := range f.valid {
+		v = append(v, t.Format(layout))
+	}
+	return strings.Join(v, ",")
 }

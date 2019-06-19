@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -638,6 +639,6482 @@ func TestTimeFlag_Set(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.Time("long", "usage")
 			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_24Hrs_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T14:22:20.999999999",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20.999999999",
+			expectedError:     "25/12/2019T14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27/08/1980T14:22:20.999999999.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20.999999999",
+			expectedError:     "25/12/2019T14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27/08/1980T14:22:20.999999999,27/08/1981T14:22:20.999999999.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20.999999999",
+			expectedError:     "25/12/2019T14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27/08/1980T14:22:20.999999999,27/08/1981T14:22:20.999999999,27/08/1982T14:22:20.999999999.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T14:22:20.999999999",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T14:22:20.999999999",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20.999999999",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T14:22:20",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20",
+			expectedError:     "25/12/2019T14:22:20 is not an acceptable value for --long. You must pick a value from 27/08/1980T14:22:20.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20",
+			expectedError:     "25/12/2019T14:22:20 is not an acceptable value for --long. You must pick a value from 27/08/1980T14:22:20,27/08/1981T14:22:20.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20",
+			expectedError:     "25/12/2019T14:22:20 is not an acceptable value for --long. You must pick a value from 27/08/1980T14:22:20,27/08/1981T14:22:20,27/08/1982T14:22:20.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T14:22:20",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T14:22:20",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T14:22:20",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_24Hrs_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 14:22:20.999999999",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20.999999999",
+			expectedError:     "25/12/2019 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27/08/1980 14:22:20.999999999.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20.999999999",
+			expectedError:     "25/12/2019 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27/08/1980 14:22:20.999999999,27/08/1981 14:22:20.999999999.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20.999999999",
+			expectedError:     "25/12/2019 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27/08/1980 14:22:20.999999999,27/08/1981 14:22:20.999999999,27/08/1982 14:22:20.999999999.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 14:22:20.999999999",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 14:22:20.999999999",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20.999999999",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 14:22:20",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20",
+			expectedError:     "25/12/2019 14:22:20 is not an acceptable value for --long. You must pick a value from 27/08/1980 14:22:20.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20",
+			expectedError:     "25/12/2019 14:22:20 is not an acceptable value for --long. You must pick a value from 27/08/1980 14:22:20,27/08/1981 14:22:20.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20",
+			expectedError:     "25/12/2019 14:22:20 is not an acceptable value for --long. You must pick a value from 27/08/1980 14:22:20,27/08/1981 14:22:20,27/08/1982 14:22:20.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 14:22:20",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 14:22:20",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 14:22:20",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Uppercase_12Hrs_Spaced_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20.999999999 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 PM",
+			expectedError:     "25/12/2019T02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999 PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 PM",
+			expectedError:     "25/12/2019T02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999 PM,27/08/1981T02:22:20.999999999 PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 PM",
+			expectedError:     "25/12/2019T02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999 PM,27/08/1981T02:22:20.999999999 PM,27/08/1982T02:22:20.999999999 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 PM",
+			expectedError:     "25/12/2019T02:22:20 PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20 PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 PM",
+			expectedError:     "25/12/2019T02:22:20 PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20 PM,27/08/1981T02:22:20 PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 PM",
+			expectedError:     "25/12/2019T02:22:20 PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20 PM,27/08/1981T02:22:20 PM,27/08/1982T02:22:20 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Uppercase_12Hrs_Spaced_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20.999999999 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 PM",
+			expectedError:     "25/12/2019 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999 PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 PM",
+			expectedError:     "25/12/2019 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999 PM,27/08/1981 02:22:20.999999999 PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 PM",
+			expectedError:     "25/12/2019 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999 PM,27/08/1981 02:22:20.999999999 PM,27/08/1982 02:22:20.999999999 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 PM",
+			expectedError:     "25/12/2019 02:22:20 PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20 PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 PM",
+			expectedError:     "25/12/2019 02:22:20 PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20 PM,27/08/1981 02:22:20 PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 PM",
+			expectedError:     "25/12/2019 02:22:20 PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20 PM,27/08/1981 02:22:20 PM,27/08/1982 02:22:20 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Lowercase_12Hrs_Spaced_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20.999999999 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 pm",
+			expectedError:     "25/12/2019T02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999 pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 pm",
+			expectedError:     "25/12/2019T02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999 pm,27/08/1981T02:22:20.999999999 pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 pm",
+			expectedError:     "25/12/2019T02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999 pm,27/08/1981T02:22:20.999999999 pm,27/08/1982T02:22:20.999999999 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999 pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 pm",
+			expectedError:     "25/12/2019T02:22:20 pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20 pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 pm",
+			expectedError:     "25/12/2019T02:22:20 pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20 pm,27/08/1981T02:22:20 pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 pm",
+			expectedError:     "25/12/2019T02:22:20 pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20 pm,27/08/1981T02:22:20 pm,27/08/1982T02:22:20 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20 pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Lowercase_12Hrs_Spaced_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20.999999999 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 pm",
+			expectedError:     "25/12/2019 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999 pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 pm",
+			expectedError:     "25/12/2019 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999 pm,27/08/1981 02:22:20.999999999 pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 pm",
+			expectedError:     "25/12/2019 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999 pm,27/08/1981 02:22:20.999999999 pm,27/08/1982 02:22:20.999999999 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999 pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 pm",
+			expectedError:     "25/12/2019 02:22:20 pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20 pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 pm",
+			expectedError:     "25/12/2019 02:22:20 pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20 pm,27/08/1981 02:22:20 pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 pm",
+			expectedError:     "25/12/2019 02:22:20 pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20 pm,27/08/1981 02:22:20 pm,27/08/1982 02:22:20 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20 pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Uppercase_12Hrs_Attached_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20.999999999PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999PM",
+			expectedError:     "25/12/2019T02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999PM",
+			expectedError:     "25/12/2019T02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999PM,27/08/1981T02:22:20.999999999PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999PM",
+			expectedError:     "25/12/2019T02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999PM,27/08/1981T02:22:20.999999999PM,27/08/1982T02:22:20.999999999PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20PM",
+			expectedError:     "25/12/2019T02:22:20PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20PM",
+			expectedError:     "25/12/2019T02:22:20PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20PM,27/08/1981T02:22:20PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20PM",
+			expectedError:     "25/12/2019T02:22:20PM is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20PM,27/08/1981T02:22:20PM,27/08/1982T02:22:20PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Uppercase_12Hrs_Attached_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20.999999999PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999PM",
+			expectedError:     "25/12/2019 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999PM",
+			expectedError:     "25/12/2019 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999PM,27/08/1981 02:22:20.999999999PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999PM",
+			expectedError:     "25/12/2019 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999PM,27/08/1981 02:22:20.999999999PM,27/08/1982 02:22:20.999999999PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20PM",
+			expectedError:     "25/12/2019 02:22:20PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20PM",
+			expectedError:     "25/12/2019 02:22:20PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20PM,27/08/1981 02:22:20PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20PM",
+			expectedError:     "25/12/2019 02:22:20PM is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20PM,27/08/1981 02:22:20PM,27/08/1982 02:22:20PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Lowercase_12Hrs_Attached_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20.999999999pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999pm",
+			expectedError:     "25/12/2019T02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999pm",
+			expectedError:     "25/12/2019T02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999pm,27/08/1981T02:22:20.999999999pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999pm",
+			expectedError:     "25/12/2019T02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20.999999999pm,27/08/1981T02:22:20.999999999pm,27/08/1982T02:22:20.999999999pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20.999999999pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20.999999999pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980T02:22:20pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980T02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980T02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20pm",
+			expectedError:     "25/12/2019T02:22:20pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20pm",
+			expectedError:     "25/12/2019T02:22:20pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20pm,27/08/1981T02:22:20pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20pm",
+			expectedError:     "25/12/2019T02:22:20pm is not an acceptable value for --long. You must pick a value from 27/08/1980T02:22:20pm,27/08/1981T02:22:20pm,27/08/1982T02:22:20pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019T02:22:20pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019T02:22:20pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Lowercase_12Hrs_Attached_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20.999999999pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999pm",
+			expectedError:     "25/12/2019 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999pm",
+			expectedError:     "25/12/2019 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999pm,27/08/1981 02:22:20.999999999pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999pm",
+			expectedError:     "25/12/2019 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20.999999999pm,27/08/1981 02:22:20.999999999pm,27/08/1982 02:22:20.999999999pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20.999999999pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20.999999999pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980 02:22:20pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980 02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980 02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20pm",
+			expectedError:     "25/12/2019 02:22:20pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20pm",
+			expectedError:     "25/12/2019 02:22:20pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20pm,27/08/1981 02:22:20pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20pm",
+			expectedError:     "25/12/2019 02:22:20pm is not an acceptable value for --long. You must pick a value from 27/08/1980 02:22:20pm,27/08/1981 02:22:20pm,27/08/1982 02:22:20pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019 02:22:20pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019 02:22:20pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_24Hrs_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T14:22:20.999999999",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20.999999999",
+			expectedError:     "25-12-2019T14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27-08-1980T14:22:20.999999999.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20.999999999",
+			expectedError:     "25-12-2019T14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27-08-1980T14:22:20.999999999,27-08-1981T14:22:20.999999999.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20.999999999",
+			expectedError:     "25-12-2019T14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27-08-1980T14:22:20.999999999,27-08-1981T14:22:20.999999999,27-08-1982T14:22:20.999999999.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T14:22:20.999999999",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T14:22:20.999999999",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20.999999999",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T14:22:20",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20",
+			expectedError:     "25-12-2019T14:22:20 is not an acceptable value for --long. You must pick a value from 27-08-1980T14:22:20.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20",
+			expectedError:     "25-12-2019T14:22:20 is not an acceptable value for --long. You must pick a value from 27-08-1980T14:22:20,27-08-1981T14:22:20.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20",
+			expectedError:     "25-12-2019T14:22:20 is not an acceptable value for --long. You must pick a value from 27-08-1980T14:22:20,27-08-1981T14:22:20,27-08-1982T14:22:20.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T14:22:20",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T14:22:20",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T14:22:20",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_24Hrs_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 14:22:20.999999999",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 14:22:20.999999999",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20.999999999",
+			expectedError:     "25-12-2019 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27-08-1980 14:22:20.999999999.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20.999999999",
+			expectedError:     "25-12-2019 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27-08-1980 14:22:20.999999999,27-08-1981 14:22:20.999999999.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20.999999999",
+			expectedError:     "25-12-2019 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 27-08-1980 14:22:20.999999999,27-08-1981 14:22:20.999999999,27-08-1982 14:22:20.999999999.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 14:22:20.999999999",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 14:22:20.999999999",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20.999999999",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 14:22:20",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 14:22:20",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20",
+			expectedError:     "25-12-2019 14:22:20 is not an acceptable value for --long. You must pick a value from 27-08-1980 14:22:20.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20",
+			expectedError:     "25-12-2019 14:22:20 is not an acceptable value for --long. You must pick a value from 27-08-1980 14:22:20,27-08-1981 14:22:20.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20",
+			expectedError:     "25-12-2019 14:22:20 is not an acceptable value for --long. You must pick a value from 27-08-1980 14:22:20,27-08-1981 14:22:20,27-08-1982 14:22:20.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 14:22:20",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 14:22:20",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 14:22:20",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Uppercase_12Hrs_Spaced_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20.999999999 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 PM",
+			expectedError:     "25-12-2019T02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999 PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 PM",
+			expectedError:     "25-12-2019T02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999 PM,27-08-1981T02:22:20.999999999 PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 PM",
+			expectedError:     "25-12-2019T02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999 PM,27-08-1981T02:22:20.999999999 PM,27-08-1982T02:22:20.999999999 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 PM",
+			expectedError:     "25-12-2019T02:22:20 PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20 PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 PM",
+			expectedError:     "25-12-2019T02:22:20 PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20 PM,27-08-1981T02:22:20 PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 PM",
+			expectedError:     "25-12-2019T02:22:20 PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20 PM,27-08-1981T02:22:20 PM,27-08-1982T02:22:20 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Uppercase_12Hrs_Spaced_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20.999999999 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 PM",
+			expectedError:     "25-12-2019 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999 PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 PM",
+			expectedError:     "25-12-2019 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999 PM,27-08-1981 02:22:20.999999999 PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 PM",
+			expectedError:     "25-12-2019 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999 PM,27-08-1981 02:22:20.999999999 PM,27-08-1982 02:22:20.999999999 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20 PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20 PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 PM",
+			expectedError:     "25-12-2019 02:22:20 PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20 PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 PM",
+			expectedError:     "25-12-2019 02:22:20 PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20 PM,27-08-1981 02:22:20 PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 PM",
+			expectedError:     "25-12-2019 02:22:20 PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20 PM,27-08-1981 02:22:20 PM,27-08-1982 02:22:20 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20 PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Lowercase_12Hrs_Spaced_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20.999999999 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 pm",
+			expectedError:     "25-12-2019T02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999 pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 pm",
+			expectedError:     "25-12-2019T02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999 pm,27-08-1981T02:22:20.999999999 pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 pm",
+			expectedError:     "25-12-2019T02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999 pm,27-08-1981T02:22:20.999999999 pm,27-08-1982T02:22:20.999999999 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999 pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 pm",
+			expectedError:     "25-12-2019T02:22:20 pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20 pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 pm",
+			expectedError:     "25-12-2019T02:22:20 pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20 pm,27-08-1981T02:22:20 pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 pm",
+			expectedError:     "25-12-2019T02:22:20 pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20 pm,27-08-1981T02:22:20 pm,27-08-1982T02:22:20 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20 pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Lowercase_12Hrs_Spaced_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20.999999999 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 pm",
+			expectedError:     "25-12-2019 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999 pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 pm",
+			expectedError:     "25-12-2019 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999 pm,27-08-1981 02:22:20.999999999 pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 pm",
+			expectedError:     "25-12-2019 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999 pm,27-08-1981 02:22:20.999999999 pm,27-08-1982 02:22:20.999999999 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999 pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20 pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20 pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 pm",
+			expectedError:     "25-12-2019 02:22:20 pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20 pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 pm",
+			expectedError:     "25-12-2019 02:22:20 pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20 pm,27-08-1981 02:22:20 pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 pm",
+			expectedError:     "25-12-2019 02:22:20 pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20 pm,27-08-1981 02:22:20 pm,27-08-1982 02:22:20 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20 pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20 pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Uppercase_12Hrs_Attached_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20.999999999PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999PM",
+			expectedError:     "25-12-2019T02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999PM",
+			expectedError:     "25-12-2019T02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999PM,27-08-1981T02:22:20.999999999PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999PM",
+			expectedError:     "25-12-2019T02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999PM,27-08-1981T02:22:20.999999999PM,27-08-1982T02:22:20.999999999PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20PM",
+			expectedError:     "25-12-2019T02:22:20PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20PM",
+			expectedError:     "25-12-2019T02:22:20PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20PM,27-08-1981T02:22:20PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20PM",
+			expectedError:     "25-12-2019T02:22:20PM is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20PM,27-08-1981T02:22:20PM,27-08-1982T02:22:20PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Uppercase_12Hrs_Attached_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20.999999999PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999PM",
+			expectedError:     "25-12-2019 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999PM",
+			expectedError:     "25-12-2019 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999PM,27-08-1981 02:22:20.999999999PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999PM",
+			expectedError:     "25-12-2019 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999PM,27-08-1981 02:22:20.999999999PM,27-08-1982 02:22:20.999999999PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20PM",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20PM",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20PM",
+			expectedError:     "25-12-2019 02:22:20PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20PM",
+			expectedError:     "25-12-2019 02:22:20PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20PM,27-08-1981 02:22:20PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20PM",
+			expectedError:     "25-12-2019 02:22:20PM is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20PM,27-08-1981 02:22:20PM,27-08-1982 02:22:20PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20PM",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Lowercase_12Hrs_Attached_With_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20.999999999pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999pm",
+			expectedError:     "25-12-2019T02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999pm",
+			expectedError:     "25-12-2019T02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999pm,27-08-1981T02:22:20.999999999pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999pm",
+			expectedError:     "25-12-2019T02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20.999999999pm,27-08-1981T02:22:20.999999999pm,27-08-1982T02:22:20.999999999pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20.999999999pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20.999999999pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980T02:22:20pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980T02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980T02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20pm",
+			expectedError:     "25-12-2019T02:22:20pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20pm",
+			expectedError:     "25-12-2019T02:22:20pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20pm,27-08-1981T02:22:20pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20pm",
+			expectedError:     "25-12-2019T02:22:20pm is not an acceptable value for --long. You must pick a value from 27-08-1980T02:22:20pm,27-08-1981T02:22:20pm,27-08-1982T02:22:20pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019T02:22:20pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019T02:22:20pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Lowercase_12Hrs_Attached_Without_T_Full_Date_Time_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20.999999999pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20.999999999pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999pm",
+			expectedError:     "25-12-2019 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999pm",
+			expectedError:     "25-12-2019 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999pm,27-08-1981 02:22:20.999999999pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999pm",
+			expectedError:     "25-12-2019 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20.999999999pm,27-08-1981 02:22:20.999999999pm,27-08-1982 02:22:20.999999999pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20.999999999pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20.999999999pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980 02:22:20pm",
+			expectedValue:   time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980 02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980 02:22:20pm",
+			expectedValue:     time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20pm",
+			expectedError:     "25-12-2019 02:22:20pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20pm",
+			expectedError:     "25-12-2019 02:22:20pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20pm,27-08-1981 02:22:20pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1981, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(1982, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20pm",
+			expectedError:     "25-12-2019 02:22:20pm is not an acceptable value for --long. You must pick a value from 27-08-1980 02:22:20pm,27-08-1981 02:22:20pm,27-08-1982 02:22:20pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20pm",
+			expectedValue:   time.Date(2019, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019 02:22:20pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019 02:22:20pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Slashed_Date_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27/08/1980",
+			expectedValue:   time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27/08/1980",
+			expectedValue:     time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27/08/1980",
+			expectedValue:     time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27/08/1980",
+			expectedValue:     time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25/12/2019",
+			expectedError:     "25/12/2019 is not an acceptable value for --long. You must pick a value from 27/08/1980.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+				time.Date(1981, 8, 27, 0, 0, 0, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019",
+			expectedError:     "25/12/2019 is not an acceptable value for --long. You must pick a value from 27/08/1980,27/08/1981.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+				time.Date(1981, 8, 27, 0, 0, 0, 0, time.UTC),
+				time.Date(1982, 8, 27, 0, 0, 0, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019",
+			expectedError:     "25/12/2019 is not an acceptable value for --long. You must pick a value from 27/08/1980,27/08/1981,27/08/1982.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25/12/2019",
+			expectedValue:   time.Date(2019, 12, 25, 0, 0, 0, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25/12/2019",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25/12/2019",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Dashed_Date_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "27-08-1980",
+			expectedValue:   time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "27-08-1980",
+			expectedValue:     time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "27-08-1980",
+			expectedValue:     time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "27-08-1980",
+			expectedValue:     time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC)},
+			setValidationList: true,
+			value:             "25-12-2019",
+			expectedError:     "25-12-2019 is not an acceptable value for --long. You must pick a value from 27-08-1980.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+				time.Date(1981, 8, 27, 0, 0, 0, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019",
+			expectedError:     "25-12-2019 is not an acceptable value for --long. You must pick a value from 27-08-1980,27-08-1981.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+				time.Date(1981, 8, 27, 0, 0, 0, 0, time.UTC),
+				time.Date(1982, 8, 27, 0, 0, 0, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019",
+			expectedError:     "25-12-2019 is not an acceptable value for --long. You must pick a value from 27-08-1980,27-08-1981,27-08-1982.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "25-12-2019",
+			expectedValue:   time.Date(2019, 12, 25, 0, 0, 0, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "25-12-2019",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(1980, 8, 27, 0, 0, 0, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "25-12-2019",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_24Hrs_With_Timestamp_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 14:22:20.999999999",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 14:22:20.999999999",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 14:22:20.999999999",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 14:22:20.999999999",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20.999999999",
+			expectedError:     "Dec 25 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.999999999.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20.999999999",
+			expectedError:     "Dec 25 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.999999999,Aug 28 14:22:20.999999999.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20.999999999",
+			expectedError:     "Dec 25 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.999999999,Aug 28 14:22:20.999999999,Aug 29 14:22:20.999999999.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 14:22:20.999999999",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 14:22:20.999999999",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20.999999999",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 14:22:20",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 14:22:20",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 14:22:20",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 14:22:20",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20",
+			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20",
+			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20,Aug 27 14:22:20.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20",
+			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20,Aug 27 14:22:20,Aug 27 14:22:20.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 14:22:20",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 14:22:20",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Uppercase_12Hrs_Spaced_With_Timestamp_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20.999999999 PM",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999 PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20.999999999 PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999 PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 PM",
+			expectedError:     "Dec 25 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 PM",
+			expectedError:     "Dec 25 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 PM,Aug 28 02:22:20.999999999 PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 PM",
+			expectedError:     "Dec 25 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 PM,Aug 28 02:22:20.999999999 PM,Aug 29 02:22:20.999999999 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999 PM",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20 PM",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20 PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20 PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20 PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 PM",
+			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 PM",
+			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM,Aug 27 02:22:20 PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 PM",
+			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM,Aug 27 02:22:20 PM,Aug 27 02:22:20 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20 PM",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Lowercase_12Hrs_Spaced_With_Timestamp_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20.999999999 pm",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999 pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20.999999999 pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999 pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 pm",
+			expectedError:     "Dec 25 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 pm",
+			expectedError:     "Dec 25 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 pm,Aug 28 02:22:20.999999999 pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 pm",
+			expectedError:     "Dec 25 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 pm,Aug 28 02:22:20.999999999 pm,Aug 29 02:22:20.999999999 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999 pm",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20 pm",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20 pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20 pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20 pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 pm",
+			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 pm",
+			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm,Aug 27 02:22:20 pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 pm",
+			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm,Aug 27 02:22:20 pm,Aug 27 02:22:20 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20 pm",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Uppercase_12Hrs_Attached_With_Timestamp_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20.999999999PM",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20.999999999PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999PM",
+			expectedError:     "Dec 25 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999PM",
+			expectedError:     "Dec 25 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999PM,Aug 28 02:22:20.999999999PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999PM",
+			expectedError:     "Dec 25 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999PM,Aug 28 02:22:20.999999999PM,Aug 29 02:22:20.999999999PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999PM",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20PM",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20PM",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20PM",
+			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20PM",
+			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM,Aug 27 02:22:20PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20PM",
+			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM,Aug 27 02:22:20PM,Aug 27 02:22:20PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20PM",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Lowercase_12Hrs_Attached_With_Timestamp_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20.999999999pm",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20.999999999pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20.999999999pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999pm",
+			expectedError:     "Dec 25 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999pm",
+			expectedError:     "Dec 25 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999pm,Aug 28 02:22:20.999999999pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999pm",
+			expectedError:     "Dec 25 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999pm,Aug 28 02:22:20.999999999pm,Aug 29 02:22:20.999999999pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999pm",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20.999999999pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "Aug 27 02:22:20pm",
+			expectedValue:   time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "Aug 27 02:22:20pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "Aug 27 02:22:20pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "Aug 27 02:22:20pm",
+			expectedValue:     time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20pm",
+			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20pm",
+			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm,Aug 27 02:22:20pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20pm",
+			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm,Aug 27 02:22:20pm,Aug 27 02:22:20pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20pm",
+			expectedValue:   time.Date(0, 12, 25, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "Dec 25 02:22:20pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_24Hrs_With_Time_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "14:22:20.999999999",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "14:22:20.999999999",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "14:22:20.999999999",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "14:22:20.999999999",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "14:22:20.999999999",
+			expectedError:     "14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 15:22:20.999999999.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "14:22:20.999999999",
+			expectedError:     "14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 15:22:20.999999999,16:22:20.999999999.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "14:22:20.999999999",
+			expectedError:     "14:22:20.999999999 is not an acceptable value for --long. You must pick a value from 15:22:20.999999999,16:22:20.999999999,17:22:20.999999999.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "14:22:20.999999999",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "14:22:20.999999999",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "14:22:20.999999999",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "14:22:20",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "14:22:20",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "14:22:20",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "14:22:20",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "14:22:20",
+			expectedError:     "14:22:20 is not an acceptable value for --long. You must pick a value from 15:22:20.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "14:22:20",
+			expectedError:     "14:22:20 is not an acceptable value for --long. You must pick a value from 15:22:20,16:22:20.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "14:22:20",
+			expectedError:     "14:22:20 is not an acceptable value for --long. You must pick a value from 15:22:20,16:22:20,17:22:20.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "14:22:20",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "14:22:20",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "14:22:20",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Uppercase_12Hrs_Spaced_With_Time_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20.999999999 PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "02:22:20.999999999 PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20.999999999 PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20.999999999 PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20.999999999 PM",
+			expectedError:     "02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 03:22:20.999999999 PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999 PM",
+			expectedError:     "02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 03:22:20.999999999 PM,04:22:20.999999999 PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999 PM",
+			expectedError:     "02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from 03:22:20.999999999 PM,04:22:20.999999999 PM,05:22:20.999999999 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999 PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999 PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20 PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "02:22:20 PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20 PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20 PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20 PM",
+			expectedError:     "02:22:20 PM is not an acceptable value for --long. You must pick a value from 03:22:20 PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20 PM",
+			expectedError:     "02:22:20 PM is not an acceptable value for --long. You must pick a value from 03:22:20 PM,04:22:20 PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20 PM",
+			expectedError:     "02:22:20 PM is not an acceptable value for --long. You must pick a value from 03:22:20 PM,04:22:20 PM,05:22:20 PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20 PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20 PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20 PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Lowercase_12Hrs_Spaced_With_Time_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20.999999999 pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "02:22:20.999999999 pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20.999999999 pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20.999999999 pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20.999999999 pm",
+			expectedError:     "02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 03:22:20.999999999 pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999 pm",
+			expectedError:     "02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 03:22:20.999999999 pm,04:22:20.999999999 pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999 pm",
+			expectedError:     "02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from 03:22:20.999999999 pm,04:22:20.999999999 pm,05:22:20.999999999 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999 pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999 pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20 pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "02:22:20 pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20 pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20 pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20 pm",
+			expectedError:     "02:22:20 pm is not an acceptable value for --long. You must pick a value from 03:22:20 pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20 pm",
+			expectedError:     "02:22:20 pm is not an acceptable value for --long. You must pick a value from 03:22:20 pm,04:22:20 pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20 pm",
+			expectedError:     "02:22:20 pm is not an acceptable value for --long. You must pick a value from 03:22:20 pm,04:22:20 pm,05:22:20 pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20 pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20 pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20 pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Uppercase_12Hrs_Attached_With_Time_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20.999999999PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "02:22:20.999999999PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20.999999999PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20.999999999PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20.999999999PM",
+			expectedError:     "02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 03:22:20.999999999PM.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999PM",
+			expectedError:     "02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 03:22:20.999999999PM,04:22:20.999999999PM.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999PM",
+			expectedError:     "02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from 03:22:20.999999999PM,04:22:20.999999999PM,05:22:20.999999999PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999PM",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "02:22:20PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20PM",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20PM",
+			expectedError:     "02:22:20PM is not an acceptable value for --long. You must pick a value from 03:22:20PM.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20PM",
+			expectedError:     "02:22:20PM is not an acceptable value for --long. You must pick a value from 03:22:20PM,04:22:20PM.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20PM",
+			expectedError:     "02:22:20PM is not an acceptable value for --long. You must pick a value from 03:22:20PM,04:22:20PM,05:22:20PM.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20PM",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20PM",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20PM",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestTimeFlag_Lowercase_12Hrs_Attached_With_Time_Only_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     time.Time
+		validationCB      func(in time.Time) error
+		setValidationCB   bool
+		validationList    []time.Time
+		setValidationList bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback with nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20.999999999pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list with nano seconds",
+			setValidationList: true,
+			value:             "02:22:20.999999999pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback with nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20.999999999pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list with nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20.999999999pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list with nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20.999999999pm",
+			expectedError:     "02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 03:22:20.999999999pm.",
+		},
+		{
+			title: "two items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999pm",
+			expectedError:     "02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 03:22:20.999999999pm,04:22:20.999999999pm.",
+		},
+		{
+			title: "three items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 999999999, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999pm",
+			expectedError:     "02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from 03:22:20.999999999pm,04:22:20.999999999pm,05:22:20.999999999pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20.999999999pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list with nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20.999999999pm",
+			expectedError:     "validation callback failed",
+		},
+
+		{
+			title:           "nil validation callback without nano seconds",
+			setValidationCB: true,
+			value:           "02:22:20pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list without nano seconds",
+			setValidationList: true,
+			value:             "02:22:20pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback without nano seconds",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "02:22:20pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list without nano seconds",
+			validationList:    make([]time.Time, 0),
+			setValidationList: true,
+			value:             "02:22:20pm",
+			expectedValue:     time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			expectedError:     "",
+		},
+		{
+			title:             "single item in the validation list without nano seconds",
+			validationList:    []time.Time{time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC)},
+			setValidationList: true,
+			value:             "02:22:20pm",
+			expectedError:     "02:22:20pm is not an acceptable value for --long. You must pick a value from 03:22:20pm.",
+		},
+		{
+			title: "two items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20pm",
+			expectedError:     "02:22:20pm is not an acceptable value for --long. You must pick a value from 03:22:20pm,04:22:20pm.",
+		},
+		{
+			title: "three items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 15, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 16, 22, 20, 0, time.UTC),
+				time.Date(0, 1, 1, 17, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20pm",
+			expectedError:     "02:22:20pm is not an acceptable value for --long. You must pick a value from 03:22:20pm,04:22:20pm,05:22:20pm.",
+		},
+		{
+			title: "validation callback with no validation error and nano seconds",
+			validationCB: func(in time.Time) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "02:22:20pm",
+			expectedValue:   time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+		},
+		{
+			title: "validation callback with validation error and without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "02:22:20pm",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list without nano seconds",
+			validationCB: func(in time.Time) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			validationList: []time.Time{
+				time.Date(0, 1, 1, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "02:22:20pm",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.validationList...)
+			}
 			err := f.Set(tc.value)
 			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})

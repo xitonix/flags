@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"testing"
 
 	"go.xitonix.io/flags"
@@ -339,6 +340,50 @@ func TestBoolFlag_Set(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.Bool("long", "usage")
 			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestBoolFlag_Validation(t *testing.T) {
+	testCases := []struct {
+		title         string
+		value         string
+		expectedValue bool
+		validationCB  func(in bool) error
+		expectedError string
+	}{
+		{
+			title:         "nil validation callback",
+			value:         "true",
+			expectedValue: true,
+			expectedError: "",
+		},
+		{
+			title: "validation callback with no validation error",
+			validationCB: func(in bool) error {
+				return nil
+			},
+			value:         "true",
+			expectedValue: true,
+		},
+		{
+			title: "validation callback with validation error",
+			validationCB: func(in bool) error {
+				return errors.New("validation callback failed")
+			},
+			value:         "true",
+			expectedError: "validation callback failed",
+			expectedValue: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Bool("long", "usage")
+			fVar := f.Var()
+			f = f.WithValidationCallback(tc.validationCB)
 			err := f.Set(tc.value)
 			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})

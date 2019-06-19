@@ -19,6 +19,7 @@ type BoolFlag struct {
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
+	validate            func(in bool) error
 }
 
 func newBool(name, usage, short string) *BoolFlag {
@@ -135,6 +136,14 @@ func (f *BoolFlag) MarkAsDeprecated() *BoolFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+func (f *BoolFlag) WithValidationCallback(validate func(in bool) error) *BoolFlag {
+	f.validate = validate
+	return f
+}
+
 // Set sets the flag value.
 func (f *BoolFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
@@ -145,6 +154,14 @@ func (f *BoolFlag) Set(value string) error {
 	if err != nil {
 		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
+
+	if f.validate != nil {
+		err := f.validate(v)
+		if err != nil {
+			return err
+		}
+	}
+
 	f.set(v)
 	f.isSet = true
 	return nil

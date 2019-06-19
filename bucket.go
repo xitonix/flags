@@ -103,8 +103,7 @@ func (b *Bucket) Parse() {
 	}
 	if err := b.checkForUnknownFlags(); err != nil {
 		b.Help()
-		b.opts.Logger.Print(err)
-		b.opts.Terminator.Terminate(core.FailureExitCode)
+		b.terminateWithError(err)
 		return
 	}
 
@@ -147,11 +146,17 @@ func (b *Bucket) Parse() {
 			if p, ok := f.(core.EmptyValueProvider); ok && found && internal.IsEmpty(value) {
 				value = p.EmptyValue()
 			}
-
+			if !b.executeCallback(f, value, false) {
+				return
+			}
 			err := f.Set(value)
 			if err != nil {
-				b.opts.Logger.Print(err)
-				b.opts.Terminator.Terminate(core.FailureExitCode)
+				b.terminateWithError(err)
+				return
+			}
+
+			if !b.executeCallback(f, value, true) {
+				return
 			}
 			break
 		}
@@ -684,4 +689,25 @@ func (b *Bucket) sortFlags() []core.Flag {
 		return b.opts.Comparer.LessThan(clone[i], clone[j])
 	})
 	return clone
+}
+
+func (b *Bucket) executeCallback(f core.Flag, value string, post bool) bool {
+	cb := b.opts.PreSetCallback
+	if post {
+		cb = b.opts.PostSetCallback
+	}
+	if cb == nil {
+		return true
+	}
+	if err := cb(f, value); err != nil {
+		b.terminateWithError(err)
+		return false
+	}
+
+	return true
+}
+
+func (b *Bucket) terminateWithError(err error) {
+	b.opts.Logger.Print(err)
+	b.opts.Terminator.Terminate(core.FailureExitCode)
 }

@@ -89,6 +89,46 @@ func TestSetDefaultValueFormatString(t *testing.T) {
 	}
 }
 
+func TestSetPreSetCallback(t *testing.T) {
+	counter := 0
+	expected := func(f core.Flag, value string) error {
+		if value != "value" {
+			t.Errorf("Expected value: 'value', Actual: %s", value)
+		}
+		counter++
+		return nil
+	}
+	SetPreSetCallback(expected)
+	if DefaultBucket.opts.PreSetCallback == nil {
+		t.Error("The default bucket's pre-set callback was nil")
+		return
+	}
+	_ = DefaultBucket.opts.PreSetCallback(mocks.NewFlag("long", "s"), "value")
+	if counter != 1 {
+		t.Error("The default bucket's pre-set callback has not been called")
+	}
+}
+
+func TestSetPostSetCallback(t *testing.T) {
+	counter := 0
+	expected := func(f core.Flag, value string) error {
+		if value != "value" {
+			t.Errorf("Expected value: 'value', Actual: %s", value)
+		}
+		counter++
+		return nil
+	}
+	SetPostSetCallback(expected)
+	if DefaultBucket.opts.PostSetCallback == nil {
+		t.Error("The default bucket's post-set callback was nil")
+		return
+	}
+	_ = DefaultBucket.opts.PostSetCallback(mocks.NewFlag("long", "s"), "value")
+	if counter != 1 {
+		t.Error("The default bucket's post-set callback has not been called")
+	}
+}
+
 func TestAppendSource(t *testing.T) {
 	DefaultBucket = NewBucket()
 	src := NewMemorySource()

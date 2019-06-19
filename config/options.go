@@ -51,6 +51,10 @@ type Options struct {
 	//
 	// The string is used to format the default value in help output (i.e. [Default: %v])
 	DefaultValueFormatString string
+	// PreSetCallback is a callback which will be called before the flag value has been set by a source.
+	PreSetCallback core.Callback
+	// PostSetCallback is a callback which will be called after the flag value has been set by a source.
+	PostSetCallback core.Callback
 }
 
 func NewOptions() *Options {
@@ -65,11 +69,29 @@ func NewOptions() *Options {
 		HelpWriter:               core.NewTabbedHelpWriter(os.Stdout),
 		DeprecationMark:          DeprecatedFlagIndicatorDefault,
 		DefaultValueFormatString: DefaultValueFormatStringDefault,
+		PreSetCallback:           nil,
+		PostSetCallback:          nil,
 	}
 }
 
 // Option represents an option function
 type Option func(options *Options)
+
+// WithPreSetCallback sets the callback function which will be called before the flag value has been set by a source.
+func WithPreSetCallback(callback core.Callback) Option {
+	return func(options *Options) {
+		options.PreSetCallback = callback
+	}
+}
+
+// WithPostSetCallback sets the callback function which will be called after the flag value has been set by a source.
+//
+// The post set callback will not get called if the set operation has failed.
+func WithPostSetCallback(callback core.Callback) Option {
+	return func(options *Options) {
+		options.PostSetCallback = callback
+	}
+}
 
 // WithSortOrder sets the sort order of the bucket.
 //

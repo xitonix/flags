@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 	"testing"
@@ -430,7 +431,7 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 			title:         "make Set call to fail",
 			flag:          mocks.NewFlag("flag", "f"),
 			args:          []string{"--flag", "flag_value"},
-			expectedValue: "flag_value",
+			expectedValue: nil,
 			MakeSetToFail: true,
 		},
 	}
@@ -463,13 +464,178 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 				if tm.Code != core.FailureExitCode {
 					t.Errorf("Expectced termination code %d, actual: %d", core.FailureExitCode, tm.Code)
 				}
-				return
 			}
 
 			if tc.flag.Get() != tc.expectedValue {
 				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.Get())
 			}
 		})
+	}
+}
+
+func TestBucket_Callbacks(t *testing.T) {
+	testCases := []struct {
+		title              string
+		expectedValue      interface{}
+		defaultValue       string
+		args               []string
+		flag               *mocks.Flag
+		makeSetToFail      bool
+		setPreSetCallback  bool
+		preSetCallbackErr  error
+		setPostSetCallback bool
+		postSetCallbackErr error
+	}{
+		{
+			title:         "no call back has been provided",
+			flag:          mocks.NewFlag("flag", "f"),
+			args:          []string{"--flag", "flag_value"},
+			expectedValue: "flag_value",
+		},
+		{
+			title:             "pre set callback",
+			flag:              mocks.NewFlag("flag", "f"),
+			args:              []string{"--flag", "flag_value"},
+			expectedValue:     "flag_value",
+			setPreSetCallback: true,
+			preSetCallbackErr: nil,
+		},
+		{
+			title:             "pre set callback failure",
+			flag:              mocks.NewFlag("flag", "f"),
+			args:              []string{"--flag", "flag_value"},
+			expectedValue:     nil,
+			setPreSetCallback: true,
+			preSetCallbackErr: errors.New("pre-set callback error"),
+		},
+		{
+			title:              "post set callback",
+			flag:               mocks.NewFlag("flag", "f"),
+			args:               []string{"--flag", "flag_value"},
+			expectedValue:      "flag_value",
+			setPostSetCallback: true,
+			postSetCallbackErr: nil,
+		},
+		{
+			title:              "post set callback failure",
+			flag:               mocks.NewFlag("flag", "f"),
+			args:               []string{"--flag", "flag_value"},
+			expectedValue:      "flag_value",
+			setPostSetCallback: true,
+			postSetCallbackErr: errors.New("post-set callback error"),
+		},
+		{
+			title:              "pre and post set callback",
+			flag:               mocks.NewFlag("flag", "f"),
+			args:               []string{"--flag", "flag_value"},
+			expectedValue:      "flag_value",
+			setPreSetCallback:  true,
+			preSetCallbackErr:  nil,
+			setPostSetCallback: true,
+			postSetCallbackErr: nil,
+		},
+		{
+			title:         "make Set to fail",
+			flag:          mocks.NewFlag("flag", "f"),
+			args:          []string{"--flag", "flag_value"},
+			expectedValue: nil,
+			makeSetToFail: true,
+		},
+		{
+			title:              "make Set to fail with post set callback",
+			flag:               mocks.NewFlag("flag", "f"),
+			args:               []string{"--flag", "flag_value"},
+			expectedValue:      nil,
+			makeSetToFail:      true,
+			setPostSetCallback: true,
+			postSetCallbackErr: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			w := mocks.NewInMemoryWriter()
+			lg := &mocks.Logger{}
+			tm := &mocks.Terminator{}
+			env := mocks.NewEnvReader()
+			bucket := newBucket(tc.args, env,
+				config.WithHelpWriter(w),
+				config.WithLogger(lg),
+				config.WithTerminator(tm))
+
+			tc.flag.SetDefaultValue(tc.defaultValue)
+			tc.flag.MakeSetToFail = tc.makeSetToFail
+
+			bucket.flags = []core.Flag{tc.flag}
+
+			var (
+				preSetCallbackCalled  bool
+				postSetCallbackCalled bool
+			)
+
+			if tc.setPreSetCallback {
+				bucket.Options().PreSetCallback = func(flag core.Flag, value string) error {
+					if value != "flag_value" {
+						t.Errorf("Pre-set callback, Expected 'flag_value', Received: %s", value)
+					}
+					preSetCallbackCalled = true
+					return tc.preSetCallbackErr
+				}
+			}
+
+			if tc.setPostSetCallback {
+				bucket.Options().PostSetCallback = func(flag core.Flag, value string) error {
+					if value != "flag_value" {
+						t.Errorf("Post-set callback, Expected 'flag_value', Received: %s", value)
+					}
+					postSetCallbackCalled = true
+					return tc.postSetCallbackErr
+				}
+			}
+
+			bucket.Parse()
+
+			if tc.setPreSetCallback && !preSetCallbackCalled {
+				t.Error("Pre-set callback has not been called")
+			}
+
+			if tc.preSetCallbackErr != nil {
+				checkError(t, tc.preSetCallbackErr, lg.Error, tm, "pre-set callback")
+				if tc.flag.IsSet() {
+					t.Error("The flag value was not supposed to be set, because pre-set callback has failed")
+				}
+			}
+
+			if tc.makeSetToFail && postSetCallbackCalled {
+				t.Error("Post-set callback was not supposed to bet called")
+			}
+
+			if tc.setPostSetCallback && !tc.makeSetToFail && !postSetCallbackCalled {
+				t.Error("Post-set callback has not been called")
+			}
+
+			if tc.postSetCallbackErr != nil {
+				checkError(t, tc.postSetCallbackErr, lg.Error, tm, "post-set callback")
+			}
+
+			if tc.flag.Get() != tc.expectedValue {
+				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.Get())
+			}
+		})
+	}
+}
+
+func checkError(t *testing.T, expected, actual error, tm *mocks.Terminator, operation string) {
+	t.Helper()
+	if !test.ErrorContains(expected, actual.Error()) {
+		t.Errorf("Expected %s error: '%s', but received: %s", operation, expected, actual)
+	}
+
+	if !tm.IsTerminated {
+		t.Errorf("Expected to terminate due to %s failure, but it didn't happen", operation)
+	}
+	if tm.Code != core.FailureExitCode {
+		t.Errorf("Expectced termination code %d due to %s failure, actual: %d", core.FailureExitCode, operation, tm.Code)
 	}
 }
 

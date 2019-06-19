@@ -77,7 +77,7 @@ func NewOptions() *Options {
 // Option represents an option function
 type Option func(options *Options)
 
-// WithPreSetCallback sets the callback function which will be called before the flag value has been set by a source.
+// WithPreSetCallback sets the callback function which will be called before the flag value is being set by a source.
 func WithPreSetCallback(callback core.Callback) Option {
 	return func(options *Options) {
 		options.PreSetCallback = callback
@@ -86,7 +86,7 @@ func WithPreSetCallback(callback core.Callback) Option {
 
 // WithPostSetCallback sets the callback function which will be called after the flag value has been set by a source.
 //
-// The post set callback will not get called if the set operation has failed.
+// The post Set callback will not get called if the Set operation fails.
 func WithPostSetCallback(callback core.Callback) Option {
 	return func(options *Options) {
 		options.PostSetCallback = callback

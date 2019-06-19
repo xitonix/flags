@@ -38,17 +38,17 @@ func SetLogger(logger core.Logger) {
 	DefaultBucket.opts.Logger = logger
 }
 
-// SetPreSetCallback sets the pre set operation callback function for the default bucket.
+// SetPreSetCallback sets the pre Set callback function for the default bucket.
 //
-// The function will be called before the flag value has been set by a source.
+// The function will be called before the flag value is being set by a source.
 func SetPreSetCallback(callback core.Callback) {
 	DefaultBucket.opts.PreSetCallback = callback
 }
 
-// SetPostSetCallback sets the post set operation callback function for the default bucket.
+// SetPostSetCallback sets the post Set callback function for the default bucket.
 //
 // The function will be called after the flag value has been set by a source.
-// The post set callback will not get called if the set operation has failed.
+// The post Set callback will not get called if the Set operation fails.
 func SetPostSetCallback(callback core.Callback) {
 	DefaultBucket.opts.PostSetCallback = callback
 }

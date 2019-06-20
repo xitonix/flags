@@ -2,6 +2,8 @@ package flags_test
 
 import (
 	"errors"
+	"fmt"
+	"math"
 	"reflect"
 	"testing"
 
@@ -370,6 +372,11 @@ func TestUIntSliceFlag_Set(t *testing.T) {
 			expectedValue: empty,
 		},
 		{
+			title:         "comma separated range",
+			value:         fmt.Sprintf("0,100,200,%d", uint64(math.MaxUint64)),
+			expectedValue: []uint{0, 100, 200, math.MaxUint64},
+		},
+		{
 			title:         "invalid value",
 			value:         " invalid ",
 			expectedError: "is not a valid []uint value",
@@ -403,7 +410,6 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		setValidationCB   bool
 		validationList    []uint
 		setValidationList bool
-		ignoreCase        bool
 		expectedError     string
 	}{
 		{
@@ -439,7 +445,6 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		{
 			title:             "none empty validation list with single item",
 			validationList:    []uint{100, 200},
-			ignoreCase:        false,
 			setValidationList: true,
 			value:             "10",
 			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100 and 200.",
@@ -448,7 +453,6 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		{
 			title:             "none empty validation list with multiple items",
 			validationList:    []uint{100, 200},
-			ignoreCase:        false,
 			setValidationList: true,
 			value:             "100,300",
 			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100 and 200.",
@@ -457,7 +461,6 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		{
 			title:             "validation list with three entries",
 			validationList:    []uint{100, 200, 300},
-			ignoreCase:        false,
 			setValidationList: true,
 			value:             "7",
 			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100, 200 and 300.",
@@ -465,17 +468,15 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		},
 		{
 			title:             "none empty validation list",
-			validationList:    []uint{100, 200},
-			ignoreCase:        false,
+			validationList:    []uint{0, 100, 200, math.MaxUint64},
 			setValidationList: true,
-			value:             "100,200",
+			value:             fmt.Sprintf("0, 100,200, %v", uint64(math.MaxUint64)),
 			expectedError:     "",
-			expectedValue:     []uint{100, 200},
+			expectedValue:     []uint{0, 100, 200, math.MaxUint64},
 		},
 		{
 			title:             "empty value",
 			validationList:    []uint{100, 200},
-			ignoreCase:        false,
 			setValidationList: true,
 			value:             "",
 			expectedError:     "",
@@ -484,7 +485,6 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		{
 			title:             "white space value",
 			validationList:    []uint{100, 200},
-			ignoreCase:        false,
 			setValidationList: true,
 			value:             "  ",
 			expectedValue:     empty,
@@ -530,7 +530,7 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 				f = f.WithValidationCallback(tc.validationCB)
 			}
 			if tc.setValidationList {
-				f = f.WithValidRange(tc.ignoreCase, tc.validationList...)
+				f = f.WithValidRange(tc.validationList...)
 			}
 			err := f.Set(tc.value)
 			checkSliceFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)

@@ -2366,6 +2366,32 @@ func TestBucket_UIntSliceP(t *testing.T) {
 	}
 }
 
+func TestBucket_Float64Slice(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Float64Slice("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Float64SliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float64SliceFlag{}, f)
+	}
+}
+
+func TestBucket_Float64SliceP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.Float64SliceP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*Float64SliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &Float64SliceFlag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

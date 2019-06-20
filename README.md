@@ -17,10 +17,8 @@ TODOs:
     * ~~Time~~
     * ~~[]string~~
     * ~~[]int~~
-    * []float64
-    * []Duration
-    * []Time
-    * map[string]string
+    * ~~[]uint~~
+    * ~~[]float64~~
     * ~~Counters (with Verbose alias)~~
 * ~~Hidden flags~~
 * ~~Deprecated flags~~

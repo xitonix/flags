@@ -173,7 +173,7 @@ func (f *UIntSliceFlag) WithValidationCallback(validate func(in uint) error) *UI
 // The set operation will fail if the flag value is not from the specified list.
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
-func (f *UIntSliceFlag) WithValidRange(ignoreCase bool, valid ...uint) *UIntSliceFlag {
+func (f *UIntSliceFlag) WithValidRange(valid ...uint) *UIntSliceFlag {
 	l := len(valid)
 	if len(valid) == 0 {
 		return f

@@ -563,3 +563,28 @@ func UIntSlice(longName, usage string) *UIntSliceFlag {
 func UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
 	return DefaultBucket.UIntSliceP(longName, usage, shortName)
 }
+
+// Float64Slice adds a new string slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+//
+// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func Float64Slice(longName, usage string) *Float64SliceFlag {
+	return DefaultBucket.Float64Slice(longName, usage)
+}
+
+// Float64SliceP adds a new string slice flag with a short name to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+// A valid short name is a case sensitive single character string (i.e. n or N).
+//
+// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func Float64SliceP(longName, usage, shortName string) *Float64SliceFlag {
+	return DefaultBucket.Float64SliceP(longName, usage, shortName)
+}

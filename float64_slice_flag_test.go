@@ -10,7 +10,7 @@ import (
 	"go.xitonix.io/flags"
 )
 
-func TestIntSlice(t *testing.T) {
+func TestFloat64Slice(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long          string
@@ -57,14 +57,14 @@ func TestIntSlice(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice(tc.long, tc.usage)
-			checkFlagInitialState(t, f, "[]int", tc.expectedUsage, tc.expectedLong, "")
-			checkSliceFlagValues(t, []int{}, f.Get(), f.Var())
+			f := flags.Float64Slice(tc.long, tc.usage)
+			checkFlagInitialState(t, f, "[]float64", tc.expectedUsage, tc.expectedLong, "")
+			checkSliceFlagValues(t, []float64{}, f.Get(), f.Var())
 		})
 	}
 }
 
-func TestIntSliceP(t *testing.T) {
+func TestFloat64SliceP(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -143,14 +143,14 @@ func TestIntSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSliceP(tc.long, tc.usage, tc.short)
-			checkFlagInitialState(t, f, "[]int", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
-			checkSliceFlagValues(t, []int{}, f.Get(), f.Var())
+			f := flags.Float64SliceP(tc.long, tc.usage, tc.short)
+			checkFlagInitialState(t, f, "[]float64", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
+			checkSliceFlagValues(t, []float64{}, f.Get(), f.Var())
 		})
 	}
 }
 
-func TestIntSliceFlag_WithKey(t *testing.T) {
+func TestFloat64SliceFlag_WithKey(t *testing.T) {
 	testCases := []struct {
 		title       string
 		key         string
@@ -187,7 +187,7 @@ func TestIntSliceFlag_WithKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage").WithKey(tc.key)
+			f := flags.Float64Slice("long", "usage").WithKey(tc.key)
 			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
@@ -196,36 +196,36 @@ func TestIntSliceFlag_WithKey(t *testing.T) {
 	}
 }
 
-func TestIntSliceFlag_WithDefault(t *testing.T) {
+func TestFloat64SliceFlag_WithDefault(t *testing.T) {
 	testCases := []struct {
 		title                string
-		defaultValue         []int
-		expectedDefaultValue []int
+		defaultValue         []float64
+		expectedDefaultValue []float64
 	}{
 		{
 			title:                "empty default value",
-			defaultValue:         []int{},
-			expectedDefaultValue: []int{},
+			defaultValue:         []float64{},
+			expectedDefaultValue: []float64{},
 		},
 		{
 			title:                "non empty default value",
-			defaultValue:         []int{100},
-			expectedDefaultValue: []int{100},
+			defaultValue:         []float64{100.87},
+			expectedDefaultValue: []float64{100.87},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage").WithDefault(tc.defaultValue)
+			f := flags.Float64Slice("long", "usage").WithDefault(tc.defaultValue)
 			actual := f.Default()
-			if !reflect.DeepEqual(actual.([]int), tc.expectedDefaultValue) {
+			if !reflect.DeepEqual(actual.([]float64), tc.expectedDefaultValue) {
 				t.Errorf("Expected Default Value: %v, Actual: %s", tc.expectedDefaultValue, actual)
 			}
 		})
 	}
 }
 
-func TestIntSliceFlag_Hide(t *testing.T) {
+func TestFloat64SliceFlag_Hide(t *testing.T) {
 	testCases := []struct {
 		title    string
 		isHidden bool
@@ -241,7 +241,7 @@ func TestIntSliceFlag_Hide(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage")
+			f := flags.Float64Slice("long", "usage")
 			if tc.isHidden {
 				f = f.Hide()
 			}
@@ -253,7 +253,7 @@ func TestIntSliceFlag_Hide(t *testing.T) {
 	}
 }
 
-func TestIntSliceFlag_IsDeprecated(t *testing.T) {
+func TestFloat64SliceFlag_IsDeprecated(t *testing.T) {
 	testCases := []struct {
 		title        string
 		isDeprecated bool
@@ -269,7 +269,7 @@ func TestIntSliceFlag_IsDeprecated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage")
+			f := flags.Float64Slice("long", "usage")
 			if tc.isDeprecated {
 				f = f.MarkAsDeprecated()
 			}
@@ -281,41 +281,41 @@ func TestIntSliceFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
-func TestIntSliceFlag_WithDelimiter(t *testing.T) {
+func TestFloat64SliceFlag_WithDelimiter(t *testing.T) {
 	testCases := []struct {
 		title         string
 		value         string
 		delimiter     string
-		expectedValue []int
+		expectedValue []float64
 	}{
 		{
 			title:         "empty delimiter",
-			value:         "100,200",
-			expectedValue: []int{100, 200},
+			value:         "100.87,200.90",
+			expectedValue: []float64{100.87, 200.90},
 		},
 		{
 			title:         "white space delimiter with white spaced input",
-			value:         "100 200",
+			value:         "100.87 200.90",
 			delimiter:     " ",
-			expectedValue: []int{100, 200},
+			expectedValue: []float64{100.87, 200.90},
 		},
 		{
 			title:         "none white space delimiter",
-			value:         "100|200",
+			value:         "100.87|200.90",
 			delimiter:     "|",
-			expectedValue: []int{100, 200},
+			expectedValue: []float64{100.87, 200.90},
 		},
 		{
 			title:         "no delimited input",
-			value:         "100",
+			value:         "100.87",
 			delimiter:     "|",
-			expectedValue: []int{100},
+			expectedValue: []float64{100.87},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage").WithDelimiter(tc.delimiter)
+			f := flags.Float64Slice("long", "usage").WithDelimiter(tc.delimiter)
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			checkSliceFlag(t, f, err, "", tc.expectedValue, f.Get(), fVar)
@@ -323,12 +323,12 @@ func TestIntSliceFlag_WithDelimiter(t *testing.T) {
 	}
 }
 
-func TestIntSliceFlag_Set(t *testing.T) {
-	empty := make([]int, 0)
+func TestFloat64SliceFlag_Set(t *testing.T) {
+	empty := make([]float64, 0)
 	testCases := []struct {
 		title         string
 		value         string
-		expectedValue []int
+		expectedValue []float64
 		expectedError string
 	}{
 		{
@@ -343,23 +343,23 @@ func TestIntSliceFlag_Set(t *testing.T) {
 		},
 		{
 			title:         "single value with white space",
-			value:         "  100  ",
-			expectedValue: []int{100},
+			value:         "  100.87  ",
+			expectedValue: []float64{100.87},
 		},
 		{
 			title:         "single value with no white space",
-			value:         "100",
-			expectedValue: []int{100},
+			value:         "100.87",
+			expectedValue: []float64{100.87},
 		},
 		{
 			title:         "comma separated value with no white space",
-			value:         "100,200",
-			expectedValue: []int{100, 200},
+			value:         "0,100.87,200.90",
+			expectedValue: []float64{0, 100.87, 200.90},
 		},
 		{
 			title:         "comma separated value with white space",
-			value:         " 100 , 200 ",
-			expectedValue: []int{100, 200},
+			value:         " 0, 100.87 , 200.90 ",
+			expectedValue: []float64{0, 100.87, 200.90},
 		},
 		{
 			title:         "comma separated empty string",
@@ -367,37 +367,32 @@ func TestIntSliceFlag_Set(t *testing.T) {
 			expectedValue: empty,
 		},
 		{
+			title:         "comma separated range",
+			value:         fmt.Sprintf("0,100.87,200.90,%f", math.MaxFloat64),
+			expectedValue: []float64{0, 100.87, 200.90, math.MaxFloat64},
+		},
+		{
 			title:         "comma separated white space string",
 			value:         " , , ",
 			expectedValue: empty,
 		},
 		{
-			title:         "comma separated range",
-			value:         fmt.Sprintf("%d, 0, %d", int64(math.MinInt64), int64(math.MaxInt64)),
-			expectedValue: []int{math.MinInt64, 0, math.MaxInt64},
-		},
-		{
 			title:         "invalid value",
 			value:         " invalid ",
-			expectedError: "is not a valid []int value",
+			expectedError: "is not a valid []float64 value",
 			expectedValue: empty,
 		},
 		{
 			title:         "partially invalid value",
-			value:         "100,invalid,200",
-			expectedError: "is not a valid []int value",
+			value:         "100.87,invalid,200.90",
+			expectedError: "is not a valid []float64 value",
 			expectedValue: empty,
-		},
-		{
-			title:         "comma separated negative values",
-			value:         "-100,-200,0,100,200",
-			expectedValue: []int{-100, -200, 0, 100, 200},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage")
+			f := flags.Float64Slice("long", "usage")
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			checkSliceFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
@@ -405,83 +400,83 @@ func TestIntSliceFlag_Set(t *testing.T) {
 	}
 }
 
-func TestIntSliceFlag_Validation(t *testing.T) {
-	empty := make([]int, 0)
+func TestFloat64SliceFlag_Validation(t *testing.T) {
+	empty := make([]float64, 0)
 	testCases := []struct {
 		title             string
 		value             string
-		expectedValue     []int
-		validationCB      func(in int) error
+		expectedValue     []float64
+		validationCB      func(in float64) error
 		setValidationCB   bool
-		validationList    []int
+		validationList    []float64
 		setValidationList bool
 		expectedError     string
 	}{
 		{
 			title:           "nil validation callback",
 			setValidationCB: true,
-			value:           "1,2",
-			expectedValue:   []int{1, 2},
+			value:           "2.5, 3.14",
+			expectedValue:   []float64{2.5, 3.14},
 			expectedError:   "",
 		},
 		{
 			title:             "nil validation list",
 			setValidationList: true,
-			value:             "1,2",
-			expectedValue:     []int{1, 2},
+			value:             "2.5, 3.14",
+			expectedValue:     []float64{2.5, 3.14},
 			expectedError:     "",
 		},
 		{
 			title:             "nil validation list and callback",
 			setValidationList: true,
 			setValidationCB:   true,
-			value:             "1,2",
-			expectedValue:     []int{1, 2},
+			value:             "2.5, 3.14",
+			expectedValue:     []float64{2.5, 3.14},
 			expectedError:     "",
 		},
 		{
 			title:             "empty validation list",
-			validationList:    make([]int, 0),
+			validationList:    make([]float64, 0),
 			setValidationList: true,
-			value:             "1,2",
-			expectedValue:     []int{1, 2},
+			value:             "2.5, 3.14",
+			expectedValue:     []float64{2.5, 3.14},
 			expectedError:     "",
 		},
 		{
 			title:             "none empty validation list with single item",
-			validationList:    []int{100, 200},
+			validationList:    []float64{100.87, 200.90},
 			setValidationList: true,
 			value:             "10",
-			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100.87 and 200.9.",
 			expectedValue:     empty,
 		},
 		{
 			title:             "none empty validation list with multiple items",
-			validationList:    []int{100, 200},
+			validationList:    []float64{100.87, 200.90},
 			setValidationList: true,
-			value:             "100,300",
-			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			value:             "100.87,314.32",
+			expectedError:     "314.32 is not an acceptable value for --numbers. The expected values are 100.87 and 200.9.",
 			expectedValue:     empty,
 		},
 		{
 			title:             "validation list with three entries",
-			validationList:    []int{100, 200, 300},
+			validationList:    []float64{100.87, 200.90, 314.32},
 			setValidationList: true,
-			value:             "7",
-			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100, 200 and 300.",
+			value:             "7.5",
+			expectedError:     "7.5 is not an acceptable value for --numbers. The expected values are 100.87, 200.9 and 314.32.",
 			expectedValue:     empty,
 		},
 		{
 			title:             "none empty validation list",
-			validationList:    []int{math.MinInt64, 0, math.MaxInt64},
+			validationList:    []float64{math.MinInt64, 0, 100.87, 200.90, math.MaxFloat64},
 			setValidationList: true,
-			value:             fmt.Sprintf("%d, 0, %d", int64(math.MinInt64), int64(math.MaxInt64)),
-			expectedValue:     []int{math.MinInt64, 0, math.MaxInt64},
+			value:             fmt.Sprintf("%f, 0, 100.87 ,200.90 , %f", float64(math.MinInt64), math.MaxFloat64),
+			expectedValue:     []float64{math.MinInt64, 0, 100.87, 200.90, math.MaxFloat64},
 			expectedError:     "",
 		},
 		{
 			title:             "empty value",
-			validationList:    []int{100, 200},
+			validationList:    []float64{100.87, 200.90},
 			setValidationList: true,
 			value:             "",
 			expectedError:     "",
@@ -489,39 +484,39 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 		},
 		{
 			title:             "white space value",
-			validationList:    []int{100, 200},
+			validationList:    []float64{100.87, 200.90},
 			setValidationList: true,
 			value:             "  ",
 			expectedValue:     empty,
 		},
 		{
 			title: "validation callback with no validation error",
-			validationCB: func(in int) error {
+			validationCB: func(in float64) error {
 				return nil
 			},
 			setValidationCB: true,
-			value:           "100",
-			expectedValue:   []int{100},
+			value:           "100.87",
+			expectedValue:   []float64{100.87},
 		},
 		{
 			title: "validation callback with validation error",
-			validationCB: func(in int) error {
+			validationCB: func(in float64) error {
 				return errors.New("validation callback failed")
 			},
 			setValidationCB: true,
-			value:           "100",
+			value:           "100.87",
 			expectedError:   "validation callback failed",
 			expectedValue:   empty,
 		},
 		{
 			title: "validation callback takes priority over validation list",
-			validationCB: func(in int) error {
+			validationCB: func(in float64) error {
 				return errors.New("validation callback failed")
 			},
 			setValidationCB:   true,
-			validationList:    []int{100, 200, 300},
+			validationList:    []float64{100.87, 200.90, 314.32},
 			setValidationList: true,
-			value:             "100",
+			value:             "100.87",
 			expectedError:     "validation callback failed",
 			expectedValue:     empty,
 		},
@@ -529,7 +524,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("numbers", "usage")
+			f := flags.Float64Slice("numbers", "usage")
 			fVar := f.Var()
 			if tc.setValidationCB {
 				f = f.WithValidationCallback(tc.validationCB)
@@ -543,30 +538,30 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 	}
 }
 
-func TestIntSliceFlag_ResetToDefault(t *testing.T) {
-	empty := make([]int, 0)
+func TestFloat64SliceFlag_ResetToDefault(t *testing.T) {
+	empty := make([]float64, 0)
 	testCases := []struct {
 		title                   string
 		value                   string
-		expectedValue           []int
-		defaultValue            []int
-		expectedAfterResetValue []int
+		expectedValue           []float64
+		defaultValue            []float64
+		expectedAfterResetValue []float64
 		expectedError           string
 		setDefault              bool
 		expectedIsSetAfterReset bool
 	}{
 		{
 			title:                   "reset without defining the default value",
-			value:                   "100",
-			expectedValue:           []int{100},
-			expectedAfterResetValue: []int{100},
+			value:                   "100.87",
+			expectedValue:           []float64{100.87},
+			expectedAfterResetValue: []float64{100.87},
 			setDefault:              false,
 			expectedIsSetAfterReset: true,
 		},
 		{
 			title:                   "reset to empty default value",
-			value:                   "100",
-			expectedValue:           []int{100},
+			value:                   "100.87",
+			expectedValue:           []float64{100.87},
 			defaultValue:            empty,
 			expectedAfterResetValue: empty,
 			setDefault:              true,
@@ -574,19 +569,19 @@ func TestIntSliceFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset to nil default value",
-			value:                   "100",
-			expectedValue:           []int{100},
+			value:                   "100.87",
+			expectedValue:           []float64{100.87},
 			defaultValue:            nil,
-			expectedAfterResetValue: []int{100},
+			expectedAfterResetValue: []float64{100.87},
 			setDefault:              true,
 			expectedIsSetAfterReset: true,
 		},
 		{
 			title:                   "reset to non-empty default value",
-			value:                   "100",
-			expectedValue:           []int{100},
-			defaultValue:            []int{100, 200},
-			expectedAfterResetValue: []int{100, 200},
+			value:                   "100.87",
+			expectedValue:           []float64{100.87},
+			defaultValue:            []float64{100.87, 200.90},
+			expectedAfterResetValue: []float64{100.87, 200.90},
 			setDefault:              true,
 			expectedIsSetAfterReset: false,
 		},
@@ -594,7 +589,7 @@ func TestIntSliceFlag_ResetToDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSlice("long", "usage")
+			f := flags.Float64Slice("long", "usage")
 			if tc.setDefault {
 				f = f.WithDefault(tc.defaultValue)
 			}

@@ -694,6 +694,29 @@ func (b *Bucket) Float64SliceP(longName, usage, shortName string) *Float64SliceF
 	return f
 }
 
+// IPAddress adds a new IPAddress flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
+//
+// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// or an IPv6 ("2001:db8::68") formatted string.
+func (b *Bucket) IPAddress(longName, usage string) *IPAddressFlag {
+	return b.IPAddressP(longName, usage, "")
+}
+
+// IPAddressP adds a new IPAddress flag with a short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
+// A valid short name is a case sensitive single character string (i.e. i or I).
+//
+// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// or an IPv6 ("2001:db8::68") formatted string.
+func (b *Bucket) IPAddressP(longName, usage, shortName string) *IPAddressFlag {
+	f := newIPAddress(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

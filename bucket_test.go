@@ -2392,6 +2392,32 @@ func TestBucket_Float64SliceP(t *testing.T) {
 	}
 }
 
+func TestBucket_IPAddress(t *testing.T) {
+	bucket := NewBucket()
+	bucket.IPAddress("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*IPAddressFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &IPAddressFlag{}, f)
+	}
+}
+
+func TestBucket_IPAddressP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.IPAddressP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*IPAddressFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &IPAddressFlag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

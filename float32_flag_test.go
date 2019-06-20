@@ -523,10 +523,6 @@ func TestFloat32Flag_ResetToDefault(t *testing.T) {
 				t.Error("IsSet() Expected: false, Actual: true")
 			}
 
-			if tc.setDefault && f.IsSet() {
-				t.Error("IsSet() Expected: false, Actual: true")
-			}
-
 			checkFlagValues(t, tc.expectedAfterResetValue, f.Get(), fVar)
 		})
 	}

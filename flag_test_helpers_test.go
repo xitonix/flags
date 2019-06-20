@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"net"
 	"reflect"
 	"testing"
 
@@ -57,6 +58,31 @@ func checkFlagValues(t *testing.T, expectedValue, actual, actualVar interface{})
 	fVar := reflect.ValueOf(actualVar).Elem()
 	if fVar.Interface() != expectedValue {
 		t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue, fVar)
+	}
+}
+
+func checkIPFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual net.IP, actualVar *net.IP) {
+	t.Helper()
+	if !test.ErrorContains(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkIPFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkIPFlagValues(t *testing.T, expectedValue, actual net.IP, actualVar *net.IP) {
+	t.Helper()
+
+	if !actual.Equal(expectedValue) {
+		t.Errorf("Expected value: %v, Actual: %v", expectedValue, actual)
+	}
+
+	if !(*actualVar).Equal(expectedValue) {
+		t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue, *actualVar)
 	}
 }
 

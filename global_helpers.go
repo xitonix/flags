@@ -588,3 +588,24 @@ func Float64Slice(longName, usage string) *Float64SliceFlag {
 func Float64SliceP(longName, usage, shortName string) *Float64SliceFlag {
 	return DefaultBucket.Float64SliceP(longName, usage, shortName)
 }
+
+// IPAddress adds a new IPAddress flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
+//
+// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// or an IPv6 ("2001:db8::68") formatted string.
+func IPAddress(longName, usage string) *IPAddressFlag {
+	return DefaultBucket.IPAddress(longName, usage)
+}
+
+// IPAddressP adds a new IPAddress flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
+// A valid short name is a case sensitive single character string (i.e. i or I).
+//
+// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// or an IPv6 ("2001:db8::68") formatted string.
+func IPAddressP(longName, usage, shortName string) *IPAddressFlag {
+	return DefaultBucket.IPAddressP(longName, usage, shortName)
+}

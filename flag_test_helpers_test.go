@@ -18,10 +18,10 @@ func checkSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, ex
 		t.Error("IsSet(), Expected value: true, Actual: false")
 	}
 
-	checkFlagSliceValues(t, expectedValue, actual, actualVar)
+	checkSliceFlagValues(t, expectedValue, actual, actualVar)
 }
 
-func checkFlagSliceValues(t *testing.T, expectedValue, actual, actualVar interface{}) {
+func checkSliceFlagValues(t *testing.T, expectedValue, actual, actualVar interface{}) {
 	t.Helper()
 	expected := reflect.TypeOf(expectedValue).Elem()
 	if !reflect.DeepEqual(reflect.TypeOf(actual).Elem(), expected) {

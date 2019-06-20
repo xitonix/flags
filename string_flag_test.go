@@ -289,9 +289,8 @@ func TestStringFlag_IsDeprecated(t *testing.T) {
 
 func TestStringFlag_Set(t *testing.T) {
 	testCases := []struct {
-		title         string
-		value         string
-		expectedError string
+		title string
+		value string
 	}{
 		{
 			title: "no value",
@@ -315,7 +314,7 @@ func TestStringFlag_Set(t *testing.T) {
 			f := flags.String("long", "usage")
 			fVar := f.Var()
 			err := f.Set(tc.value)
-			checkFlag(t, f, err, tc.expectedError, tc.value, f.Get(), fVar)
+			checkFlag(t, f, err, "", tc.value, f.Get(), fVar)
 		})
 	}
 }

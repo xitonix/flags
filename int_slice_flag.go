@@ -26,6 +26,9 @@ type IntSliceFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	delimiter           string
+	validate            func(in int) error
+	validM              map[int]interface{}
+	valid               string
 }
 
 func newIntSlice(name, usage, short string) *IntSliceFlag {
@@ -155,6 +158,34 @@ func (f *IntSliceFlag) WithDelimiter(delimiter string) *IntSliceFlag {
 	return f
 }
 
+// WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
+//
+// The set operation will fail if the callback returns an error.
+// You can also define a list of acceptable values using WithValidRange(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *IntSliceFlag) WithValidationCallback(validate func(in int) error) *IntSliceFlag {
+	f.validate = validate
+	return f
+}
+
+// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
+//
+// The set operation will fail if the flag value is not from the specified list.
+// You can also define a custom validation callback function using WithValidationCallback(...) method.
+// Remember that setting the valid range will have no effect if a validation callback has been specified.
+func (f *IntSliceFlag) WithValidRange(ignoreCase bool, valid ...int) *IntSliceFlag {
+	l := len(valid)
+	if len(valid) == 0 {
+		return f
+	}
+	f.validM = make(map[int]interface{})
+	for i, v := range valid {
+		f.valid += internal.GetExpectedValueString(v, i, l)
+		f.validM[v] = nil
+	}
+	return f
+}
+
 // Set sets the flag value.
 //
 // The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
@@ -175,6 +206,25 @@ func (f *IntSliceFlag) Set(value string) error {
 		}
 		list = append(list, item)
 	}
+
+	if f.validate != nil {
+		for _, item := range list {
+			err := f.validate(item)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Validation callback takes priority over validation list
+	if f.validate == nil && f.validM != nil {
+		for _, item := range list {
+			if _, ok := f.validM[item]; !ok {
+				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+			}
+		}
+	}
+
 	f.set(list)
 	f.isSet = true
 	return nil

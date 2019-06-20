@@ -1,6 +1,7 @@
 package flags_test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -391,6 +392,147 @@ func TestIntSliceFlag_Set(t *testing.T) {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.IntSlice("long", "usage")
 			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkSliceFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestIntSliceFlag_Validation(t *testing.T) {
+	testCases := []struct {
+		title             string
+		value             string
+		expectedValue     []int
+		validationCB      func(in int) error
+		setValidationCB   bool
+		validationList    []int
+		setValidationList bool
+		ignoreCase        bool
+		expectedError     string
+	}{
+		{
+			title:           "nil validation callback",
+			setValidationCB: true,
+			value:           "1,2",
+			expectedValue:   []int{1, 2},
+			expectedError:   "",
+		},
+		{
+			title:             "nil validation list",
+			setValidationList: true,
+			value:             "1,2",
+			expectedValue:     []int{1, 2},
+			expectedError:     "",
+		},
+		{
+			title:             "nil validation list and callback",
+			setValidationList: true,
+			setValidationCB:   true,
+			value:             "1,2",
+			expectedValue:     []int{1, 2},
+			expectedError:     "",
+		},
+		{
+			title:             "empty validation list",
+			validationList:    make([]int, 0),
+			setValidationList: true,
+			value:             "1,2",
+			expectedValue:     []int{1, 2},
+			expectedError:     "",
+		},
+		{
+			title:             "none empty validation list with single item",
+			validationList:    []int{100, 200},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "10",
+			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+		},
+		{
+			title:             "none empty validation list with multiple items",
+			validationList:    []int{100, 200},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "100,300",
+			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			expectedValue:     []int{},
+		},
+		{
+			title:             "validation list with three entries",
+			validationList:    []int{100, 200, 300},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "7",
+			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100, 200 and 300.",
+			expectedValue:     []int{},
+		},
+		{
+			title:             "none empty validation list",
+			validationList:    []int{100, 200},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "100,200",
+			expectedError:     "",
+			expectedValue:     []int{100, 200},
+		},
+		{
+			title:             "empty value",
+			validationList:    []int{100, 200},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "",
+			expectedError:     "",
+			expectedValue:     []int{},
+		},
+		{
+			title:             "white space value",
+			validationList:    []int{100, 200},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "  ",
+			expectedValue:     []int{},
+		},
+		{
+			title: "validation callback with no validation error",
+			validationCB: func(in int) error {
+				return nil
+			},
+			setValidationCB: true,
+			value:           "100",
+			expectedValue:   []int{100},
+		},
+		{
+			title: "validation callback with validation error",
+			validationCB: func(in int) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB: true,
+			value:           "100",
+			expectedError:   "validation callback failed",
+		},
+		{
+			title: "validation callback takes priority over validation list",
+			validationCB: func(in int) error {
+				return errors.New("validation callback failed")
+			},
+			setValidationCB:   true,
+			validationList:    []int{100, 200, 300},
+			setValidationList: true,
+			value:             "100",
+			expectedError:     "validation callback failed",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.IntSlice("numbers", "usage")
+			fVar := f.Var()
+			if tc.setValidationCB {
+				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.setValidationList {
+				f = f.WithValidRange(tc.ignoreCase, tc.validationList...)
+			}
 			err := f.Set(tc.value)
 			checkSliceFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})

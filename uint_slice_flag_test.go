@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags"
 )
 
-func TestStringSlice(t *testing.T) {
+func TestUIntSlice(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long          string
@@ -55,14 +55,14 @@ func TestStringSlice(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice(tc.long, tc.usage)
-			checkFlagInitialState(t, f, "[]string", tc.expectedUsage, tc.expectedLong, "")
-			checkSliceFlagValues(t, []string{}, f.Get(), f.Var())
+			f := flags.UIntSlice(tc.long, tc.usage)
+			checkFlagInitialState(t, f, "[]uint", tc.expectedUsage, tc.expectedLong, "")
+			checkSliceFlagValues(t, []uint{}, f.Get(), f.Var())
 		})
 	}
 }
 
-func TestStringSliceP(t *testing.T) {
+func TestUIntSliceP(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -141,14 +141,14 @@ func TestStringSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSliceP(tc.long, tc.usage, tc.short)
-			checkFlagInitialState(t, f, "[]string", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
-			checkSliceFlagValues(t, []string{}, f.Get(), f.Var())
+			f := flags.UIntSliceP(tc.long, tc.usage, tc.short)
+			checkFlagInitialState(t, f, "[]uint", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
+			checkSliceFlagValues(t, []uint{}, f.Get(), f.Var())
 		})
 	}
 }
 
-func TestStringSliceFlag_WithKey(t *testing.T) {
+func TestUIntSliceFlag_WithKey(t *testing.T) {
 	testCases := []struct {
 		title       string
 		key         string
@@ -185,7 +185,7 @@ func TestStringSliceFlag_WithKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage").WithKey(tc.key)
+			f := flags.UIntSlice("long", "usage").WithKey(tc.key)
 			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
@@ -194,36 +194,36 @@ func TestStringSliceFlag_WithKey(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithDefault(t *testing.T) {
+func TestUIntSliceFlag_WithDefault(t *testing.T) {
 	testCases := []struct {
 		title                string
-		defaultValue         []string
-		expectedDefaultValue []string
+		defaultValue         []uint
+		expectedDefaultValue []uint
 	}{
 		{
 			title:                "empty default value",
-			defaultValue:         []string{},
-			expectedDefaultValue: []string{},
+			defaultValue:         []uint{},
+			expectedDefaultValue: []uint{},
 		},
 		{
 			title:                "non empty default value",
-			defaultValue:         []string{"abc"},
-			expectedDefaultValue: []string{"abc"},
+			defaultValue:         []uint{100},
+			expectedDefaultValue: []uint{100},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage").WithDefault(tc.defaultValue)
+			f := flags.UIntSlice("long", "usage").WithDefault(tc.defaultValue)
 			actual := f.Default()
-			if !reflect.DeepEqual(actual.([]string), tc.expectedDefaultValue) {
+			if !reflect.DeepEqual(actual.([]uint), tc.expectedDefaultValue) {
 				t.Errorf("Expected Default Value: %v, Actual: %s", tc.expectedDefaultValue, actual)
 			}
 		})
 	}
 }
 
-func TestStringSliceFlag_Hide(t *testing.T) {
+func TestUIntSliceFlag_Hide(t *testing.T) {
 	testCases := []struct {
 		title    string
 		isHidden bool
@@ -239,7 +239,7 @@ func TestStringSliceFlag_Hide(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.UIntSlice("long", "usage")
 			if tc.isHidden {
 				f = f.Hide()
 			}
@@ -251,7 +251,7 @@ func TestStringSliceFlag_Hide(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_IsDeprecated(t *testing.T) {
+func TestUIntSliceFlag_IsDeprecated(t *testing.T) {
 	testCases := []struct {
 		title        string
 		isDeprecated bool
@@ -267,7 +267,7 @@ func TestStringSliceFlag_IsDeprecated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.UIntSlice("long", "usage")
 			if tc.isDeprecated {
 				f = f.MarkAsDeprecated()
 			}
@@ -279,41 +279,41 @@ func TestStringSliceFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithDelimiter(t *testing.T) {
+func TestUIntSliceFlag_WithDelimiter(t *testing.T) {
 	testCases := []struct {
 		title         string
 		value         string
 		delimiter     string
-		expectedValue []string
+		expectedValue []uint
 	}{
 		{
 			title:         "empty delimiter",
-			value:         "abc,xyz",
-			expectedValue: []string{"abc", "xyz"},
+			value:         "100,200",
+			expectedValue: []uint{100, 200},
 		},
 		{
 			title:         "white space delimiter with white spaced input",
-			value:         "abc xyz",
+			value:         "100 200",
 			delimiter:     " ",
-			expectedValue: []string{"abc", "xyz"},
-		},
-		{
-			title:         "white space delimiter with none white spaced input",
-			value:         "abc,xyz",
-			delimiter:     " ",
-			expectedValue: []string{"abc,xyz"},
+			expectedValue: []uint{100, 200},
 		},
 		{
 			title:         "none white space delimiter",
-			value:         "abc|xyz",
+			value:         "100|200",
 			delimiter:     "|",
-			expectedValue: []string{"abc", "xyz"},
+			expectedValue: []uint{100, 200},
+		},
+		{
+			title:         "no delimited input",
+			value:         "100",
+			delimiter:     "|",
+			expectedValue: []uint{100},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage").WithDelimiter(tc.delimiter)
+			f := flags.UIntSlice("long", "usage").WithDelimiter(tc.delimiter)
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			checkSliceFlag(t, f, err, "", tc.expectedValue, f.Get(), fVar)
@@ -321,58 +321,13 @@ func TestStringSliceFlag_WithDelimiter(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithTrimming(t *testing.T) {
-	testCases := []struct {
-		title          string
-		value          string
-		enableTrimming bool
-		expectedValue  []string
-	}{
-		{
-			title:          "without trimming",
-			enableTrimming: false,
-			value:          "  abc  ,  xyz  ",
-			expectedValue:  []string{"  abc  ", "  xyz  "},
-		},
-		{
-			title:          "with trimming",
-			enableTrimming: true,
-			value:          "  abc  ,  xyz  ",
-			expectedValue:  []string{"abc", "xyz"},
-		},
-		{
-			title:          "only white space input without trimming",
-			enableTrimming: false,
-			value:          "   ",
-			expectedValue:  []string{"   "},
-		},
-		{
-			title:          "only white space input with trimming",
-			enableTrimming: true,
-			value:          "   ,   ",
-			expectedValue:  []string{"", ""},
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
-			if tc.enableTrimming {
-				f = f.WithTrimming()
-			}
-			fVar := f.Var()
-			err := f.Set(tc.value)
-			checkSliceFlag(t, f, err, "", tc.expectedValue, f.Get(), fVar)
-		})
-	}
-}
-
-func TestStringSliceFlag_Set(t *testing.T) {
-	empty := make([]string, 0)
+func TestUIntSliceFlag_Set(t *testing.T) {
+	empty := make([]uint, 0)
 	testCases := []struct {
 		title         string
 		value         string
-		expectedValue []string
+		expectedValue []uint
+		expectedError string
 	}{
 		{
 			title:         "empty value",
@@ -382,49 +337,71 @@ func TestStringSliceFlag_Set(t *testing.T) {
 		{
 			title:         "white space value",
 			value:         "   ",
-			expectedValue: []string{"   "},
+			expectedValue: empty,
 		},
 		{
-			title:         "value with white space",
-			value:         "  abc  ",
-			expectedValue: []string{"  abc  "},
+			title:         "single value with white space",
+			value:         "  100  ",
+			expectedValue: []uint{100},
 		},
 		{
-			title:         "value with no white space",
-			value:         "abc",
-			expectedValue: []string{"abc"},
+			title:         "single value with no white space",
+			value:         "100",
+			expectedValue: []uint{100},
 		},
 		{
 			title:         "comma separated value with no white space",
-			value:         "abc,efg",
-			expectedValue: []string{"abc", "efg"},
+			value:         "0,100,200",
+			expectedValue: []uint{0, 100, 200},
 		},
 		{
 			title:         "comma separated value with white space",
-			value:         " abc , efg ",
-			expectedValue: []string{" abc ", " efg "},
+			value:         " 0, 100 , 200 ",
+			expectedValue: []uint{0, 100, 200},
+		},
+		{
+			title:         "comma separated empty string",
+			value:         ",,",
+			expectedValue: empty,
+		},
+		{
+			title:         "comma separated white space string",
+			value:         " , , ",
+			expectedValue: empty,
+		},
+		{
+			title:         "invalid value",
+			value:         " invalid ",
+			expectedError: "is not a valid []uint value",
+			expectedValue: empty,
+		},
+		{
+			title:         "partially invalid value",
+			value:         "100,invalid,200",
+			expectedError: "is not a valid []uint value",
+			expectedValue: empty,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.UIntSlice("long", "usage")
 			fVar := f.Var()
 			err := f.Set(tc.value)
-			checkSliceFlag(t, f, err, "", tc.expectedValue, f.Get(), fVar)
+			checkSliceFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
 		})
 	}
 }
 
-func TestStringSliceFlag_Validation(t *testing.T) {
-	empty := make([]string, 0)
+func TestUIntSliceFlag_Validation(t *testing.T) {
+	empty := make([]uint, 0)
 	testCases := []struct {
 		title             string
 		value             string
-		expectedValue     []string
-		validationCB      func(in string) error
+		expectedValue     []uint
+		validationCB      func(in uint) error
 		setValidationCB   bool
-		validationList    []string
+		validationList    []uint
 		setValidationList bool
 		ignoreCase        bool
 		expectedError     string
@@ -432,54 +409,72 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 		{
 			title:           "nil validation callback",
 			setValidationCB: true,
-			value:           "value",
-			expectedValue:   []string{"value"},
+			value:           "1,2",
+			expectedValue:   []uint{1, 2},
 			expectedError:   "",
 		},
 		{
 			title:             "nil validation list",
 			setValidationList: true,
-			value:             "value",
-			expectedValue:     []string{"value"},
+			value:             "1,2",
+			expectedValue:     []uint{1, 2},
 			expectedError:     "",
 		},
 		{
 			title:             "nil validation list and callback",
 			setValidationList: true,
 			setValidationCB:   true,
-			value:             "value",
-			expectedValue:     []string{"value"},
+			value:             "1,2",
+			expectedValue:     []uint{1, 2},
 			expectedError:     "",
 		},
 		{
 			title:             "empty validation list",
-			validationList:    make([]string, 0),
+			validationList:    make([]uint, 0),
 			setValidationList: true,
-			value:             "value",
-			expectedValue:     []string{"value"},
+			value:             "1,2",
+			expectedValue:     []uint{1, 2},
 			expectedError:     "",
 		},
 		{
-			title:             "invalid case sensitive validation list with single item",
-			validationList:    []string{"Green", "Red"},
+			title:             "none empty validation list with single item",
+			validationList:    []uint{100, 200},
 			ignoreCase:        false,
 			setValidationList: true,
-			value:             "green",
-			expectedError:     "green is not an acceptable value for --colours. The expected values are Green and Red.",
+			value:             "10",
+			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100 and 200.",
 			expectedValue:     empty,
 		},
 		{
-			title:             "valid case sensitive validation list with multiple items",
-			validationList:    []string{"Green", "Red"},
+			title:             "none empty validation list with multiple items",
+			validationList:    []uint{100, 200},
 			ignoreCase:        false,
 			setValidationList: true,
-			value:             "Green,Red",
+			value:             "100,300",
+			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "validation list with three entries",
+			validationList:    []uint{100, 200, 300},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "7",
+			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100, 200 and 300.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "none empty validation list",
+			validationList:    []uint{100, 200},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "100,200",
 			expectedError:     "",
-			expectedValue:     []string{"Green", "Red"},
+			expectedValue:     []uint{100, 200},
 		},
 		{
 			title:             "empty value",
-			validationList:    []string{"Green", "Red"},
+			validationList:    []uint{100, 200},
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "",
@@ -488,75 +483,40 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 		},
 		{
 			title:             "white space value",
-			validationList:    []string{"Green", "Red"},
+			validationList:    []uint{100, 200},
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "  ",
-			expectedError:     "'  ' is not an acceptable value for --colours. The expected values are Green and Red.",
-			expectedValue:     empty,
-		},
-		{
-			title:             "acceptable white space value",
-			validationList:    []string{"Green", "Red", "  "},
-			ignoreCase:        false,
-			setValidationList: true,
-			value:             "  ",
-			expectedError:     "",
-			expectedValue:     []string{"  "},
-		},
-		{
-			title:             "invalid case insensitive validation list with multiple items",
-			validationList:    []string{"Green", "Red"},
-			ignoreCase:        true,
-			setValidationList: true,
-			value:             "Green,Red,Pink",
-			expectedError:     "Pink is not an acceptable value for --colours. The expected values are Green and Red.",
-			expectedValue:     empty,
-		},
-		{
-			title:             "valid case insensitive validation list with multiple items",
-			validationList:    []string{"Green", "Red"},
-			ignoreCase:        true,
-			setValidationList: true,
-			value:             "green,red",
-			expectedValue:     []string{"green", "red"},
-		},
-		{
-			title:             "three items in the validation list",
-			validationList:    []string{"Green", "Pink", "Yellow"},
-			setValidationList: true,
-			value:             "blue",
-			expectedError:     "blue is not an acceptable value for --colours. The expected values are Green, Pink and Yellow.",
 			expectedValue:     empty,
 		},
 		{
 			title: "validation callback with no validation error",
-			validationCB: func(in string) error {
+			validationCB: func(in uint) error {
 				return nil
 			},
 			setValidationCB: true,
-			value:           "blue",
-			expectedValue:   []string{"blue"},
+			value:           "100",
+			expectedValue:   []uint{100},
 		},
 		{
 			title: "validation callback with validation error",
-			validationCB: func(in string) error {
+			validationCB: func(in uint) error {
 				return errors.New("validation callback failed")
 			},
 			setValidationCB: true,
-			value:           "blue",
+			value:           "100",
 			expectedError:   "validation callback failed",
 			expectedValue:   empty,
 		},
 		{
 			title: "validation callback takes priority over validation list",
-			validationCB: func(in string) error {
+			validationCB: func(in uint) error {
 				return errors.New("validation callback failed")
 			},
 			setValidationCB:   true,
-			validationList:    []string{"Green", "Pink", "Yellow"},
+			validationList:    []uint{100, 200, 300},
 			setValidationList: true,
-			value:             "blue",
+			value:             "100",
 			expectedError:     "validation callback failed",
 			expectedValue:     empty,
 		},
@@ -564,7 +524,7 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("colours", "usage")
+			f := flags.UIntSlice("numbers", "usage")
 			fVar := f.Var()
 			if tc.setValidationCB {
 				f = f.WithValidationCallback(tc.validationCB)
@@ -578,30 +538,30 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_ResetToDefault(t *testing.T) {
-	empty := make([]string, 0)
+func TestUIntSliceFlag_ResetToDefault(t *testing.T) {
+	empty := make([]uint, 0)
 	testCases := []struct {
 		title                   string
 		value                   string
-		expectedValue           []string
-		defaultValue            []string
-		expectedAfterResetValue []string
+		expectedValue           []uint
+		defaultValue            []uint
+		expectedAfterResetValue []uint
 		expectedError           string
 		setDefault              bool
 		expectedIsSetAfterReset bool
 	}{
 		{
 			title:                   "reset without defining the default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
-			expectedAfterResetValue: []string{"abc"},
+			value:                   "100",
+			expectedValue:           []uint{100},
+			expectedAfterResetValue: []uint{100},
 			setDefault:              false,
 			expectedIsSetAfterReset: true,
 		},
 		{
 			title:                   "reset to empty default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
+			value:                   "100",
+			expectedValue:           []uint{100},
 			defaultValue:            empty,
 			expectedAfterResetValue: empty,
 			setDefault:              true,
@@ -609,19 +569,19 @@ func TestStringSliceFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset to nil default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
+			value:                   "100",
+			expectedValue:           []uint{100},
 			defaultValue:            nil,
-			expectedAfterResetValue: []string{"abc"},
+			expectedAfterResetValue: []uint{100},
 			setDefault:              true,
 			expectedIsSetAfterReset: true,
 		},
 		{
 			title:                   "reset to non-empty default value",
-			value:                   "abc",
-			expectedValue:           []string{"abc"},
-			defaultValue:            []string{"abc", "efg"},
-			expectedAfterResetValue: []string{"abc", "efg"},
+			value:                   "100",
+			expectedValue:           []uint{100},
+			defaultValue:            []uint{100, 200},
+			expectedAfterResetValue: []uint{100, 200},
 			setDefault:              true,
 			expectedIsSetAfterReset: false,
 		},
@@ -629,7 +589,7 @@ func TestStringSliceFlag_ResetToDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSlice("long", "usage")
+			f := flags.UIntSlice("long", "usage")
 			if tc.setDefault {
 				f = f.WithDefault(tc.defaultValue)
 			}

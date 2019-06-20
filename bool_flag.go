@@ -23,14 +23,15 @@ type BoolFlag struct {
 }
 
 func newBool(name, usage, short string) *BoolFlag {
-	ptr := new(bool)
-	return &BoolFlag{
+	f := &BoolFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(bool),
 	}
+	f.set(false)
+	return f
 }
 
 // LongName returns the long name of the flag.

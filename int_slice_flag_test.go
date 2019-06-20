@@ -399,6 +399,7 @@ func TestIntSliceFlag_Set(t *testing.T) {
 }
 
 func TestIntSliceFlag_Validation(t *testing.T) {
+	empty := make([]int, 0)
 	testCases := []struct {
 		title             string
 		value             string
@@ -447,6 +448,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			setValidationList: true,
 			value:             "10",
 			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			expectedValue:     empty,
 		},
 		{
 			title:             "none empty validation list with multiple items",
@@ -455,7 +457,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			setValidationList: true,
 			value:             "100,300",
 			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100 and 200.",
-			expectedValue:     []int{},
+			expectedValue:     empty,
 		},
 		{
 			title:             "validation list with three entries",
@@ -464,7 +466,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			setValidationList: true,
 			value:             "7",
 			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100, 200 and 300.",
-			expectedValue:     []int{},
+			expectedValue:     empty,
 		},
 		{
 			title:             "none empty validation list",
@@ -482,7 +484,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			setValidationList: true,
 			value:             "",
 			expectedError:     "",
-			expectedValue:     []int{},
+			expectedValue:     empty,
 		},
 		{
 			title:             "white space value",
@@ -490,7 +492,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "  ",
-			expectedValue:     []int{},
+			expectedValue:     empty,
 		},
 		{
 			title: "validation callback with no validation error",
@@ -509,6 +511,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			setValidationCB: true,
 			value:           "100",
 			expectedError:   "validation callback failed",
+			expectedValue:   empty,
 		},
 		{
 			title: "validation callback takes priority over validation list",
@@ -520,6 +523,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			setValidationList: true,
 			value:             "100",
 			expectedError:     "validation callback failed",
+			expectedValue:     empty,
 		},
 	}
 

@@ -100,14 +100,15 @@ type TimeFlag struct {
 }
 
 func newTime(name, usage, short string) *TimeFlag {
-	ptr := new(time.Time)
-	return &TimeFlag{
+	f := &TimeFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(time.Time),
 	}
+	f.set(time.Time{})
+	return f
 }
 
 // LongName returns the long name of the flag.

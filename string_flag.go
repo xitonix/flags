@@ -25,14 +25,15 @@ type StringFlag struct {
 }
 
 func newString(name, usage, short string) *StringFlag {
-	ptr := new(string)
-	return &StringFlag{
+	f := &StringFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(string),
 	}
+	f.set("")
+	return f
 }
 
 // LongName returns the long name of the flag (i.e. --file).

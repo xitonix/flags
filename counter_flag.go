@@ -28,14 +28,15 @@ type CounterFlag struct {
 }
 
 func newCounter(name, usage, short string) *CounterFlag {
-	ptr := new(int)
-	return &CounterFlag{
+	f := &CounterFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(int),
 	}
+	f.set(0)
+	return f
 }
 
 // LongName returns the long name of the flag.

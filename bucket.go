@@ -640,6 +640,33 @@ func (b *Bucket) IntSliceP(longName, usage, shortName string) *IntSliceFlag {
 	return f
 }
 
+// UIntSlice adds a new string slice flag to the bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+//
+// The value of a UIntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// For example --numbers "1,8,70,60,100"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func (b *Bucket) UIntSlice(longName, usage string) *UIntSliceFlag {
+	return b.UIntSliceP(longName, usage, "")
+}
+
+// UIntSliceP adds a new string slice flag with a short name to the bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+// A valid short name is a case sensitive single character string (i.e. n or N).
+//
+// The value of a UIntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// For example --numbers "1,8,70,60,100"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func (b *Bucket) UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
+	f := newUIntSlice(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

@@ -25,14 +25,15 @@ type UInt64Flag struct {
 }
 
 func newUInt64(name, usage, short string) *UInt64Flag {
-	ptr := new(uint64)
-	return &UInt64Flag{
+	f := &UInt64Flag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(uint64),
 	}
+	f.set(0)
+	return f
 }
 
 // LongName returns the long name of the flag.

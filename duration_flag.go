@@ -30,14 +30,15 @@ type DurationFlag struct {
 }
 
 func newDuration(name, usage, short string) *DurationFlag {
-	ptr := new(time.Duration)
-	return &DurationFlag{
+	f := &DurationFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(time.Duration),
 	}
+	f.set(0)
+	return f
 }
 
 // LongName returns the long name of the flag.

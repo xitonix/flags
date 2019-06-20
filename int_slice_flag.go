@@ -32,16 +32,16 @@ type IntSliceFlag struct {
 }
 
 func newIntSlice(name, usage, short string) *IntSliceFlag {
-	ptr := new([]int)
-	return &IntSliceFlag{
+	f := &IntSliceFlag{
 		key:       &data.Key{},
 		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
-		ptr:       ptr,
-		value:     make([]int, 0),
+		ptr:       new([]int),
 		delimiter: core.DefaultSliceDelimiter,
 	}
+	f.set(make([]int, 0))
+	return f
 }
 
 // LongName returns the long name of the flag

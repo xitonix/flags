@@ -38,16 +38,16 @@ type StringSliceFlag struct {
 }
 
 func newStringSlice(name, usage, short string) *StringSliceFlag {
-	ptr := new([]string)
-	return &StringSliceFlag{
+	f := &StringSliceFlag{
 		key:       &data.Key{},
 		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
-		ptr:       ptr,
-		value:     make([]string, 0),
+		ptr:       new([]string),
 		delimiter: core.DefaultSliceDelimiter,
 	}
+	f.set(make([]string, 0))
+	return f
 }
 
 // LongName returns the long name of the flag

@@ -2340,6 +2340,32 @@ func TestBucket_IntSliceP(t *testing.T) {
 	}
 }
 
+func TestBucket_UIntSlice(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UIntSlice("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UIntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &UIntSliceFlag{}, f)
+	}
+}
+
+func TestBucket_UIntSliceP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.UIntSliceP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*UIntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &UIntSliceFlag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

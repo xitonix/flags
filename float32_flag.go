@@ -25,14 +25,15 @@ type Float32Flag struct {
 }
 
 func newFloat32(name, usage, short string) *Float32Flag {
-	ptr := new(float32)
-	return &Float32Flag{
+	f := &Float32Flag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(float32),
 	}
+	f.set(0.0)
+	return f
 }
 
 // LongName returns the long name of the flag.

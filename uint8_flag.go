@@ -25,14 +25,15 @@ type UInt8Flag struct {
 }
 
 func newUInt8(name, usage, short string) *UInt8Flag {
-	ptr := new(uint8)
-	return &UInt8Flag{
+	f := &UInt8Flag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   ptr,
+		ptr:   new(uint8),
 	}
+	f.set(0)
+	return f
 }
 
 // LongName returns the long name of the flag.

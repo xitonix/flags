@@ -23,14 +23,14 @@ func checkSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, ex
 
 func checkSliceFlagValues(t *testing.T, expectedValue, actual, actualVar interface{}) {
 	t.Helper()
-	expected := reflect.TypeOf(expectedValue).Elem()
-	if !reflect.DeepEqual(reflect.TypeOf(actual).Elem(), expected) {
-		t.Errorf("Expected value: %v, Actual: %v", expectedValue, actual)
+	expected := reflect.ValueOf(expectedValue).Interface()
+	if !reflect.DeepEqual(reflect.ValueOf(actual).Interface(), expected) {
+		t.Errorf("Expected value: %v, Actual: %v", expected, actual)
 	}
 
 	fVar := reflect.ValueOf(actualVar).Elem().Interface()
-	if !reflect.DeepEqual(reflect.TypeOf(fVar).Elem(), expected) {
-		t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue, fVar)
+	if !reflect.DeepEqual(fVar, expected) {
+		t.Errorf("Expected flag variable: %v, Actual: %v", expected, fVar)
 	}
 }
 

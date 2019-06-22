@@ -320,22 +320,22 @@ func TestIPAddressFlag_Set(t *testing.T) {
 			expectedValue: nil,
 		},
 		{
-			title:         "IPV4 value with white space",
+			title:         "IPv4 value with white space",
 			value:         "  " + ipV4Address + "  ",
 			expectedValue: ipV4,
 		},
 		{
-			title:         "IPV6 value with white space",
+			title:         "IPv6 value with white space",
 			value:         "  " + ipV6Address + "  ",
 			expectedValue: ipV6,
 		},
 		{
-			title:         "IPV4 value without white space",
+			title:         "IPv4 value without white space",
 			value:         ipV4Address,
 			expectedValue: ipV4,
 		},
 		{
-			title:         "IPV6 value without white space",
+			title:         "IPv6 value without white space",
 			value:         ipV6Address,
 			expectedValue: ipV6,
 		},
@@ -380,35 +380,35 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 		expectedError     string
 	}{
 		{
-			title:           "nil validation callback with IPV4 input",
+			title:           "nil validation callback with IPv4 input",
 			setValidationCB: true,
 			value:           ipV4Address,
 			expectedValue:   ipV4,
 			expectedError:   "",
 		},
 		{
-			title:           "nil validation callback with IPV6 input",
+			title:           "nil validation callback with IPv6 input",
 			setValidationCB: true,
 			value:           ipV6Address,
 			expectedValue:   ipV6,
 			expectedError:   "",
 		},
 		{
-			title:             "nil validation list with IPV4 input",
+			title:             "nil validation list with IPv4 input",
 			setValidationList: true,
 			value:             ipV4Address,
 			expectedValue:     ipV4,
 			expectedError:     "",
 		},
 		{
-			title:             "nil validation list with IPV6 input",
+			title:             "nil validation list with IPv6 input",
 			setValidationList: true,
 			value:             ipV6Address,
 			expectedValue:     ipV6,
 			expectedError:     "",
 		},
 		{
-			title:             "nil validation list and callback with IPV4 input",
+			title:             "nil validation list and callback with IPv4 input",
 			setValidationList: true,
 			setValidationCB:   true,
 			value:             ipV4Address,
@@ -416,7 +416,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "nil validation list and callback with IPV6 input",
+			title:             "nil validation list and callback with IPv6 input",
 			setValidationList: true,
 			setValidationCB:   true,
 			value:             ipV6Address,
@@ -424,7 +424,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "empty validation list with IPV4 input",
+			title:             "empty validation list with IPv4 input",
 			validationList:    make([]net.IP, 0),
 			setValidationList: true,
 			value:             ipV4Address,
@@ -432,7 +432,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "empty validation list with IPV6 input",
+			title:             "empty validation list with IPv6 input",
 			validationList:    make([]net.IP, 0),
 			setValidationList: true,
 			value:             ipV6Address,
@@ -440,7 +440,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "IPV4 single item in the validation list",
+			title:             "IPv4 single item in the validation list",
 			validationList:    []net.IP{ipV4},
 			setValidationList: true,
 			value:             unacceptableV4Address,
@@ -448,7 +448,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:     nil,
 		},
 		{
-			title:             "IPV6 single item in the validation list",
+			title:             "IPv6 single item in the validation list",
 			validationList:    []net.IP{ipV6},
 			setValidationList: true,
 			value:             unacceptableV6Address,
@@ -472,7 +472,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:     nil,
 		},
 		{
-			title:             "acceptable IPV4 input with validation list",
+			title:             "acceptable IPv4 input with validation list",
 			validationList:    []net.IP{ipV4},
 			setValidationList: true,
 			value:             ipV4Address,
@@ -480,7 +480,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "acceptable IPV6 input with validation list",
+			title:             "acceptable IPv6 input with validation list",
 			validationList:    []net.IP{ipV6},
 			setValidationList: true,
 			value:             ipV6Address,
@@ -488,7 +488,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "acceptable IPV4 input with mix validation list",
+			title:             "acceptable IPv4 input with mix validation list",
 			validationList:    []net.IP{ipV4, ipV6},
 			setValidationList: true,
 			value:             ipV4Address,
@@ -496,7 +496,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title:             "acceptable IPV6 input with mix validation list",
+			title:             "acceptable IPv6 input with mix validation list",
 			validationList:    []net.IP{ipV4, ipV6},
 			setValidationList: true,
 			value:             ipV6Address,
@@ -504,7 +504,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
-			title: "IPV4 input with validation callback with no validation error",
+			title: "IPv4 input with validation callback with no validation error",
 			validationCB: func(in net.IP) error {
 				return nil
 			},
@@ -513,7 +513,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:   ipV4,
 		},
 		{
-			title: "IPV6 input with validation callback with no validation error",
+			title: "IPv6 input with validation callback with no validation error",
 			validationCB: func(in net.IP) error {
 				return nil
 			},
@@ -522,7 +522,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:   ipV6,
 		},
 		{
-			title: "IPV4 input with failing validation callback",
+			title: "IPv4 input with failing validation callback",
 			validationCB: func(in net.IP) error {
 				return errors.New("validation callback failed")
 			},
@@ -532,7 +532,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:   nil,
 		},
 		{
-			title: "IPV6 input with failing validation callback",
+			title: "IPv6 input with failing validation callback",
 			validationCB: func(in net.IP) error {
 				return errors.New("validation callback failed")
 			},
@@ -613,7 +613,7 @@ func TestIPAddressFlag_ResetToDefault(t *testing.T) {
 			setDefault:              false,
 		},
 		{
-			title:                   "reset to IPV4 zero default value",
+			title:                   "reset to IPv4 zero default value",
 			value:                   ipV4Address,
 			expectedValue:           ipV4,
 			defaultValue:            net.IPv4zero,
@@ -621,7 +621,7 @@ func TestIPAddressFlag_ResetToDefault(t *testing.T) {
 			setDefault:              true,
 		},
 		{
-			title:                   "reset to IPV6 zero default value",
+			title:                   "reset to IPv6 zero default value",
 			value:                   ipV6Address,
 			expectedValue:           ipV6,
 			defaultValue:            net.IPv6zero,
@@ -629,7 +629,7 @@ func TestIPAddressFlag_ResetToDefault(t *testing.T) {
 			setDefault:              true,
 		},
 		{
-			title:                   "reset to non-zero IPV4 default value",
+			title:                   "reset to non-zero IPv4 default value",
 			value:                   ipV4Address,
 			expectedValue:           ipV4,
 			defaultValue:            ipV4Default,
@@ -637,7 +637,7 @@ func TestIPAddressFlag_ResetToDefault(t *testing.T) {
 			setDefault:              true,
 		},
 		{
-			title:                   "reset to non-zero IPV6 default value",
+			title:                   "reset to non-zero IPv6 default value",
 			value:                   ipV6Address,
 			expectedValue:           ipV6,
 			defaultValue:            ipV6Default,

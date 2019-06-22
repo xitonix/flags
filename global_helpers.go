@@ -514,7 +514,7 @@ func StringSliceP(longName, usage, shortName string) *StringSliceFlag {
 	return DefaultBucket.StringSliceP(longName, usage, shortName)
 }
 
-// IntSlice adds a new string slice flag to the default bucket.
+// IntSlice adds a new int slice flag to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
@@ -526,7 +526,7 @@ func IntSlice(longName, usage string) *IntSliceFlag {
 	return DefaultBucket.IntSlice(longName, usage)
 }
 
-// IntSliceP adds a new string slice flag with a short name to the default bucket.
+// IntSliceP adds a new int slice flag with a short name to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -539,7 +539,7 @@ func IntSliceP(longName, usage, shortName string) *IntSliceFlag {
 	return DefaultBucket.IntSliceP(longName, usage, shortName)
 }
 
-// UIntSlice adds a new string slice flag to the default bucket.
+// UIntSlice adds a new uint slice flag to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
@@ -551,7 +551,7 @@ func UIntSlice(longName, usage string) *UIntSliceFlag {
 	return DefaultBucket.UIntSlice(longName, usage)
 }
 
-// UIntSliceP adds a new string slice flag with a short name to the default bucket.
+// UIntSliceP adds a new uint slice flag with a short name to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -564,7 +564,7 @@ func UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
 	return DefaultBucket.UIntSliceP(longName, usage, shortName)
 }
 
-// Float64Slice adds a new string slice flag to the default bucket.
+// Float64Slice adds a new float64 slice flag to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
@@ -576,7 +576,7 @@ func Float64Slice(longName, usage string) *Float64SliceFlag {
 	return DefaultBucket.Float64Slice(longName, usage)
 }
 
-// Float64SliceP adds a new string slice flag with a short name to the default bucket.
+// Float64SliceP adds a new float64 slice flag with a short name to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -608,4 +608,31 @@ func IPAddress(longName, usage string) *IPAddressFlag {
 // or an IPv6 ("2001:db8::68") formatted string.
 func IPAddressP(longName, usage, shortName string) *IPAddressFlag {
 	return DefaultBucket.IPAddressP(longName, usage, shortName)
+}
+
+// IPAddressSlice adds a new IP address slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. ip-addresses)
+//
+// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
+// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
+// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
+	return DefaultBucket.IPAddressSlice(longName, usage)
+}
+
+// IPAddressSliceP adds a new IP address slice flag with a short name to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. ip-addresses)
+// A valid short name is a case sensitive single character string (i.e. i or I).
+//
+// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
+// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
+// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func IPAddressSliceP(longName, usage, shortName string) *IPAddressSliceFlag {
+	return DefaultBucket.IPAddressSliceP(longName, usage, shortName)
 }

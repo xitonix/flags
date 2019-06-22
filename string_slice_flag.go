@@ -125,10 +125,8 @@ func (f *StringSliceFlag) WithKey(keyID string) *StringSliceFlag {
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
 func (f *StringSliceFlag) WithDefault(defaultValue []string) *StringSliceFlag {
-	if defaultValue != nil {
-		f.defaultValue = defaultValue
-		f.hasDefault = true
-	}
+	f.defaultValue = defaultValue
+	f.hasDefault = true
 	return f
 }
 
@@ -233,14 +231,15 @@ func (f *StringSliceFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		for _, item := range parts {
+			tmp := item
 			if f.ignoreCase {
-				item = strings.ToLower(item)
+				tmp = strings.ToLower(item)
 			}
-			if _, ok := f.validM[item]; !ok {
-				if internal.IsEmpty(value) {
-					value = "'" + value + "'"
+			if _, ok := f.validM[tmp]; !ok {
+				if internal.IsEmpty(item) {
+					item = "'" + item + "'"
 				}
-				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+				return internal.OutOfRangeErr(item, f.long, f.valid, len(f.validM))
 			}
 		}
 	}

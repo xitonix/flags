@@ -379,13 +379,13 @@ func TestFloat64SliceFlag_Set(t *testing.T) {
 		{
 			title:         "invalid value",
 			value:         " invalid ",
-			expectedError: "is not a valid []float64 value",
+			expectedError: "'invalid' is not a valid []float64 value for --long",
 			expectedValue: empty,
 		},
 		{
 			title:         "partially invalid value",
 			value:         "100.87,invalid,200.90",
-			expectedError: "is not a valid []float64 value",
+			expectedError: "'invalid' is not a valid []float64 value for --long",
 			expectedValue: empty,
 		},
 	}
@@ -572,9 +572,9 @@ func TestFloat64SliceFlag_ResetToDefault(t *testing.T) {
 			value:                   "100.87",
 			expectedValue:           []float64{100.87},
 			defaultValue:            nil,
-			expectedAfterResetValue: []float64{100.87},
+			expectedAfterResetValue: nil,
 			setDefault:              true,
-			expectedIsSetAfterReset: true,
+			expectedIsSetAfterReset: false,
 		},
 		{
 			title:                   "reset to non-empty default value",

@@ -1,7 +1,7 @@
 package flags
 
 import (
-	"strconv"
+	"net"
 	"strings"
 
 	"go.xitonix.io/flags/core"
@@ -9,78 +9,77 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// IntSliceFlag represents an IntSlice flag.
+// IPAddressSliceFlag represents an IP Address slice flag
 //
-// The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
-// For example --numbers "1,8,70,60,100"
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-type IntSliceFlag struct {
+// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
+// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
+// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
+type IPAddressSliceFlag struct {
 	key                 *data.Key
-	defaultValue, value []int
+	defaultValue, value []net.IP
 	hasDefault          bool
-	ptr                 *[]int
+	ptr                 *[]net.IP
 	long, short         string
 	usage               string
 	isSet               bool
 	isDeprecated        bool
 	isHidden            bool
 	delimiter           string
-	validate            func(in int) error
-	validM              map[int]interface{}
+	validate            func(in net.IP) error
+	validM              map[string]interface{}
 	valid               string
 }
 
-func newIntSlice(name, usage, short string) *IntSliceFlag {
-	f := &IntSliceFlag{
+func newIPAddressSlice(name, usage, short string) *IPAddressSliceFlag {
+	f := &IPAddressSliceFlag{
 		key:       &data.Key{},
 		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
-		ptr:       new([]int),
+		ptr:       new([]net.IP),
 		delimiter: core.DefaultSliceDelimiter,
 	}
-	f.set(make([]int, 0))
+	f.set(nil)
 	return f
 }
 
-// LongName returns the long name of the flag
+// LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --numbers).
-func (f *IntSliceFlag) LongName() string {
+// Long name is case insensitive and always lower case (i.e. --port-number).
+func (f *IPAddressSliceFlag) LongName() string {
 	return f.long
 }
 
 // IsHidden returns true if the flag is hidden.
 //
 // A hidden flag won't be printed in the help output.
-func (f *IntSliceFlag) IsHidden() bool {
+func (f *IPAddressSliceFlag) IsHidden() bool {
 	return f.isHidden
 }
 
 // IsDeprecated returns true if the flag is deprecated.
-func (f *IntSliceFlag) IsDeprecated() bool {
+func (f *IPAddressSliceFlag) IsDeprecated() bool {
 	return f.isDeprecated
 }
 
 // Type returns the string representation of the flag's type.
 //
 // This will be printed in the help output.
-func (f *IntSliceFlag) Type() string {
-	return "[]int"
+func (f *IPAddressSliceFlag) Type() string {
+	return "[]IP"
 }
 
 // ShortName returns the flag's short name.
 //
 // Short name is a single case sensitive character (i.e. -P).
-func (f *IntSliceFlag) ShortName() string {
+func (f *IPAddressSliceFlag) ShortName() string {
 	return f.short
 }
 
 // Usage returns the usage string of the flag.
 //
 // This will be printed in the help output.
-func (f *IntSliceFlag) Usage() string {
+func (f *IPAddressSliceFlag) Usage() string {
 	return f.usage
 }
 
@@ -88,19 +87,19 @@ func (f *IntSliceFlag) Usage() string {
 //
 // This method returns false if none of the sources has a value to offer, or the value
 // has been set to Default (if specified).
-func (f *IntSliceFlag) IsSet() bool {
+func (f *IPAddressSliceFlag) IsSet() bool {
 	return f.isSet
 }
 
 // Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
-func (f *IntSliceFlag) Var() *[]int {
+func (f *IPAddressSliceFlag) Var() *[]net.IP {
 	return f.ptr
 }
 
 // Get returns the current value of the flag.
-func (f *IntSliceFlag) Get() []int {
+func (f *IPAddressSliceFlag) Get() []net.IP {
 	return f.value
 }
 
@@ -110,7 +109,7 @@ func (f *IntSliceFlag) Get() []int {
 //
 // In order for the flag value to be extractable from the environment variables, or all the other custom sources,
 // it MUST have a key associated with it.
-func (f *IntSliceFlag) WithKey(keyID string) *IntSliceFlag {
+func (f *IPAddressSliceFlag) WithKey(keyID string) *IPAddressSliceFlag {
 	f.key.SetID(keyID)
 	return f
 }
@@ -118,7 +117,7 @@ func (f *IntSliceFlag) WithKey(keyID string) *IntSliceFlag {
 // WithDefault sets the default value of the flag.
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
-func (f *IntSliceFlag) WithDefault(defaultValue []int) *IntSliceFlag {
+func (f *IPAddressSliceFlag) WithDefault(defaultValue []net.IP) *IPAddressSliceFlag {
 	f.defaultValue = defaultValue
 	f.hasDefault = true
 	return f
@@ -127,7 +126,7 @@ func (f *IntSliceFlag) WithDefault(defaultValue []int) *IntSliceFlag {
 // Hide marks the flag as hidden.
 //
 // A hidden flag will not be displayed in the help output.
-func (f *IntSliceFlag) Hide() *IntSliceFlag {
+func (f *IPAddressSliceFlag) Hide() *IPAddressSliceFlag {
 	f.isHidden = true
 	return f
 }
@@ -142,13 +141,13 @@ func (f *IntSliceFlag) Hide() *IntSliceFlag {
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 // 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
-func (f *IntSliceFlag) MarkAsDeprecated() *IntSliceFlag {
+func (f *IPAddressSliceFlag) MarkAsDeprecated() *IPAddressSliceFlag {
 	f.isDeprecated = true
 	return f
 }
 
 // WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
-func (f *IntSliceFlag) WithDelimiter(delimiter string) *IntSliceFlag {
+func (f *IPAddressSliceFlag) WithDelimiter(delimiter string) *IPAddressSliceFlag {
 	if len(delimiter) == 0 {
 		delimiter = core.DefaultSliceDelimiter
 	}
@@ -161,7 +160,7 @@ func (f *IntSliceFlag) WithDelimiter(delimiter string) *IntSliceFlag {
 // The set operation will fail if the callback returns an error.
 // You can also define a list of acceptable values using WithValidRange(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
-func (f *IntSliceFlag) WithValidationCallback(validate func(in int) error) *IntSliceFlag {
+func (f *IPAddressSliceFlag) WithValidationCallback(validate func(in net.IP) error) *IPAddressSliceFlag {
 	f.validate = validate
 	return f
 }
@@ -171,38 +170,37 @@ func (f *IntSliceFlag) WithValidationCallback(validate func(in int) error) *IntS
 // The set operation will fail if the flag value is not from the specified list.
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
-func (f *IntSliceFlag) WithValidRange(valid ...int) *IntSliceFlag {
+func (f *IPAddressSliceFlag) WithValidRange(valid ...net.IP) *IPAddressSliceFlag {
 	l := len(valid)
-	if len(valid) == 0 {
+	if l == 0 {
 		return f
 	}
-	f.validM = make(map[int]interface{})
+	f.validM = make(map[string]interface{})
 	for i, v := range valid {
 		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v] = nil
+		f.validM[v.String()] = nil
 	}
 	return f
 }
 
 // Set sets the flag value.
 //
-// The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
-// For example --numbers "1,8,70,60,100"
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-func (f *IntSliceFlag) Set(value string) error {
+// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
+// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
+// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
+func (f *IPAddressSliceFlag) Set(value string) error {
 	parts := strings.Split(strings.TrimSpace(value), f.delimiter)
-	list := make([]int, 0)
+	list := make([]net.IP, 0)
 	for _, v := range parts {
 		value = strings.TrimSpace(v)
 		if internal.IsEmpty(v) {
 			continue
 		}
-		item, err := strconv.Atoi(value)
-		if err != nil {
+		ip := net.ParseIP(value)
+		if ip == nil {
 			return internal.InvalidValueErr(value, f.long, f.Type())
 		}
-		list = append(list, item)
+		list = append(list, ip)
 	}
 
 	if f.validate != nil {
@@ -217,7 +215,7 @@ func (f *IntSliceFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		for _, item := range list {
-			if _, ok := f.validM[item]; !ok {
+			if _, ok := f.validM[item.String()]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
 			}
 		}
@@ -232,7 +230,7 @@ func (f *IntSliceFlag) Set(value string) error {
 //
 // Calling this method on a flag without a default value will have no effect.
 // The default value can be defined using WithDefault(...) method.
-func (f *IntSliceFlag) ResetToDefault() {
+func (f *IPAddressSliceFlag) ResetToDefault() {
 	if !f.hasDefault {
 		return
 	}
@@ -243,10 +241,11 @@ func (f *IntSliceFlag) ResetToDefault() {
 // Default returns the default value if specified, otherwise returns nil
 //
 // The default value can be defined using WithDefault(...) method
-func (f *IntSliceFlag) Default() interface{} {
+func (f *IPAddressSliceFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil
 	}
+
 	return f.defaultValue
 }
 
@@ -255,11 +254,11 @@ func (f *IntSliceFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *IntSliceFlag) Key() *data.Key {
+func (f *IPAddressSliceFlag) Key() *data.Key {
 	return f.key
 }
 
-func (f *IntSliceFlag) set(value []int) {
+func (f *IPAddressSliceFlag) set(value []net.IP) {
 	f.value = value
 	*f.ptr = value
 }

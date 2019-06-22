@@ -613,7 +613,7 @@ func (b *Bucket) StringSliceP(longName, usage, shortName string) *StringSliceFla
 	return f
 }
 
-// IntSlice adds a new string slice flag to the bucket.
+// IntSlice adds a new int slice flag to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
@@ -625,7 +625,7 @@ func (b *Bucket) IntSlice(longName, usage string) *IntSliceFlag {
 	return b.IntSliceP(longName, usage, "")
 }
 
-// IntSliceP adds a new string slice flag with a short name to the bucket.
+// IntSliceP adds a new int slice flag with a short name to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -640,7 +640,7 @@ func (b *Bucket) IntSliceP(longName, usage, shortName string) *IntSliceFlag {
 	return f
 }
 
-// UIntSlice adds a new string slice flag to the bucket.
+// UIntSlice adds a new uint slice flag to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
@@ -652,7 +652,7 @@ func (b *Bucket) UIntSlice(longName, usage string) *UIntSliceFlag {
 	return b.UIntSliceP(longName, usage, "")
 }
 
-// UIntSliceP adds a new string slice flag with a short name to the bucket.
+// UIntSliceP adds a new uint slice flag with a short name to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -667,7 +667,7 @@ func (b *Bucket) UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
 	return f
 }
 
-// Float64Slice adds a new string slice flag to the bucket.
+// Float64Slice adds a new float64 slice flag to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
@@ -679,7 +679,7 @@ func (b *Bucket) Float64Slice(longName, usage string) *Float64SliceFlag {
 	return b.Float64SliceP(longName, usage, "")
 }
 
-// Float64SliceP adds a new string slice flag with a short name to the bucket.
+// Float64SliceP adds a new float64 slice flag with a short name to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -713,6 +713,35 @@ func (b *Bucket) IPAddress(longName, usage string) *IPAddressFlag {
 // or an IPv6 ("2001:db8::68") formatted string.
 func (b *Bucket) IPAddressP(longName, usage, shortName string) *IPAddressFlag {
 	f := newIPAddress(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
+// IPAddressSlice adds a new IP Address slice flag to the bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. ip-addresses)
+//
+// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
+// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
+// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func (b *Bucket) IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
+	return b.IPAddressSliceP(longName, usage, "")
+}
+
+// IPAddressSliceP adds a new IP Address slice flag with a short name to the bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. ip-addresses)
+// A valid short name is a case sensitive single character string (i.e. i or I).
+//
+// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
+// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
+// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func (b *Bucket) IPAddressSliceP(longName, usage, shortName string) *IPAddressSliceFlag {
+	f := newIPAddressSlice(longName, usage, shortName)
 	b.flags = append(b.flags, f)
 	return f
 }

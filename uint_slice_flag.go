@@ -119,10 +119,8 @@ func (f *UIntSliceFlag) WithKey(keyID string) *UIntSliceFlag {
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
 func (f *UIntSliceFlag) WithDefault(defaultValue []uint) *UIntSliceFlag {
-	if defaultValue != nil {
-		f.defaultValue = defaultValue
-		f.hasDefault = true
-	}
+	f.defaultValue = defaultValue
+	f.hasDefault = true
 	return f
 }
 

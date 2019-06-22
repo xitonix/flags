@@ -119,10 +119,8 @@ func (f *Float64SliceFlag) WithKey(keyID string) *Float64SliceFlag {
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
 func (f *Float64SliceFlag) WithDefault(defaultValue []float64) *Float64SliceFlag {
-	if defaultValue != nil {
-		f.defaultValue = defaultValue
-		f.hasDefault = true
-	}
+	f.defaultValue = defaultValue
+	f.hasDefault = true
 	return f
 }
 

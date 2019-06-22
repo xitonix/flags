@@ -379,13 +379,13 @@ func TestIntSliceFlag_Set(t *testing.T) {
 		{
 			title:         "invalid value",
 			value:         " invalid ",
-			expectedError: "is not a valid []int value",
+			expectedError: "'invalid' is not a valid []int value for --long",
 			expectedValue: empty,
 		},
 		{
 			title:         "partially invalid value",
 			value:         "100,invalid,200",
-			expectedError: "is not a valid []int value",
+			expectedError: "'invalid' is not a valid []int value for --long",
 			expectedValue: empty,
 		},
 		{
@@ -577,9 +577,9 @@ func TestIntSliceFlag_ResetToDefault(t *testing.T) {
 			value:                   "100",
 			expectedValue:           []int{100},
 			defaultValue:            nil,
-			expectedAfterResetValue: []int{100},
+			expectedAfterResetValue: nil,
 			setDefault:              true,
-			expectedIsSetAfterReset: true,
+			expectedIsSetAfterReset: false,
 		},
 		{
 			title:                   "reset to non-empty default value",

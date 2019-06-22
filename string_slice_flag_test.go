@@ -469,6 +469,15 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			expectedValue:     empty,
 		},
 		{
+			title:             "invalid case sensitive validation list with multiple items",
+			validationList:    []string{"Green", "Red", "Blue"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "Green,red,Blue",
+			expectedError:     "red is not an acceptable value for --colours. The expected values are Green, Red and Blue.",
+			expectedValue:     empty,
+		},
+		{
 			title:             "valid case sensitive validation list with multiple items",
 			validationList:    []string{"Green", "Red"},
 			ignoreCase:        false,
@@ -612,9 +621,9 @@ func TestStringSliceFlag_ResetToDefault(t *testing.T) {
 			value:                   "abc",
 			expectedValue:           []string{"abc"},
 			defaultValue:            nil,
-			expectedAfterResetValue: []string{"abc"},
+			expectedAfterResetValue: nil,
 			setDefault:              true,
-			expectedIsSetAfterReset: true,
+			expectedIsSetAfterReset: false,
 		},
 		{
 			title:                   "reset to non-empty default value",

@@ -444,14 +444,14 @@ func TestFloat64SliceFlag_Validation(t *testing.T) {
 		},
 		{
 			title:             "none empty validation list with single item",
-			validationList:    []float64{100.87, 200.90},
+			validationList:    []float64{100.87},
 			setValidationList: true,
 			value:             "10",
-			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100.87 and 200.9.",
+			expectedError:     "10 is not an acceptable value for --numbers. The expected value is 100.87.",
 			expectedValue:     empty,
 		},
 		{
-			title:             "none empty validation list with multiple items",
+			title:             "none empty validation list with two items",
 			validationList:    []float64{100.87, 200.90},
 			setValidationList: true,
 			value:             "100.87,314.32",
@@ -459,7 +459,7 @@ func TestFloat64SliceFlag_Validation(t *testing.T) {
 			expectedValue:     empty,
 		},
 		{
-			title:             "validation list with three entries",
+			title:             "validation list with three items",
 			validationList:    []float64{100.87, 200.90, 314.32},
 			setValidationList: true,
 			value:             "7.5",

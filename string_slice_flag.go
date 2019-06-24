@@ -50,7 +50,7 @@ func newStringSlice(name, usage, short string) *StringSliceFlag {
 	return f
 }
 
-// LongName returns the long name of the flag
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --colours).
 func (f *StringSliceFlag) LongName() string {

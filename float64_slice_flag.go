@@ -44,7 +44,7 @@ func newFloat64Slice(name, usage, short string) *Float64SliceFlag {
 	return f
 }
 
-// LongName returns the long name of the flag
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --rates).
 func (f *Float64SliceFlag) LongName() string {

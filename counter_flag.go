@@ -39,7 +39,7 @@ func newCounter(name, usage, short string) *CounterFlag {
 	return f
 }
 
-// LongName returns the long name of the flag.
+// LongName returns the long name of the flag..
 //
 // Long name is case insensitive and always lower case (i.e. --verbosity).
 func (f *CounterFlag) LongName() string {

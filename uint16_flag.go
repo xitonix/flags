@@ -36,7 +36,7 @@ func newUInt16(name, usage, short string) *UInt16Flag {
 	return f
 }
 
-// LongName returns the long name of the flag.
+// LongName returns the long name of the flag..
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UInt16Flag) LongName() string {

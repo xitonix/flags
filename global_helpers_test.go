@@ -682,6 +682,32 @@ func TestGlobalDurationP(t *testing.T) {
 	}
 }
 
+func TestGlobalDurationSlice(t *testing.T) {
+	DefaultBucket = NewBucket()
+	DurationSlice("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*DurationSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &DurationSliceFlag{}, f)
+	}
+}
+
+func TestGlobalDurationSliceP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	DurationSliceP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*DurationSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &DurationSliceFlag{}, f)
+	}
+}
+
 func TestGlobalTime(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Time("long", "usage")

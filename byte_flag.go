@@ -36,7 +36,7 @@ func newByte(name, usage, short string) *ByteFlag {
 	return f
 }
 
-// LongName returns the long name of the flag.
+// LongName returns the long name of the flag..
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *ByteFlag) LongName() string {

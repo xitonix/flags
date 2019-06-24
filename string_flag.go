@@ -36,7 +36,7 @@ func newString(name, usage, short string) *StringFlag {
 	return f
 }
 
-// LongName returns the long name of the flag (i.e. --file).
+// LongName returns the long name of the flag. (i.e. --file).
 //
 // Long name is case insensitive and always lower case (i.e. --file-path).
 func (f *StringFlag) LongName() string {

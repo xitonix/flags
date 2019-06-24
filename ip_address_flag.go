@@ -39,7 +39,7 @@ func newIPAddress(name, usage, short string) *IPAddressFlag {
 	return f
 }
 
-// LongName returns the long name of the flag.
+// LongName returns the long name of the flag..
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *IPAddressFlag) LongName() string {

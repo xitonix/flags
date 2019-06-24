@@ -444,14 +444,14 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 		},
 		{
 			title:             "none empty validation list with single item",
-			validationList:    []uint{100, 200},
+			validationList:    []uint{100},
 			setValidationList: true,
 			value:             "10",
-			expectedError:     "10 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			expectedError:     "10 is not an acceptable value for --numbers. The expected value is 100.",
 			expectedValue:     empty,
 		},
 		{
-			title:             "none empty validation list with multiple items",
+			title:             "none empty validation list with two items",
 			validationList:    []uint{100, 200},
 			setValidationList: true,
 			value:             "100,300",
@@ -459,7 +459,7 @@ func TestUIntSliceFlag_Validation(t *testing.T) {
 			expectedValue:     empty,
 		},
 		{
-			title:             "validation list with three entries",
+			title:             "validation list with three items",
 			validationList:    []uint{100, 200, 300},
 			setValidationList: true,
 			value:             "7",

@@ -111,7 +111,7 @@ func newTime(name, usage, short string) *TimeFlag {
 	return f
 }
 
-// LongName returns the long name of the flag.
+// LongName returns the long name of the flag..
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *TimeFlag) LongName() string {

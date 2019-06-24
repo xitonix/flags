@@ -44,7 +44,7 @@ func newUIntSlice(name, usage, short string) *UIntSliceFlag {
 	return f
 }
 
-// LongName returns the long name of the flag
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --numbers).
 func (f *UIntSliceFlag) LongName() string {

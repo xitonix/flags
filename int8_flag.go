@@ -36,7 +36,7 @@ func newInt8(name, usage, short string) *Int8Flag {
 	return f
 }
 
-// LongName returns the long name of the flag.
+// LongName returns the long name of the flag..
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *Int8Flag) LongName() string {

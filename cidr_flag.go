@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"net"
 	"strings"
 
 	"go.xitonix.io/flags/core"
@@ -194,14 +193,9 @@ func (f *CIDRFlag) Set(value string) error {
 		f.isSet = true
 		return nil
 	}
-	ip, network, err := net.ParseCIDR(value)
-	if err != nil {
+	cidr := core.NewCIDR(value)
+	if !cidr.IsValid() {
 		return internal.InvalidValueErr(value, f.long, f.Type())
-	}
-
-	cidr := core.CIDR{
-		IP:      ip,
-		Network: network,
 	}
 
 	if f.validate != nil {

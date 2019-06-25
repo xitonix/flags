@@ -19,6 +19,7 @@ func main() {
 	ss := flags.StringSliceP("colours", "Colour pallet", "c").WithDefault([]string{"Pink"})
 	ip := flags.IPAddressP("ip-address", "IP address usage", "i").WithValidRange(net.ParseIP("10.10.10.10"))
 	sl := flags.StringSlice("ss", "string slice").WithValidRange(false, "A", "B")
+	cid := flags.CIDR("network", "network usage")
 	flags.Parse()
 	fmt.Println("Value:", *str)
 	fmt.Println("Int:", i.Get())
@@ -26,4 +27,5 @@ func main() {
 	fmt.Printf("Colours:%v\n", ss.Get())
 	fmt.Printf("IP:%v\n", ip.Get())
 	fmt.Printf("SL:%v\n", sl.Get())
+	fmt.Printf("CID:%v\n", cid.Get().IsValid())
 }

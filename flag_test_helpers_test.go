@@ -120,6 +120,41 @@ func checkIPFlagValues(t *testing.T, expectedValue, actual net.IP, actualVar *ne
 	}
 }
 
+func checkCIDRFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual core.CIDR, actualVar *core.CIDR) {
+	t.Helper()
+	if !test.ErrorContains(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkCIDRFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkCIDRFlagValues(t *testing.T, expectedValue, actual core.CIDR, actualVar *core.CIDR) {
+	t.Helper()
+
+	if !actual.Equals(expectedValue) {
+		t.Errorf("Expected value: %v, Actual: %v", expectedValue, actual)
+	}
+
+	if !(*actualVar).Equals(expectedValue) {
+		t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue, *actualVar)
+	}
+
+	expectedIsValid := expectedValue.IsValid()
+
+	if actual.IsValid() != expectedIsValid {
+		t.Errorf("Expected IsValid(): %v, Actual: %v", expectedIsValid, actual.IsValid())
+	}
+
+	if (*actualVar).IsValid() != expectedIsValid {
+		t.Errorf("Expected var IsValid(): %v, Actual: %v", expectedIsValid, (*actualVar).IsValid())
+	}
+}
+
 func checkFlagInitialState(t *testing.T, f core.Flag, expectedType, expectedUsage, expectedLong, expectedShort string) {
 	t.Helper()
 	if f.LongName() != expectedLong {

@@ -796,6 +796,35 @@ func (b *Bucket) IPAddressSliceP(longName, usage, shortName string) *IPAddressSl
 	return f
 }
 
+// CIDR adds a new CIDR flag to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. network).
+//
+// The value of a CIDR flag can be defined using a CIDR notation IP address and prefix length,
+// like "192.0.2.0/24" or "2001:db8::/32", as defined in RFC 4632 and RFC 4291. The input will be
+// parsed to the IP address and the network implied by the IP and prefix length.
+//
+// For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
+func (b *Bucket) CIDR(longName, usage string) *CIDRFlag {
+	return b.CIDRP(longName, usage, "")
+}
+
+// CIDRP adds a new CIDR flag with a short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. network).
+// A valid short name is a case sensitive single character string (i.e. n or N).
+//
+// The value of a CIDR flag can be defined using a CIDR notation IP address and prefix length,
+// like "192.0.2.0/24" or "2001:db8::/32", as defined in RFC 4632 and RFC 4291. The input will be
+// parsed to the IP address and the network implied by the IP and prefix length.
+//
+// For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
+func (b *Bucket) CIDRP(longName, usage, shortName string) *CIDRFlag {
+	f := newCIDR(longName, usage, shortName)
+	b.flags = append(b.flags, f)
+	return f
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

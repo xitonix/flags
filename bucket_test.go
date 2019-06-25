@@ -2496,6 +2496,32 @@ func TestBucket_IPAddressSliceP(t *testing.T) {
 	}
 }
 
+func TestBucket_CIDR(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CIDR("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CIDRFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	}
+}
+
+func TestBucket_CIDRP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CIDRP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CIDRFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

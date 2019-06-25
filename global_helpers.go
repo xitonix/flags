@@ -682,3 +682,28 @@ func IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
 func IPAddressSliceP(longName, usage, shortName string) *IPAddressSliceFlag {
 	return DefaultBucket.IPAddressSliceP(longName, usage, shortName)
 }
+
+// CIDR adds a new CIDR flag to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. network).
+// A valid short name is a case sensitive single character string (i.e. n or N).
+//
+// The value of a CIDR flag can be defined using a CIDR notation IP address and prefix length,
+// like "192.0.2.0/24" or "2001:db8::/32", as defined in RFC 4632 and RFC 4291. The input will be
+// parsed to the IP address and the network implied by the IP and prefix length.
+//
+// For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
+func CIDR(longName, usage string) *CIDRFlag {
+	return DefaultBucket.CIDR(longName, usage)
+}
+
+// CIDRP adds a new CIDR flag with short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
+// A valid short name is a case sensitive single character string (i.e. i or I).
+//
+// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// or an IPv6 ("2001:db8::68") formatted string.
+func CIDRP(longName, usage, shortName string) *CIDRFlag {
+	return DefaultBucket.CIDRP(longName, usage, shortName)
+}

@@ -455,7 +455,15 @@ func TestFloat64SliceFlag_Validation(t *testing.T) {
 			validationList:    []float64{100.87, 200.90},
 			setValidationList: true,
 			value:             "100.87,314.32",
-			expectedError:     "314.32 is not an acceptable value for --numbers. The expected values are 100.87 and 200.9.",
+			expectedError:     "314.32 is not an acceptable value for --numbers. The expected values are 100.87,200.9.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "duplicate items in the validation list",
+			validationList:    []float64{100.87, 100.87},
+			setValidationList: true,
+			value:             "100.87,314.32",
+			expectedError:     "314.32 is not an acceptable value for --numbers. The expected value is 100.87.",
 			expectedValue:     empty,
 		},
 		{
@@ -463,7 +471,7 @@ func TestFloat64SliceFlag_Validation(t *testing.T) {
 			validationList:    []float64{100.87, 200.90, 314.32},
 			setValidationList: true,
 			value:             "7.5",
-			expectedError:     "7.5 is not an acceptable value for --numbers. The expected values are 100.87, 200.9 and 314.32.",
+			expectedError:     "7.5 is not an acceptable value for --numbers. The expected values are 100.87,200.9,314.32.",
 			expectedValue:     empty,
 		},
 		{

@@ -20,7 +20,7 @@ type StringFlag struct {
 	isHidden            bool
 	validate            func(in string) error
 	validM              map[string]interface{}
-	valid               string
+	acceptableItems     []string
 	ignoreCase          bool
 }
 
@@ -155,18 +155,21 @@ func (f *StringFlag) WithValidationCallback(validate func(in string) error) *Str
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *StringFlag) WithValidRange(ignoreCase bool, valid ...string) *StringFlag {
-	l := len(valid)
 	if len(valid) == 0 {
 		return f
 	}
 	f.ignoreCase = ignoreCase
 	f.validM = make(map[string]interface{})
-	for i, v := range valid {
-		f.valid += internal.GetExpectedValueString(v, i, l)
+	f.acceptableItems = make([]string, 0)
+	for _, v := range valid {
+		item := v
 		if ignoreCase {
-			v = strings.ToLower(v)
+			item = strings.ToLower(v)
 		}
-		f.validM[v] = nil
+		if _, ok := f.validM[item]; !ok {
+			f.acceptableItems = append(f.acceptableItems, v)
+			f.validM[item] = nil
+		}
 	}
 	return f
 }
@@ -190,7 +193,7 @@ func (f *StringFlag) Set(value string) error {
 			if internal.IsEmpty(value) {
 				value = "'" + value + "'"
 			}
-			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}
 	f.set(value)

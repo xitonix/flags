@@ -96,7 +96,7 @@ type TimeFlag struct {
 	isHidden            bool
 	validate            func(in time.Time) error
 	validM              map[time.Time]interface{}
-	valid               []time.Time
+	acceptedItems       []time.Time
 }
 
 func newTime(name, usage, short string) *TimeFlag {
@@ -230,14 +230,16 @@ func (f *TimeFlag) WithValidationCallback(validate func(in time.Time) error) *Ti
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *TimeFlag) WithValidRange(valid ...time.Time) *TimeFlag {
-	l := len(valid)
-	if l == 0 {
+	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[time.Time]interface{})
+	f.acceptedItems = make([]time.Time, 0)
 	for _, v := range valid {
-		f.valid = valid
-		f.validM[v] = nil
+		if _, ok := f.validM[v]; !ok {
+			f.acceptedItems = append(f.acceptedItems, v)
+			f.validM[v] = nil
+		}
 	}
 	return f
 }
@@ -344,7 +346,7 @@ func (f *TimeFlag) set(value time.Time) {
 
 func (f *TimeFlag) getValidRangeString(layout string) string {
 	v := make([]string, 0)
-	for _, t := range f.valid {
+	for _, t := range f.acceptedItems {
 		v = append(v, t.Format(layout))
 	}
 	return strings.Join(v, ",")

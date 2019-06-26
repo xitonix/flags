@@ -24,7 +24,7 @@ type IPAddressFlag struct {
 	isHidden            bool
 	validate            func(in net.IP) error
 	validM              map[string]interface{}
-	valid               string
+	acceptableItems     []string
 }
 
 func newIPAddress(name, usage, short string) *IPAddressFlag {
@@ -158,14 +158,17 @@ func (f *IPAddressFlag) WithValidationCallback(validate func(in net.IP) error) *
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *IPAddressFlag) WithValidRange(valid ...net.IP) *IPAddressFlag {
-	l := len(valid)
-	if l == 0 {
+	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[string]interface{})
-	for i, v := range valid {
-		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v.String()] = nil
+	f.acceptableItems = make([]string, 0)
+	for _, v := range valid {
+		s := v.String()
+		if _, ok := f.validM[s]; !ok {
+			f.validM[s] = nil
+			f.acceptableItems = append(f.acceptableItems, s)
+		}
 	}
 	return f
 }
@@ -196,7 +199,7 @@ func (f *IPAddressFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		if _, ok := f.validM[ip.String()]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}
 

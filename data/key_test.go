@@ -79,7 +79,7 @@ func TestKey_Set(t *testing.T) {
 			e.SetID(tc.inputName)
 			actual := e.String()
 			if actual != tc.expectedName {
-				t.Errorf("String(), Expected: %s, Actual:%s", tc.expectedName, actual)
+				t.Errorf("FullString(), Expected: %s, Actual:%s", tc.expectedName, actual)
 			}
 
 			if tc.expectedIsSet != e.IsSet() {

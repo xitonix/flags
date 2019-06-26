@@ -21,7 +21,7 @@ type UIntFlag struct {
 	isHidden            bool
 	validate            func(in uint) error
 	validM              map[uint]interface{}
-	valid               string
+	acceptableItems     []string
 }
 
 func newUInt(name, usage, short string) *UIntFlag {
@@ -155,14 +155,16 @@ func (f *UIntFlag) WithValidationCallback(validate func(in uint) error) *UIntFla
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *UIntFlag) WithValidRange(valid ...uint) *UIntFlag {
-	l := len(valid)
-	if l == 0 {
+	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[uint]interface{})
-	for i, v := range valid {
-		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v] = nil
+	f.acceptableItems = make([]string, 0)
+	for _, v := range valid {
+		if _, ok := f.validM[v]; !ok {
+			f.acceptableItems = append(f.acceptableItems, strconv.FormatUint(uint64(v), 10))
+			f.validM[v] = nil
+		}
 	}
 	return f
 }
@@ -188,7 +190,7 @@ func (f *UIntFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		if _, ok := f.validM[uint(v)]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}
 

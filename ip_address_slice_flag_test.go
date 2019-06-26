@@ -611,6 +611,22 @@ func TestIPAddressSliceFlag_Validation(t *testing.T) {
 			expectedValue:     empty,
 		},
 		{
+			title:             "duplicate IPv4 in the validation list",
+			validationList:    []net.IP{ipV4One, ipV4One},
+			setValidationList: true,
+			value:             ipV4AddressTwo,
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected value is %s.", ipV4AddressTwo, ipV4AddressOne),
+			expectedValue:     empty,
+		},
+		{
+			title:             "duplicate IPv6 in the validation list",
+			validationList:    []net.IP{ipV6One, ipV6One},
+			setValidationList: true,
+			value:             ipV6AddressTwo,
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected value is %s.", ipV6AddressTwo, ipV6AddressOne),
+			expectedValue:     empty,
+		},
+		{
 			title:             "unacceptable IPv6 input with single validation entry",
 			validationList:    []net.IP{ipV6One},
 			setValidationList: true,
@@ -618,13 +634,12 @@ func TestIPAddressSliceFlag_Validation(t *testing.T) {
 			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected value is %s.", ipV6AddressTwo, ipV6AddressOne),
 			expectedValue:     empty,
 		},
-
 		{
 			title:             "unacceptable IPv4 input with two validation entries",
 			validationList:    []net.IP{ipV4One, ipV4Two},
 			setValidationList: true,
 			value:             unacceptableIPv4Address,
-			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s and %s.", unacceptableIPv4Address, ipV4AddressOne, ipV4AddressTwo),
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s,%s.", unacceptableIPv4Address, ipV4AddressOne, ipV4AddressTwo),
 			expectedValue:     empty,
 		},
 		{
@@ -632,7 +647,7 @@ func TestIPAddressSliceFlag_Validation(t *testing.T) {
 			validationList:    []net.IP{ipV6One, ipV6Two},
 			setValidationList: true,
 			value:             unacceptableIPv6Address,
-			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s and %s.", unacceptableIPv6Address, ipV6AddressOne, ipV6AddressTwo),
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s,%s.", unacceptableIPv6Address, ipV6AddressOne, ipV6AddressTwo),
 			expectedValue:     empty,
 		},
 		{
@@ -640,7 +655,7 @@ func TestIPAddressSliceFlag_Validation(t *testing.T) {
 			validationList:    []net.IP{ipV4One, ipV4Two, ipV4Three},
 			setValidationList: true,
 			value:             unacceptableIPv4Address,
-			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s, %s and %s.", unacceptableIPv4Address, ipV4AddressOne, ipV4AddressTwo, ipV4AddressThree),
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s,%s,%s.", unacceptableIPv4Address, ipV4AddressOne, ipV4AddressTwo, ipV4AddressThree),
 			expectedValue:     empty,
 		},
 		{
@@ -648,7 +663,7 @@ func TestIPAddressSliceFlag_Validation(t *testing.T) {
 			validationList:    []net.IP{ipV6One, ipV6Two, ipV6Three},
 			setValidationList: true,
 			value:             unacceptableIPv6Address,
-			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s, %s and %s.", unacceptableIPv6Address, ipV6AddressOne, ipV6AddressTwo, ipV6AddressThree),
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --ip-addresses. The expected values are %s,%s,%s.", unacceptableIPv6Address, ipV6AddressOne, ipV6AddressTwo, ipV6AddressThree),
 			expectedValue:     empty,
 		},
 		{

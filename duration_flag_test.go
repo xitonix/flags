@@ -387,14 +387,21 @@ func TestDurationFlag_Validation(t *testing.T) {
 			validationList:    []time.Duration{1 * time.Second, 2 * time.Second},
 			setValidationList: true,
 			value:             "300s",
-			expectedError:     "300s is not an acceptable value for --long. The expected values are 1s and 2s.",
+			expectedError:     "300s is not an acceptable value for --long. The expected values are 1s,2s.",
 		},
 		{
 			title:             "three items in the validation list",
 			validationList:    []time.Duration{1 * time.Second, 2 * time.Second, 3 * time.Second},
 			setValidationList: true,
 			value:             "400s",
-			expectedError:     "400s is not an acceptable value for --long. The expected values are 1s, 2s and 3s.",
+			expectedError:     "400s is not an acceptable value for --long. The expected values are 1s,2s,3s.",
+		},
+		{
+			title:             "duplicate items in the validation list",
+			validationList:    []time.Duration{1 * time.Second, 1 * time.Second},
+			setValidationList: true,
+			value:             "400s",
+			expectedError:     "400s is not an acceptable value for --long. The expected value is 1s.",
 		},
 		{
 			title: "validation callback with no validation error",

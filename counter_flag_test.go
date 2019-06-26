@@ -343,18 +343,25 @@ func TestCounterFlag_Validation(t *testing.T) {
 			expectedError:     "200 is not an acceptable value for --long. The expected value is 100.",
 		},
 		{
+			title:             "non unique items in the validation list",
+			validationList:    []int{100, 100, 100},
+			setValidationList: true,
+			value:             "200",
+			expectedError:     "200 is not an acceptable value for --long. The expected value is 100.",
+		},
+		{
 			title:             "two items in the validation list",
 			validationList:    []int{100, 200},
 			setValidationList: true,
 			value:             "300",
-			expectedError:     "300 is not an acceptable value for --long. The expected values are 100 and 200.",
+			expectedError:     "300 is not an acceptable value for --long. The expected values are 100,200.",
 		},
 		{
 			title:             "three items in the validation list",
 			validationList:    []int{100, 200, 300},
 			setValidationList: true,
 			value:             "400",
-			expectedError:     "400 is not an acceptable value for --long. The expected values are 100, 200 and 300.",
+			expectedError:     "400 is not an acceptable value for --long. The expected values are 100,200,300.",
 		},
 		{
 			title: "validation callback with no validation error",

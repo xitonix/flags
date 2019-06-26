@@ -27,5 +27,5 @@ func main() {
 	fmt.Printf("Colours:%v\n", ss.Get())
 	fmt.Printf("IP:%v\n", ip.Get())
 	fmt.Printf("SL:%v\n", sl.Get())
-	fmt.Printf("CID:%v\n", cid.Get().IsValid())
+	fmt.Printf("CID:%v\n", cid.Get().String())
 }

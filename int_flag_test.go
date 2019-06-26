@@ -385,14 +385,21 @@ func TestIntFlag_Validation(t *testing.T) {
 			validationList:    []int{100, 200},
 			setValidationList: true,
 			value:             "300",
-			expectedError:     "300 is not an acceptable value for --long. The expected values are 100 and 200.",
+			expectedError:     "300 is not an acceptable value for --long. The expected values are 100,200.",
 		},
 		{
 			title:             "three items in the validation list",
 			validationList:    []int{100, 200, 300},
 			setValidationList: true,
 			value:             "400",
-			expectedError:     "400 is not an acceptable value for --long. The expected values are 100, 200 and 300.",
+			expectedError:     "400 is not an acceptable value for --long. The expected values are 100,200,300.",
+		},
+		{
+			title:             "duplicate items in the validation list",
+			validationList:    []int{100, 100},
+			setValidationList: true,
+			value:             "104",
+			expectedError:     "104 is not an acceptable value for --long. The expected value is 100.",
 		},
 		{
 			title: "validation callback with no validation error",

@@ -31,7 +31,7 @@ type DurationSliceFlag struct {
 	delimiter           string
 	validate            func(in time.Duration) error
 	validM              map[time.Duration]interface{}
-	valid               string
+	acceptableItems     []string
 }
 
 func newDurationSlice(name, usage, short string) *DurationSliceFlag {
@@ -175,14 +175,16 @@ func (f *DurationSliceFlag) WithValidationCallback(validate func(in time.Duratio
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *DurationSliceFlag) WithValidRange(valid ...time.Duration) *DurationSliceFlag {
-	l := len(valid)
 	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[time.Duration]interface{})
-	for i, v := range valid {
-		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v] = nil
+	f.acceptableItems = make([]string, 0)
+	for _, v := range valid {
+		if _, ok := f.validM[v]; !ok {
+			f.validM[v] = nil
+			f.acceptableItems = append(f.acceptableItems, v.String())
+		}
 	}
 	return f
 }
@@ -224,7 +226,7 @@ func (f *DurationSliceFlag) Set(value string) error {
 	if f.validate == nil && f.validM != nil {
 		for _, item := range list {
 			if _, ok := f.validM[item]; !ok {
-				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 			}
 		}
 	}

@@ -397,14 +397,21 @@ func TestFloat64Flag_Validation(t *testing.T) {
 			validationList:    []float64{100.25, 101.60},
 			setValidationList: true,
 			value:             "102.80",
-			expectedError:     "102.80 is not an acceptable value for --long. The expected values are 100.25 and 101.6",
+			expectedError:     "102.80 is not an acceptable value for --long. The expected values are 100.25,101.6",
+		},
+		{
+			title:             "duplicate items in the validation list",
+			validationList:    []float64{100.25, 100.25},
+			setValidationList: true,
+			value:             "102.80",
+			expectedError:     "102.80 is not an acceptable value for --long. The expected value is 100.25.",
 		},
 		{
 			title:             "three items in the validation list",
 			validationList:    []float64{100.25, 101.30, 102.40},
 			setValidationList: true,
 			value:             "104.10",
-			expectedError:     "104.10 is not an acceptable value for --long. The expected values are 100.25, 101.3 and 102.4",
+			expectedError:     "104.10 is not an acceptable value for --long. The expected values are 100.25,101.3,102.4",
 		},
 		{
 			title:             "max",

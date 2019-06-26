@@ -20,7 +20,7 @@ func (k *Key) Prefix() string {
 	return k.prefix
 }
 
-// String returns the string representation of the key.
+// FullString returns the string representation of the key.
 //
 // The return value is uppercase and consists of the optional prefix, concatenated with the ID in PREFIX_ID format.
 // If the ID has not been set, this method will return an empty string, even if the prefix is not empty.

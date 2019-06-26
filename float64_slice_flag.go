@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -28,7 +29,7 @@ type Float64SliceFlag struct {
 	delimiter           string
 	validate            func(in float64) error
 	validM              map[float64]interface{}
-	valid               string
+	acceptableItems     []string
 }
 
 func newFloat64Slice(name, usage, short string) *Float64SliceFlag {
@@ -172,14 +173,16 @@ func (f *Float64SliceFlag) WithValidationCallback(validate func(in float64) erro
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *Float64SliceFlag) WithValidRange(valid ...float64) *Float64SliceFlag {
-	l := len(valid)
 	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[float64]interface{})
-	for i, v := range valid {
-		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v] = nil
+	f.acceptableItems = make([]string, 0)
+	for _, v := range valid {
+		if _, ok := f.validM[v]; !ok {
+			f.validM[v] = nil
+			f.acceptableItems = append(f.acceptableItems, fmt.Sprintf("%v", v))
+		}
 	}
 	return f
 }
@@ -218,7 +221,7 @@ func (f *Float64SliceFlag) Set(value string) error {
 	if f.validate == nil && f.validM != nil {
 		for _, item := range list {
 			if _, ok := f.validM[item]; !ok {
-				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 			}
 		}
 	}

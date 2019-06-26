@@ -449,7 +449,15 @@ func TestDurationSliceFlag_Validation(t *testing.T) {
 			validationList:    []time.Duration{2 * time.Second, 3 * time.Second},
 			setValidationList: true,
 			value:             "1s",
-			expectedError:     "1s is not an acceptable value for --durations. The expected values are 2s and 3s.",
+			expectedError:     "1s is not an acceptable value for --durations. The expected values are 2s,3s.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "duplicate items in the validation list",
+			validationList:    []time.Duration{3 * time.Second, 3 * time.Second},
+			setValidationList: true,
+			value:             "1s",
+			expectedError:     "1s is not an acceptable value for --durations. The expected value is 3s.",
 			expectedValue:     empty,
 		},
 		{
@@ -457,7 +465,7 @@ func TestDurationSliceFlag_Validation(t *testing.T) {
 			validationList:    []time.Duration{3 * time.Second, 2 * time.Second, 1 * time.Second},
 			setValidationList: true,
 			value:             "4s",
-			expectedError:     "4s is not an acceptable value for --durations. The expected values are 3s, 2s and 1s.",
+			expectedError:     "4s is not an acceptable value for --durations. The expected values are 3s,2s,1s.",
 			expectedValue:     empty,
 		},
 		{

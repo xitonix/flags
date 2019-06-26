@@ -5100,6 +5100,16 @@ func TestTimeFlag_24Hrs_With_Timestamp_Validation(t *testing.T) {
 			expectedError:     "Dec 25 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.999999999,Aug 28 14:22:20.999999999.",
 		},
 		{
+			title: "duplicate items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20.999999999",
+			expectedError:     "Dec 25 14:22:20.999999999 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.999999999.",
+		},
+		{
 			title: "three items in the validation list with nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
@@ -5183,22 +5193,32 @@ func TestTimeFlag_24Hrs_With_Timestamp_Validation(t *testing.T) {
 			title: "two items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 14:22:20",
+			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20,Aug 28 14:22:20.",
+		},
+		{
+			title: "duplicate items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 14:22:20",
-			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20,Aug 27 14:22:20.",
+			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20.",
 		},
 		{
 			title: "three items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 14:22:20",
-			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20,Aug 27 14:22:20,Aug 27 14:22:20.",
+			expectedError:     "Dec 25 14:22:20 is not an acceptable value for --long. You must pick a value from Aug 27 14:22:20,Aug 28 14:22:20,Aug 29 14:22:20.",
 		},
 		{
 			title: "validation callback with no validation error and nano seconds",
@@ -5308,6 +5328,16 @@ func TestTimeFlag_Uppercase_12Hrs_Spaced_With_Timestamp_Validation(t *testing.T)
 			expectedError:     "Dec 25 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 PM,Aug 28 02:22:20.999999999 PM.",
 		},
 		{
+			title: "duplicate items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 PM",
+			expectedError:     "Dec 25 02:22:20.999999999 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 PM.",
+		},
+		{
 			title: "three items in the validation list with nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
@@ -5391,22 +5421,32 @@ func TestTimeFlag_Uppercase_12Hrs_Spaced_With_Timestamp_Validation(t *testing.T)
 			title: "two items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 PM",
+			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM,Aug 28 02:22:20 PM.",
+		},
+		{
+			title: "duplicate items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20 PM",
-			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM,Aug 27 02:22:20 PM.",
+			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM.",
 		},
 		{
 			title: "three items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20 PM",
-			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM,Aug 27 02:22:20 PM,Aug 27 02:22:20 PM.",
+			expectedError:     "Dec 25 02:22:20 PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 PM,Aug 28 02:22:20 PM,Aug 29 02:22:20 PM.",
 		},
 		{
 			title: "validation callback with no validation error and nano seconds",
@@ -5516,6 +5556,16 @@ func TestTimeFlag_Lowercase_12Hrs_Spaced_With_Timestamp_Validation(t *testing.T)
 			expectedError:     "Dec 25 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 pm,Aug 28 02:22:20.999999999 pm.",
 		},
 		{
+			title: "duplicate items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999 pm",
+			expectedError:     "Dec 25 02:22:20.999999999 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999 pm.",
+		},
+		{
 			title: "three items in the validation list with nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
@@ -5599,22 +5649,32 @@ func TestTimeFlag_Lowercase_12Hrs_Spaced_With_Timestamp_Validation(t *testing.T)
 			title: "two items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20 pm",
+			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm,Aug 28 02:22:20 pm.",
+		},
+		{
+			title: "duplicate items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20 pm",
-			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm,Aug 27 02:22:20 pm.",
+			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm.",
 		},
 		{
 			title: "three items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20 pm",
-			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm,Aug 27 02:22:20 pm,Aug 27 02:22:20 pm.",
+			expectedError:     "Dec 25 02:22:20 pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20 pm,Aug 28 02:22:20 pm,Aug 29 02:22:20 pm.",
 		},
 		{
 			title: "validation callback with no validation error and nano seconds",
@@ -5724,6 +5784,16 @@ func TestTimeFlag_Uppercase_12Hrs_Attached_With_Timestamp_Validation(t *testing.
 			expectedError:     "Dec 25 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999PM,Aug 28 02:22:20.999999999PM.",
 		},
 		{
+			title: "duplicate items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999PM",
+			expectedError:     "Dec 25 02:22:20.999999999PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999PM.",
+		},
+		{
 			title: "three items in the validation list with nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
@@ -5807,22 +5877,32 @@ func TestTimeFlag_Uppercase_12Hrs_Attached_With_Timestamp_Validation(t *testing.
 			title: "two items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20PM",
+			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM,Aug 28 02:22:20PM.",
+		},
+		{
+			title: "duplicate items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20PM",
-			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM,Aug 27 02:22:20PM.",
+			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM.",
 		},
 		{
 			title: "three items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20PM",
-			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM,Aug 27 02:22:20PM,Aug 27 02:22:20PM.",
+			expectedError:     "Dec 25 02:22:20PM is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20PM,Aug 28 02:22:20PM,Aug 29 02:22:20PM.",
 		},
 		{
 			title: "validation callback with no validation error and nano seconds",
@@ -5932,6 +6012,16 @@ func TestTimeFlag_Lowercase_12Hrs_Attached_With_Timestamp_Validation(t *testing.
 			expectedError:     "Dec 25 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999pm,Aug 28 02:22:20.999999999pm.",
 		},
 		{
+			title: "duplicate items in the validation list with nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20.999999999pm",
+			expectedError:     "Dec 25 02:22:20.999999999pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20.999999999pm.",
+		},
+		{
 			title: "three items in the validation list with nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 999999999, time.UTC),
@@ -6015,22 +6105,32 @@ func TestTimeFlag_Lowercase_12Hrs_Attached_With_Timestamp_Validation(t *testing.
 			title: "two items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+			},
+			setValidationList: true,
+			value:             "Dec 25 02:22:20pm",
+			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm,Aug 28 02:22:20pm.",
+		},
+		{
+			title: "duplicate items in the validation list without nano seconds",
+			validationList: []time.Time{
+				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20pm",
-			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm,Aug 27 02:22:20pm.",
+			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm.",
 		},
 		{
 			title: "three items in the validation list without nano seconds",
 			validationList: []time.Time{
 				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
-				time.Date(0, 8, 27, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 28, 14, 22, 20, 0, time.UTC),
+				time.Date(0, 8, 29, 14, 22, 20, 0, time.UTC),
 			},
 			setValidationList: true,
 			value:             "Dec 25 02:22:20pm",
-			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm,Aug 27 02:22:20pm,Aug 27 02:22:20pm.",
+			expectedError:     "Dec 25 02:22:20pm is not an acceptable value for --long. You must pick a value from Aug 27 02:22:20pm,Aug 28 02:22:20pm,Aug 29 02:22:20pm.",
 		},
 		{
 			title: "validation callback with no validation error and nano seconds",

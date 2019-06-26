@@ -27,7 +27,7 @@ type CIDRFlag struct {
 	isHidden            bool
 	validate            func(in core.CIDR) error
 	validM              map[string]interface{}
-	valid               string
+	acceptableItems     []string
 }
 
 func newCIDR(name, usage, short string) *CIDRFlag {
@@ -38,10 +38,7 @@ func newCIDR(name, usage, short string) *CIDRFlag {
 		usage: usage,
 		ptr:   new(core.CIDR),
 	}
-	f.set(core.CIDR{
-		IP:      nil,
-		Network: nil,
-	})
+	f.set(core.CIDR{})
 	return f
 }
 
@@ -164,17 +161,20 @@ func (f *CIDRFlag) WithValidationCallback(validate func(in core.CIDR) error) *CI
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *CIDRFlag) WithValidRange(valid ...core.CIDR) *CIDRFlag {
-	l := len(valid)
-	if l == 0 {
+	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[string]interface{})
-	for i, v := range valid {
-		if !v.IsValid() {
+	f.acceptableItems = make([]string, 0)
+	for _, cidr := range valid {
+		s := cidr.String()
+		if internal.IsEmpty(s) {
 			continue
 		}
-		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v.String()] = nil
+		if _, ok := f.validM[s]; !ok {
+			f.validM[s] = nil
+			f.acceptableItems = append(f.acceptableItems, s)
+		}
 	}
 	return f
 }
@@ -193,13 +193,13 @@ func (f *CIDRFlag) Set(value string) error {
 		f.isSet = true
 		return nil
 	}
-	cidr := core.NewCIDR(value)
-	if !cidr.IsValid() {
+	cidr, err := core.ParseCIDR(value)
+	if err != nil {
 		return internal.InvalidValueErr(value, f.long, f.Type())
 	}
 
 	if f.validate != nil {
-		err := f.validate(cidr)
+		err := f.validate(*cidr)
 		if err != nil {
 			return err
 		}
@@ -208,11 +208,11 @@ func (f *CIDRFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && f.validM != nil {
 		if _, ok := f.validM[cidr.String()]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}
 
-	f.set(cidr)
+	f.set(*cidr)
 	f.isSet = true
 	return nil
 }

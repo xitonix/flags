@@ -460,7 +460,7 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			validationList:    []int{100, 200},
 			setValidationList: true,
 			value:             "100,300",
-			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100 and 200.",
+			expectedError:     "300 is not an acceptable value for --numbers. The expected values are 100,200.",
 			expectedValue:     empty,
 		},
 		{
@@ -468,7 +468,15 @@ func TestIntSliceFlag_Validation(t *testing.T) {
 			validationList:    []int{100, 200, 300},
 			setValidationList: true,
 			value:             "7",
-			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100, 200 and 300.",
+			expectedError:     "7 is not an acceptable value for --numbers. The expected values are 100,200,300.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "duplicate items in the validation list",
+			validationList:    []int{100, 100},
+			setValidationList: true,
+			value:             "7",
+			expectedError:     "7 is not an acceptable value for --numbers. The expected value is 100.",
 			expectedValue:     empty,
 		},
 		{

@@ -27,7 +27,7 @@ type IPAddressSliceFlag struct {
 	delimiter           string
 	validate            func(in net.IP) error
 	validM              map[string]interface{}
-	valid               string
+	acceptableItems     []string
 }
 
 func newIPAddressSlice(name, usage, short string) *IPAddressSliceFlag {
@@ -171,14 +171,17 @@ func (f *IPAddressSliceFlag) WithValidationCallback(validate func(in net.IP) err
 // You can also define a custom validation callback function using WithValidationCallback(...) method.
 // Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *IPAddressSliceFlag) WithValidRange(valid ...net.IP) *IPAddressSliceFlag {
-	l := len(valid)
-	if l == 0 {
+	if len(valid) == 0 {
 		return f
 	}
 	f.validM = make(map[string]interface{})
-	for i, v := range valid {
-		f.valid += internal.GetExpectedValueString(v, i, l)
-		f.validM[v.String()] = nil
+	f.acceptableItems = make([]string, 0)
+	for _, v := range valid {
+		s := v.String()
+		if _, ok := f.validM[s]; !ok {
+			f.acceptableItems = append(f.acceptableItems, s)
+			f.validM[s] = nil
+		}
 	}
 	return f
 }
@@ -216,7 +219,7 @@ func (f *IPAddressSliceFlag) Set(value string) error {
 	if f.validate == nil && f.validM != nil {
 		for _, item := range list {
 			if _, ok := f.validM[item.String()]; !ok {
-				return internal.OutOfRangeErr(value, f.long, f.valid, len(f.validM))
+				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 			}
 		}
 	}

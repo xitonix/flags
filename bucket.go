@@ -210,7 +210,7 @@ func (b *Bucket) AddSource(src core.Source, index int) {
 	b.sources = append(b.sources[:index], append([]core.Source{src}, b.sources[index:]...)...)
 }
 
-// String adds a new string flag to the bucket.
+// FullString adds a new string flag to the bucket.
 //
 // The long names will be automatically converted to lowercase by the library.
 func (b *Bucket) String(longName, usage string) *StringFlag {

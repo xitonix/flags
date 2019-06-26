@@ -15,7 +15,7 @@ func TestCIDR_Equals(t *testing.T) {
 		expected bool
 	}{
 		{
-			title:    "empty cidr inputs",
+			title:    "nil input inputs",
 			expected: true,
 		},
 		{
@@ -210,7 +210,7 @@ func TestCIDR_Equals(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			actual := tc.c1.Equals(tc.c2)
+			actual := tc.c1.Equal(tc.c2)
 			if actual != tc.expected {
 				t.Errorf("Expected: %v, Actual: %v", tc.expected, actual)
 			}
@@ -218,7 +218,7 @@ func TestCIDR_Equals(t *testing.T) {
 	}
 }
 
-func TestCIDR_String(t *testing.T) {
+func TestCIDR_FullString(t *testing.T) {
 	ip, n, _ := net.ParseCIDR("192.168.1.1/24")
 	invalidNetwork := &net.IPNet{
 		IP:   net.ParseIP("192.168.1.2"),
@@ -231,6 +231,7 @@ func TestCIDR_String(t *testing.T) {
 	}{
 		{
 			title:    "empty CIDR",
+			cidr:     core.CIDR{},
 			expected: "",
 		},
 		{
@@ -301,6 +302,98 @@ func TestCIDR_String(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
+			actual := tc.cidr.FullString()
+			if actual != tc.expected {
+				t.Errorf("Expected: '%v', Actual: '%v'", tc.expected, actual)
+			}
+		})
+	}
+}
+
+func TestCIDR_String(t *testing.T) {
+	ip, n, _ := net.ParseCIDR("192.168.1.1/24")
+	invalidNetwork := &net.IPNet{
+		IP:   net.ParseIP("192.168.1.2"),
+		Mask: net.IPMask([]byte{1}),
+	}
+	testCases := []struct {
+		title    string
+		cidr     core.CIDR
+		expected string
+	}{
+		{
+			title:    "empty CIDR",
+			cidr:     core.CIDR{},
+			expected: "",
+		},
+		{
+			title: "non empty IP address and nil network",
+			cidr: core.CIDR{
+				IP:      net.ParseIP("192.168.1.1"),
+				Network: nil,
+			},
+			expected: "",
+		},
+		{
+			title: "non empty IP address and empty network",
+			cidr: core.CIDR{
+				IP:      net.ParseIP("192.168.1.1"),
+				Network: &net.IPNet{},
+			},
+			expected: "",
+		},
+		{
+			title: "non empty IP address and a network with nil mask",
+			cidr: core.CIDR{
+				IP: net.ParseIP("192.168.1.1"),
+				Network: &net.IPNet{
+					IP:   net.ParseIP("192.168.1.2"),
+					Mask: nil,
+				},
+			},
+			expected: "",
+		},
+		{
+			title: "non empty IP address and a network with empty mask",
+			cidr: core.CIDR{
+				IP: net.ParseIP("192.168.1.1"),
+				Network: &net.IPNet{
+					IP:   net.ParseIP("192.168.1.2"),
+					Mask: net.IPMask{},
+				},
+			},
+			expected: "",
+		},
+		{
+			title: "non empty IP address and a none empty network",
+			cidr: core.CIDR{
+				IP: ip,
+				Network: &net.IPNet{
+					IP:   n.IP,
+					Mask: n.Mask,
+				},
+			},
+			expected: "192.168.1.1/24",
+		},
+		{
+			title: "non empty IP address and invalid network",
+			cidr: core.CIDR{
+				IP:      net.ParseIP("192.168.1.1"),
+				Network: invalidNetwork,
+			},
+			expected: "",
+		},
+		{
+			title: "empty IP address and invalid network",
+			cidr: core.CIDR{
+				Network: invalidNetwork,
+			},
+			expected: "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
 			actual := tc.cidr.String()
 			if actual != tc.expected {
 				t.Errorf("Expected: '%v', Actual: '%v'", tc.expected, actual)
@@ -309,63 +402,80 @@ func TestCIDR_String(t *testing.T) {
 	}
 }
 
-func TestCIDR_IsValid(t *testing.T) {
+func TestParseCIDR(t *testing.T) {
 	ip, n, _ := net.ParseCIDR("192.168.1.1/24")
 	testCases := []struct {
-		title                 string
-		cidr                  core.CIDR
-		expected              bool
-		expectedOriginalValue string
+		title              string
+		input              string
+		expected           *core.CIDR
+		expectedString     string
+		expectedFullString string
+		expectErr          bool
 	}{
 		{
-			title:    "empty cidr",
-			expected: false,
+			title:              "empty input",
+			expected:           nil,
+			expectedString:     "",
+			expectedFullString: "",
+			expectErr:          true,
 		},
 		{
-			title:    "cidr built without using the constructor",
-			expected: false,
-			cidr: core.CIDR{
-				IP: ip,
-				Network: &net.IPNet{
-					IP:   n.IP,
-					Mask: n.Mask,
-				},
+			title:              "white space input",
+			expected:           nil,
+			input:              "     ",
+			expectedString:     "",
+			expectedFullString: "",
+			expectErr:          true,
+		},
+		{
+			title: "valid input input with no white space",
+			expected: &core.CIDR{
+				IP:      ip,
+				Network: n,
 			},
+			input:              "192.168.1.1/24",
+			expectedFullString: "192.168.1.1-192.168.1.0/24",
+			expectedString:     "192.168.1.1/24",
+			expectErr:          false,
 		},
 		{
-			title:    "invalid cidr built using the constructor",
-			expected: false,
-			cidr:     core.NewCIDR("invalid"),
-		},
-		{
-			title:    "invalid cidr built using an empty string",
-			expected: false,
-			cidr:     core.NewCIDR("   "),
-		},
-		{
-			title:                 "valid cidr built using the constructor",
-			expected:              true,
-			cidr:                  core.NewCIDR("192.168.1.1/24"),
-			expectedOriginalValue: "192.168.1.1/24",
-		},
-
-		{
-			title:                 "valid cidr built using the constructor with white spaced input",
-			expected:              true,
-			cidr:                  core.NewCIDR("   192.168.1.1/24   "),
-			expectedOriginalValue: "192.168.1.1/24",
+			title: "valid input input with white space sting",
+			expected: &core.CIDR{
+				IP:      ip,
+				Network: n,
+			},
+			input:              "    192.168.1.1/24    ",
+			expectedFullString: "192.168.1.1-192.168.1.0/24",
+			expectedString:     "192.168.1.1/24",
+			expectErr:          false,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			actual := tc.cidr.IsValid()
-			if actual != tc.expected {
+			actual, err := core.ParseCIDR(tc.input)
+			if tc.expectErr && err == nil {
+				t.Error("Expected to receive an error, but received nil")
+			}
+			if !tc.expectErr && err != nil {
+				t.Errorf("Did not expect to receive an error, but received %s", err)
+			}
+
+			if err != nil {
+				return
+			}
+			if !actual.Equal(*tc.expected) {
 				t.Errorf("Expected: %v, Actual: %v", tc.expected, actual)
 			}
-			ao := tc.cidr.OriginalValue()
-			if ao != tc.expectedOriginalValue {
-				t.Errorf("Expected Original Value: '%v', Actual: '%v'", tc.expectedOriginalValue, ao)
+
+			actualFullString := actual.FullString()
+			if actualFullString != tc.expectedFullString {
+				t.Errorf("Expected full string: %v, Actual: %v", tc.expectedFullString, actualFullString)
+			}
+
+			actualString := actual.String()
+			if actualString != tc.expectedString {
+				t.Errorf("Expected string: %v, Actual: %v", tc.expectedString, actualString)
 			}
 		})
 	}

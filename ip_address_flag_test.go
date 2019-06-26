@@ -456,11 +456,27 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:     nil,
 		},
 		{
+			title:             "duplicate IPv6 items in the validation list",
+			validationList:    []net.IP{ipV6, ipV6},
+			setValidationList: true,
+			value:             unacceptableV6Address,
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --long. The expected value is %s.", unacceptableV6Address, ipV6Address),
+			expectedValue:     nil,
+		},
+		{
+			title:             "duplicate IPv4 items in the validation list",
+			validationList:    []net.IP{ipV4, ipV4},
+			setValidationList: true,
+			value:             unacceptableV4Address,
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --long. The expected value is %s.", unacceptableV4Address, ipV4Address),
+			expectedValue:     nil,
+		},
+		{
 			title:             "two IPv4 items in the validation list",
 			validationList:    []net.IP{ipV4, net.ParseIP("192.168.1.2")},
 			setValidationList: true,
 			value:             unacceptableV4Address,
-			expectedError:     fmt.Sprintf("%s is not an acceptable value for --long. The expected values are %s and 192.168.1.2.", unacceptableV4Address, ipV4Address),
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --long. The expected values are %s,192.168.1.2.", unacceptableV4Address, ipV4Address),
 			expectedValue:     nil,
 		},
 		{
@@ -468,7 +484,7 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			validationList:    []net.IP{ipV6, net.ParseIP("fe80:3::1ff:fe23:4567:890a")},
 			setValidationList: true,
 			value:             unacceptableV6Address,
-			expectedError:     fmt.Sprintf("%s is not an acceptable value for --long. The expected values are %s and fe80:3::1ff:fe23:4567:890a.", unacceptableV6Address, ipV6Address),
+			expectedError:     fmt.Sprintf("%s is not an acceptable value for --long. The expected values are %s,fe80:3::1ff:fe23:4567:890a.", unacceptableV6Address, ipV6Address),
 			expectedValue:     nil,
 		},
 		{

@@ -103,63 +103,42 @@ func TestOutOfRangeErr(t *testing.T) {
 		title       string
 		value       interface{}
 		longName    string
-		valid       string
-		rangeLength int
+		valid       []string
 		expectedErr string
 	}{
 		{
 			title:       "list with single item",
 			value:       "abc",
 			longName:    "long",
-			valid:       "A",
-			rangeLength: 1,
+			valid:       []string{"A"},
 			expectedErr: "abc is not an acceptable value for --long. The expected value is A.",
 		},
 		{
-			title:       "list with more than one items",
+			title:       "list with two items",
 			value:       "abc",
 			longName:    "long",
-			valid:       "A, B and C",
-			rangeLength: 2,
-			expectedErr: "abc is not an acceptable value for --long. The expected values are A, B and C.",
+			valid:       []string{"A", "B"},
+			expectedErr: "abc is not an acceptable value for --long. The expected values are A,B.",
 		},
 		{
-			title:       "empty valid range string with more than two items in the list",
+			title:       "list with three items",
 			value:       "abc",
 			longName:    "long",
-			valid:       "",
-			rangeLength: 2,
-			expectedErr: "abc is not an acceptable value for --long.",
+			valid:       []string{"A", "B", "C"},
+			expectedErr: "abc is not an acceptable value for --long. The expected values are A,B,C.",
 		},
 		{
-			title:       "empty valid range string with one item in the list",
+			title:       "empty valid range string",
 			value:       "abc",
 			longName:    "long",
-			valid:       "",
-			rangeLength: 1,
-			expectedErr: "abc is not an acceptable value for --long.",
-		},
-		{
-			title:       "white space valid range string with more than two items in the list",
-			value:       "abc",
-			longName:    "long",
-			valid:       "   ",
-			rangeLength: 2,
-			expectedErr: "abc is not an acceptable value for --long.",
-		},
-		{
-			title:       "white space valid range string with one item in the list",
-			value:       "abc",
-			longName:    "long",
-			valid:       "   ",
-			rangeLength: 1,
+			valid:       []string{},
 			expectedErr: "abc is not an acceptable value for --long.",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			err := internal.OutOfRangeErr(tc.value, tc.longName, tc.valid, tc.rangeLength)
+			err := internal.OutOfRangeErr(tc.value, tc.longName, tc.valid)
 			if err.Error() != tc.expectedErr {
 				t.Errorf("Expected error: '%v', Actual: '%v'", tc.expectedErr, err)
 			}
@@ -172,53 +151,6 @@ func TestInvalidValueErr(t *testing.T) {
 	actual := internal.InvalidValueErr("abc", "flag", "type")
 	if actual.Error() != expected {
 		t.Errorf("Expected: '%s', Actual: '%s'", expected, actual)
-	}
-}
-
-func TestGetExpectedValueString(t *testing.T) {
-	testCases := []struct {
-		title        string
-		entry        interface{}
-		index, total int
-		expected     string
-	}{
-		{
-			title:    "not the last item of the list",
-			entry:    "abc",
-			index:    0,
-			total:    3,
-			expected: "abc, ",
-		},
-		{
-			title:    "one before the last item of the list",
-			entry:    "abc",
-			index:    1,
-			total:    3,
-			expected: "abc and ",
-		},
-		{
-			title:    "the last item of the list",
-			entry:    "abc",
-			index:    2,
-			total:    3,
-			expected: "abc",
-		},
-		{
-			title:    "other indexes",
-			entry:    "abc",
-			index:    3,
-			total:    3,
-			expected: "abc, ",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.title, func(t *testing.T) {
-			actual := internal.GetExpectedValueString(tc.entry, tc.index, tc.total)
-			if actual != tc.expected {
-				t.Errorf("Expected: '%s', Actual: '%s'", tc.expected, actual)
-			}
-		})
 	}
 }
 

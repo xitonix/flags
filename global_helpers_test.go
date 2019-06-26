@@ -81,7 +81,7 @@ func TestSetDeprecationMark(t *testing.T) {
 }
 
 func TestSetDefaultValueFormatString(t *testing.T) {
-	expected := "Format String"
+	expected := "Format FullString"
 	SetDefaultValueFormatString(expected)
 	actual := DefaultBucket.opts.DefaultValueFormatString
 	if actual != expected {

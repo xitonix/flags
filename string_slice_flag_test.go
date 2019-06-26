@@ -465,7 +465,25 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "green",
-			expectedError:     "green is not an acceptable value for --colours. The expected values are Green and Red.",
+			expectedError:     "green is not an acceptable value for --colours. The expected values are Green,Red.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "duplicate case sensitive validation list",
+			validationList:    []string{"Green", "Green"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "green",
+			expectedError:     "green is not an acceptable value for --colours. The expected value is Green.",
+			expectedValue:     empty,
+		},
+		{
+			title:             "duplicate case insensitive validation list",
+			validationList:    []string{"Green", "Green"},
+			ignoreCase:        false,
+			setValidationList: true,
+			value:             "Pink",
+			expectedError:     "Pink is not an acceptable value for --colours. The expected value is Green.",
 			expectedValue:     empty,
 		},
 		{
@@ -474,7 +492,7 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "Green,red,Blue",
-			expectedError:     "red is not an acceptable value for --colours. The expected values are Green, Red and Blue.",
+			expectedError:     "red is not an acceptable value for --colours. The expected values are Green,Red,Blue.",
 			expectedValue:     empty,
 		},
 		{
@@ -501,7 +519,7 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			ignoreCase:        false,
 			setValidationList: true,
 			value:             "  ",
-			expectedError:     "'  ' is not an acceptable value for --colours. The expected values are Green and Red.",
+			expectedError:     "'  ' is not an acceptable value for --colours. The expected values are Green,Red.",
 			expectedValue:     empty,
 		},
 		{
@@ -519,7 +537,7 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			ignoreCase:        true,
 			setValidationList: true,
 			value:             "Green,Red,Pink",
-			expectedError:     "Pink is not an acceptable value for --colours. The expected values are Green and Red.",
+			expectedError:     "Pink is not an acceptable value for --colours. The expected values are Green,Red.",
 			expectedValue:     empty,
 		},
 		{
@@ -535,7 +553,7 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			validationList:    []string{"Green", "Pink", "Yellow"},
 			setValidationList: true,
 			value:             "blue",
-			expectedError:     "blue is not an acceptable value for --colours. The expected values are Green, Pink and Yellow.",
+			expectedError:     "blue is not an acceptable value for --colours. The expected values are Green,Pink,Yellow.",
 			expectedValue:     empty,
 		},
 		{

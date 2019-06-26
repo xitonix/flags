@@ -26,26 +26,16 @@ func SanitiseShortName(name string) string {
 	return strings.TrimLeft(name, "-")
 }
 
-func GetExpectedValueString(entry interface{}, i, total int) string {
-	switch i {
-	case total - 2:
-		return fmt.Sprintf("%v and ", entry)
-	case total - 1:
-		return fmt.Sprintf("%v", entry)
-	default:
-		return fmt.Sprintf("%v, ", entry)
-	}
-}
-
-func OutOfRangeErr(value interface{}, longName string, valid string, validCount int) error {
-	if IsEmpty(valid) {
+func OutOfRangeErr(value interface{}, longName string, valid []string) error {
+	if len(valid) == 0 {
 		return fmt.Errorf("%v is not an acceptable value for --%s.", value, longName)
 	}
+
 	plural := " is"
-	if validCount > 1 {
+	if len(valid) > 1 {
 		plural = "s are"
 	}
-	return fmt.Errorf("%v is not an acceptable value for --%s. The expected value%s %s.", value, longName, plural, valid)
+	return fmt.Errorf("%v is not an acceptable value for --%s. The expected value%s %s.", value, longName, plural, strings.Join(valid, ","))
 }
 
 func InvalidValueErr(value interface{}, longName, flagType string) error {

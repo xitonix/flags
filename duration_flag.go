@@ -25,7 +25,7 @@ type DurationFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in time.Duration) error
-	validM              map[time.Duration]interface{}
+	validationList      map[time.Duration]interface{}
 	acceptableItems     []string
 }
 
@@ -163,11 +163,11 @@ func (f *DurationFlag) WithValidRange(valid ...time.Duration) *DurationFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[time.Duration]interface{})
+	f.validationList = make(map[time.Duration]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, v.String())
 		}
 	}
@@ -198,8 +198,8 @@ func (f *DurationFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[dur]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[dur]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

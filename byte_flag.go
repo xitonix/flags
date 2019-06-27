@@ -20,7 +20,7 @@ type ByteFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in byte) error
-	validM              map[byte]interface{}
+	validationList      map[byte]interface{}
 	acceptableItems     []string
 }
 
@@ -158,11 +158,11 @@ func (f *ByteFlag) WithValidRange(valid ...byte) *ByteFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[byte]interface{})
+	f.validationList = make(map[byte]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, strconv.FormatUint(uint64(v), 10))
 		}
 	}
@@ -188,8 +188,8 @@ func (f *ByteFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[byte(v)]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[byte(v)]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

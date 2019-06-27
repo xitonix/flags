@@ -26,7 +26,7 @@ type IPAddressSliceFlag struct {
 	isHidden            bool
 	delimiter           string
 	validate            func(in net.IP) error
-	validM              map[string]interface{}
+	validationList      map[string]interface{}
 	acceptableItems     []string
 }
 
@@ -174,13 +174,16 @@ func (f *IPAddressSliceFlag) WithValidRange(valid ...net.IP) *IPAddressSliceFlag
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[string]interface{})
+	f.validationList = make(map[string]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
+		if len(v) == 0 {
+			continue
+		}
 		s := v.String()
-		if _, ok := f.validM[s]; !ok {
+		if _, ok := f.validationList[s]; !ok {
 			f.acceptableItems = append(f.acceptableItems, s)
-			f.validM[s] = nil
+			f.validationList[s] = nil
 		}
 	}
 	return f
@@ -216,9 +219,9 @@ func (f *IPAddressSliceFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
+	if f.validate == nil && len(f.validationList) > 0 {
 		for _, item := range list {
-			if _, ok := f.validM[item.String()]; !ok {
+			if _, ok := f.validationList[item.String()]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 			}
 		}

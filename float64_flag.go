@@ -21,7 +21,7 @@ type Float64Flag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in float64) error
-	validM              map[float64]interface{}
+	validationList      map[float64]interface{}
 	acceptableItems     []string
 }
 
@@ -159,11 +159,11 @@ func (f *Float64Flag) WithValidRange(valid ...float64) *Float64Flag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[float64]interface{})
+	f.validationList = make(map[float64]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, fmt.Sprintf("%v", v))
 		}
 	}
@@ -188,8 +188,8 @@ func (f *Float64Flag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[v]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[v]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

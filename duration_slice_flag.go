@@ -30,7 +30,7 @@ type DurationSliceFlag struct {
 	isHidden            bool
 	delimiter           string
 	validate            func(in time.Duration) error
-	validM              map[time.Duration]interface{}
+	validationList      map[time.Duration]interface{}
 	acceptableItems     []string
 }
 
@@ -178,11 +178,11 @@ func (f *DurationSliceFlag) WithValidRange(valid ...time.Duration) *DurationSlic
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[time.Duration]interface{})
+	f.validationList = make(map[time.Duration]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, v.String())
 		}
 	}
@@ -223,9 +223,9 @@ func (f *DurationSliceFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
+	if f.validate == nil && len(f.validationList) > 0 {
 		for _, item := range list {
-			if _, ok := f.validM[item]; !ok {
+			if _, ok := f.validationList[item]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 			}
 		}

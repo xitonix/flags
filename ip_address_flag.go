@@ -23,7 +23,7 @@ type IPAddressFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in net.IP) error
-	validM              map[string]interface{}
+	validationList      map[string]interface{}
 	acceptableItems     []string
 }
 
@@ -161,12 +161,15 @@ func (f *IPAddressFlag) WithValidRange(valid ...net.IP) *IPAddressFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[string]interface{})
+	f.validationList = make(map[string]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
+		if len(v) == 0 {
+			continue
+		}
 		s := v.String()
-		if _, ok := f.validM[s]; !ok {
-			f.validM[s] = nil
+		if _, ok := f.validationList[s]; !ok {
+			f.validationList[s] = nil
 			f.acceptableItems = append(f.acceptableItems, s)
 		}
 	}
@@ -197,8 +200,8 @@ func (f *IPAddressFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[ip.String()]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[ip.String()]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

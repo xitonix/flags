@@ -23,7 +23,7 @@ type CounterFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in int) error
-	validM              map[int]interface{}
+	validationList      map[int]interface{}
 	acceptableItems     []string
 }
 
@@ -161,11 +161,11 @@ func (f *CounterFlag) WithValidRange(valid ...int) *CounterFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[int]interface{})
+	f.validationList = make(map[int]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, strconv.Itoa(v))
 		}
 	}
@@ -191,8 +191,8 @@ func (f *CounterFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[v]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[v]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

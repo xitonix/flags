@@ -20,7 +20,7 @@ type Int64Flag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in int64) error
-	validM              map[int64]interface{}
+	validationList      map[int64]interface{}
 	acceptableItems     []string
 }
 
@@ -158,12 +158,12 @@ func (f *Int64Flag) WithValidRange(valid ...int64) *Int64Flag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[int64]interface{})
+	f.validationList = make(map[int64]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
+		if _, ok := f.validationList[v]; !ok {
 			f.acceptableItems = append(f.acceptableItems, strconv.FormatInt(int64(v), 10))
-			f.validM[v] = nil
+			f.validationList[v] = nil
 		}
 	}
 	return f
@@ -188,8 +188,8 @@ func (f *Int64Flag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[int64(v)]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[int64(v)]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

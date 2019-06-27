@@ -20,7 +20,7 @@ type UInt16Flag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in uint16) error
-	validM              map[uint16]interface{}
+	validationList      map[uint16]interface{}
 	acceptableItems     []string
 }
 
@@ -158,11 +158,11 @@ func (f *UInt16Flag) WithValidRange(valid ...uint16) *UInt16Flag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[uint16]interface{})
+	f.validationList = make(map[uint16]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, strconv.FormatUint(uint64(v), 10))
 		}
 	}
@@ -188,8 +188,8 @@ func (f *UInt16Flag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[uint16(v)]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[uint16(v)]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

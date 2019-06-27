@@ -95,7 +95,7 @@ type TimeFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in time.Time) error
-	validM              map[time.Time]interface{}
+	validationList      map[time.Time]interface{}
 	acceptedItems       []time.Time
 }
 
@@ -233,12 +233,12 @@ func (f *TimeFlag) WithValidRange(valid ...time.Time) *TimeFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[time.Time]interface{})
+	f.validationList = make(map[time.Time]interface{})
 	f.acceptedItems = make([]time.Time, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
+		if _, ok := f.validationList[v]; !ok {
 			f.acceptedItems = append(f.acceptedItems, v)
-			f.validM[v] = nil
+			f.validationList[v] = nil
 		}
 	}
 	return f
@@ -293,8 +293,8 @@ func (f *TimeFlag) Set(value string) error {
 			}
 
 			// Validation callback takes priority over validation list
-			if f.validate == nil && f.validM != nil {
-				if _, ok := f.validM[t]; !ok {
+			if f.validate == nil && len(f.validationList) > 0 {
+				if _, ok := f.validationList[t]; !ok {
 					return fmt.Errorf("%v is not an acceptable value for --%s. You must pick a value from %s.", t.Format(layout), f.long, f.getValidRangeString(layout))
 				}
 			}

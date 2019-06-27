@@ -20,7 +20,7 @@ type Int8Flag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in int8) error
-	validM              map[int8]interface{}
+	validationList      map[int8]interface{}
 	acceptableItems     []string
 }
 
@@ -158,11 +158,11 @@ func (f *Int8Flag) WithValidRange(valid ...int8) *Int8Flag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[int8]interface{})
+	f.validationList = make(map[int8]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
-			f.validM[v] = nil
+		if _, ok := f.validationList[v]; !ok {
+			f.validationList[v] = nil
 			f.acceptableItems = append(f.acceptableItems, strconv.FormatInt(int64(v), 10))
 		}
 	}
@@ -188,8 +188,8 @@ func (f *Int8Flag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[int8(v)]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[int8(v)]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

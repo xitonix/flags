@@ -27,7 +27,7 @@ type IntSliceFlag struct {
 	isHidden            bool
 	delimiter           string
 	validate            func(in int) error
-	validM              map[int]interface{}
+	validationList      map[int]interface{}
 	acceptableItems     []string
 }
 
@@ -175,12 +175,12 @@ func (f *IntSliceFlag) WithValidRange(valid ...int) *IntSliceFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[int]interface{})
+	f.validationList = make(map[int]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
-		if _, ok := f.validM[v]; !ok {
+		if _, ok := f.validationList[v]; !ok {
 			f.acceptableItems = append(f.acceptableItems, strconv.Itoa(v))
-			f.validM[v] = nil
+			f.validationList[v] = nil
 		}
 	}
 	return f
@@ -217,9 +217,9 @@ func (f *IntSliceFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
+	if f.validate == nil && len(f.validationList) > 0 {
 		for _, item := range list {
-			if _, ok := f.validM[item]; !ok {
+			if _, ok := f.validationList[item]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 			}
 		}

@@ -32,7 +32,7 @@ type StringSliceFlag struct {
 	delimiter           string
 	trimSpaces          bool
 	validate            func(in string) error
-	validM              map[string]interface{}
+	validationList      map[string]interface{}
 	acceptableItems     []string
 	ignoreCase          bool
 }
@@ -188,16 +188,16 @@ func (f *StringSliceFlag) WithValidRange(ignoreCase bool, valid ...string) *Stri
 		return f
 	}
 	f.ignoreCase = ignoreCase
-	f.validM = make(map[string]interface{})
+	f.validationList = make(map[string]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
 		item := v
 		if ignoreCase {
 			item = strings.ToLower(v)
 		}
-		if _, ok := f.validM[item]; !ok {
+		if _, ok := f.validationList[item]; !ok {
 			f.acceptableItems = append(f.acceptableItems, v)
-			f.validM[item] = nil
+			f.validationList[item] = nil
 		}
 	}
 	return f
@@ -232,13 +232,13 @@ func (f *StringSliceFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
+	if f.validate == nil && len(f.validationList) > 0 {
 		for _, item := range parts {
 			tmp := item
 			if f.ignoreCase {
 				tmp = strings.ToLower(item)
 			}
-			if _, ok := f.validM[tmp]; !ok {
+			if _, ok := f.validationList[tmp]; !ok {
 				if internal.IsEmpty(item) {
 					item = "'" + item + "'"
 				}

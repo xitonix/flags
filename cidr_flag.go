@@ -26,7 +26,7 @@ type CIDRFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in core.CIDR) error
-	validM              map[string]interface{}
+	validationList      map[string]interface{}
 	acceptableItems     []string
 }
 
@@ -164,15 +164,15 @@ func (f *CIDRFlag) WithValidRange(valid ...core.CIDR) *CIDRFlag {
 	if len(valid) == 0 {
 		return f
 	}
-	f.validM = make(map[string]interface{})
+	f.validationList = make(map[string]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, cidr := range valid {
 		s := cidr.String()
 		if internal.IsEmpty(s) {
 			continue
 		}
-		if _, ok := f.validM[s]; !ok {
-			f.validM[s] = nil
+		if _, ok := f.validationList[s]; !ok {
+			f.validationList[s] = nil
 			f.acceptableItems = append(f.acceptableItems, s)
 		}
 	}
@@ -206,8 +206,8 @@ func (f *CIDRFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
-		if _, ok := f.validM[cidr.String()]; !ok {
+	if f.validate == nil && len(f.validationList) > 0 {
+		if _, ok := f.validationList[cidr.String()]; !ok {
 			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
 		}
 	}

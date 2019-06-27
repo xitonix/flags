@@ -432,6 +432,14 @@ func TestCIDRFlag_Validation(t *testing.T) {
 			expectedError:     "",
 		},
 		{
+			title:             "invalid item in the validation list",
+			validationList:    []core.CIDR{{}},
+			setValidationList: true,
+			value:             ipV4Network,
+			expectedValue:     *ipV4Cidr,
+			expectedError:     "",
+		},
+		{
 			title:             "IPv4 single item in the validation list",
 			validationList:    []core.CIDR{*ipV4Cidr},
 			setValidationList: true,

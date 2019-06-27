@@ -19,7 +19,7 @@ type StringFlag struct {
 	isDeprecated        bool
 	isHidden            bool
 	validate            func(in string) error
-	validM              map[string]interface{}
+	validationList      map[string]interface{}
 	acceptableItems     []string
 	ignoreCase          bool
 }
@@ -159,16 +159,16 @@ func (f *StringFlag) WithValidRange(ignoreCase bool, valid ...string) *StringFla
 		return f
 	}
 	f.ignoreCase = ignoreCase
-	f.validM = make(map[string]interface{})
+	f.validationList = make(map[string]interface{})
 	f.acceptableItems = make([]string, 0)
 	for _, v := range valid {
 		item := v
 		if ignoreCase {
 			item = strings.ToLower(v)
 		}
-		if _, ok := f.validM[item]; !ok {
+		if _, ok := f.validationList[item]; !ok {
 			f.acceptableItems = append(f.acceptableItems, v)
-			f.validM[item] = nil
+			f.validationList[item] = nil
 		}
 	}
 	return f
@@ -184,12 +184,12 @@ func (f *StringFlag) Set(value string) error {
 	}
 
 	// Validation callback takes priority over validation list
-	if f.validate == nil && f.validM != nil {
+	if f.validate == nil && len(f.validationList) > 0 {
 		item := value
 		if f.ignoreCase {
 			item = strings.ToLower(item)
 		}
-		if _, ok := f.validM[item]; !ok {
+		if _, ok := f.validationList[item]; !ok {
 			if internal.IsEmpty(value) {
 				value = "'" + value + "'"
 			}

@@ -611,6 +611,14 @@ func TestIPAddressSliceFlag_Validation(t *testing.T) {
 			expectedValue:     empty,
 		},
 		{
+			title:             "invalid item in the validation list",
+			validationList:    []net.IP{{}},
+			setValidationList: true,
+			value:             ipV4AddressOne,
+			expectedValue:     []net.IP{ipV4One},
+			expectedError:     "",
+		},
+		{
 			title:             "duplicate IPv4 in the validation list",
 			validationList:    []net.IP{ipV4One, ipV4One},
 			setValidationList: true,

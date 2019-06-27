@@ -488,6 +488,14 @@ func TestIPAddressFlag_Validation(t *testing.T) {
 			expectedValue:     nil,
 		},
 		{
+			title:             "invalid item in the validation list",
+			validationList:    []net.IP{{}},
+			setValidationList: true,
+			value:             ipV4Address,
+			expectedValue:     ipV4,
+			expectedError:     "",
+		},
+		{
 			title:             "acceptable IPv4 input with validation list",
 			validationList:    []net.IP{ipV4},
 			setValidationList: true,

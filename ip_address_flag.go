@@ -62,7 +62,7 @@ func (f *IPAddressFlag) IsDeprecated() bool {
 //
 // This will be printed in the help output.
 func (f *IPAddressFlag) Type() string {
-	return "IP"
+	return "ip"
 }
 
 // ShortName returns the flag's short name.

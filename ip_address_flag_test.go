@@ -57,7 +57,7 @@ func TestIPAddress(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.IPAddress(tc.long, tc.usage)
-			checkFlagInitialState(t, f, "IP", tc.expectedUsage, tc.expectedLong, "")
+			checkFlagInitialState(t, f, "ip", tc.expectedUsage, tc.expectedLong, "")
 			checkIPFlagValues(t, nil, f.Get(), f.Var())
 		})
 	}
@@ -143,7 +143,7 @@ func TestIPAddressP(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.IPAddressP(tc.long, tc.usage, tc.short)
-			checkFlagInitialState(t, f, "IP", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
+			checkFlagInitialState(t, f, "ip", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkIPFlagValues(t, nil, f.Get(), f.Var())
 		})
 	}
@@ -342,7 +342,7 @@ func TestIPAddressFlag_Set(t *testing.T) {
 		{
 			title:         "invalid value",
 			value:         "abc",
-			expectedError: "is not a valid IP value",
+			expectedError: "is not a valid ip value",
 			expectedValue: nil,
 		},
 	}

@@ -109,6 +109,11 @@ func (b *Bucket) Parse() {
 	}
 
 	for _, f := range b.flags {
+		if f.IsRequired() && f.IsDeprecated() {
+			pn := internal.GetPrintName(f.LongName(), f.ShortName())
+			b.terminateWithError(fmt.Errorf("%s is marked as deprecated. An obsolete flag cannot be mandatory", pn))
+			return
+		}
 		for _, src := range b.sources {
 			var (
 				found bool
@@ -162,11 +167,8 @@ func (b *Bucket) Parse() {
 			break
 		}
 		if f.IsRequired() && !f.IsSet() {
-			short := f.ShortName()
-			if short != "" {
-				short = "-" + short + ", "
-			}
-			b.terminateWithError(fmt.Errorf("%s--%s flag is required", short, f.LongName()))
+			pn := internal.GetPrintName(f.LongName(), f.ShortName())
+			b.terminateWithError(fmt.Errorf("%s flag is required", pn))
 			return
 		}
 	}

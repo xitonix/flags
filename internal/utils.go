@@ -41,3 +41,10 @@ func OutOfRangeErr(value interface{}, longName string, valid []string) error {
 func InvalidValueErr(value interface{}, longName, flagType string) error {
 	return fmt.Errorf("'%v' is not a valid %s value for --%s", value, flagType, longName)
 }
+
+func GetPrintName(long, short string) string {
+	if short != "" {
+		short = "-" + short + ", "
+	}
+	return short + "--" + long
+}

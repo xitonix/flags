@@ -18,6 +18,7 @@ type Int32Flag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in int32) error
 	validationList      map[int32]interface{}
@@ -53,6 +54,19 @@ func (f *Int32Flag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *Int32Flag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *Int32Flag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *Int32Flag) Required() *Int32Flag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

@@ -24,6 +24,7 @@ type IntSliceFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	delimiter           string
 	validate            func(in int) error
@@ -61,6 +62,19 @@ func (f *IntSliceFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *IntSliceFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *IntSliceFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *IntSliceFlag) Required() *IntSliceFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

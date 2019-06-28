@@ -17,6 +17,7 @@ type StringFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in string) error
 	validationList      map[string]interface{}
@@ -53,6 +54,19 @@ func (f *StringFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *StringFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *StringFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *StringFlag) Required() *StringFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

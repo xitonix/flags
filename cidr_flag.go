@@ -24,6 +24,7 @@ type CIDRFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in core.CIDR) error
 	validationList      map[string]interface{}
@@ -59,6 +60,19 @@ func (f *CIDRFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *CIDRFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *CIDRFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *CIDRFlag) Required() *CIDRFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

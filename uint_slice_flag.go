@@ -24,6 +24,7 @@ type UIntSliceFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	delimiter           string
 	validate            func(in uint) error
@@ -144,6 +145,19 @@ func (f *UIntSliceFlag) Hide() *UIntSliceFlag {
 // 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
 func (f *UIntSliceFlag) MarkAsDeprecated() *UIntSliceFlag {
 	f.isDeprecated = true
+	return f
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *UIntSliceFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *UIntSliceFlag) Required() *UIntSliceFlag {
+	f.isRequired = true
 	return f
 }
 

@@ -58,7 +58,7 @@ func TestIPAddressSlice(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.IPAddressSlice(tc.long, tc.usage)
-			checkFlagInitialState(t, f, "[]IP", tc.expectedUsage, tc.expectedLong, "")
+			checkFlagInitialState(t, f, "[]ip", tc.expectedUsage, tc.expectedLong, "")
 			checkIPSliceFlagValues(t, []net.IP{}, f.Get(), f.Var())
 		})
 	}
@@ -144,7 +144,7 @@ func TestIPAddressSliceP(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.IPAddressSliceP(tc.long, tc.usage, tc.short)
-			checkFlagInitialState(t, f, "[]IP", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
+			checkFlagInitialState(t, f, "[]ip", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkIPSliceFlagValues(t, []net.IP{}, f.Get(), f.Var())
 		})
 	}
@@ -476,13 +476,13 @@ func TestIPAddressSliceFlag_Set(t *testing.T) {
 		{
 			title:         "invalid value",
 			value:         " invalid ",
-			expectedError: "'invalid' is not a valid []IP value for --long",
+			expectedError: "'invalid' is not a valid []ip value for --long",
 			expectedValue: empty,
 		},
 		{
 			title:         "partially invalid value",
 			value:         ipV4AddressOne + ",invalid," + ipV6AddressOne,
-			expectedError: "'invalid' is not a valid []IP value for --long",
+			expectedError: "'invalid' is not a valid []ip value for --long",
 			expectedValue: empty,
 		},
 	}

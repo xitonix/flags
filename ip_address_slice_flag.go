@@ -23,6 +23,7 @@ type IPAddressSliceFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	delimiter           string
 	validate            func(in net.IP) error
@@ -62,11 +63,24 @@ func (f *IPAddressSliceFlag) IsDeprecated() bool {
 	return f.isDeprecated
 }
 
+// IsRequired returns true if the flag value must be provided.
+func (f *IPAddressSliceFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *IPAddressSliceFlag) Required() *IPAddressSliceFlag {
+	f.isRequired = true
+	return f
+}
+
 // Type returns the string representation of the flag's type.
 //
 // This will be printed in the help output.
 func (f *IPAddressSliceFlag) Type() string {
-	return "[]IP"
+	return "[]ip"
 }
 
 // ShortName returns the flag's short name.

@@ -8,6 +8,7 @@ type Flag interface {
 	ShortName() string
 	Usage() string
 	IsSet() bool
+	IsRequired() bool
 	Type() string
 	Key() *data.Key
 	Set(value string) error

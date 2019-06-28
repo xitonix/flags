@@ -18,6 +18,7 @@ type BoolFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in bool) error
 }
@@ -51,6 +52,19 @@ func (f *BoolFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *BoolFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *BoolFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *BoolFlag) Required() *BoolFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

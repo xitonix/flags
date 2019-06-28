@@ -21,6 +21,7 @@ type CounterFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in int) error
 	validationList      map[int]interface{}
@@ -56,6 +57,19 @@ func (f *CounterFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *CounterFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *CounterFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *CounterFlag) Required() *CounterFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

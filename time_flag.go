@@ -93,6 +93,7 @@ type TimeFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in time.Time) error
 	validationList      map[time.Time]interface{}
@@ -128,6 +129,19 @@ func (f *TimeFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *TimeFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *TimeFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *TimeFlag) Required() *TimeFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.
@@ -295,7 +309,7 @@ func (f *TimeFlag) Set(value string) error {
 			// Validation callback takes priority over validation list
 			if f.validate == nil && len(f.validationList) > 0 {
 				if _, ok := f.validationList[t]; !ok {
-					return fmt.Errorf("%v is not an acceptable value for --%s. You must pick a value from %s.", t.Format(layout), f.long, f.getValidRangeString(layout))
+					return fmt.Errorf("%v is not an acceptable value for --%s. You must pick a value from %s.", t.Format(layout), f.long, f.getValidRangeTime(layout))
 				}
 			}
 
@@ -344,7 +358,7 @@ func (f *TimeFlag) set(value time.Time) {
 	*f.ptr = value
 }
 
-func (f *TimeFlag) getValidRangeString(layout string) string {
+func (f *TimeFlag) getValidRangeTime(layout string) string {
 	v := make([]string, 0)
 	for _, t := range f.acceptedItems {
 		v = append(v, t.Format(layout))

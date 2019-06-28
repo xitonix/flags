@@ -18,6 +18,7 @@ type ByteFlag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in byte) error
 	validationList      map[byte]interface{}
@@ -53,6 +54,19 @@ func (f *ByteFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *ByteFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *ByteFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *ByteFlag) Required() *ByteFlag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

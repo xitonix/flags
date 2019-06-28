@@ -18,6 +18,7 @@ type UInt64Flag struct {
 	usage               string
 	isSet               bool
 	isDeprecated        bool
+	isRequired          bool
 	isHidden            bool
 	validate            func(in uint64) error
 	validationList      map[uint64]interface{}
@@ -53,6 +54,19 @@ func (f *UInt64Flag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *UInt64Flag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *UInt64Flag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *UInt64Flag) Required() *UInt64Flag {
+	f.isRequired = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.

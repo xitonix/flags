@@ -9,6 +9,7 @@ type Flag struct {
 	value         interface{}
 	isSet         bool
 	isDeprecated  bool
+	isRequired    bool
 	isHidden      bool
 	hasDefault    bool
 	defaultValue  string
@@ -67,6 +68,19 @@ func (f *Flag) IsHidden() bool {
 
 func (f *Flag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *Flag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *Flag) Required() *Flag {
+	f.isRequired = true
+	return f
 }
 
 func (f *Flag) Type() string {

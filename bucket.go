@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"fmt"
 	"os"
 	"sort"
 	"strconv"
@@ -159,6 +160,14 @@ func (b *Bucket) Parse() {
 				return
 			}
 			break
+		}
+		if f.IsRequired() && !f.IsSet() {
+			short := f.ShortName()
+			if short != "" {
+				short = "-" + short + ", "
+			}
+			b.terminateWithError(fmt.Errorf("%s--%s flag is required", short, f.LongName()))
+			return
 		}
 	}
 }

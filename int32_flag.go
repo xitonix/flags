@@ -191,7 +191,7 @@ func (f *Int32Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return internal.InvalidValueErr(value, f.long, f.Type())
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {
@@ -204,7 +204,7 @@ func (f *Int32Flag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && len(f.validationList) > 0 {
 		if _, ok := f.validationList[int32(v)]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+			return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 		}
 	}
 

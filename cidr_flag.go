@@ -209,7 +209,7 @@ func (f *CIDRFlag) Set(value string) error {
 	}
 	cidr, err := core.ParseCIDR(value)
 	if err != nil {
-		return internal.InvalidValueErr(value, f.long, f.Type())
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {
@@ -222,7 +222,7 @@ func (f *CIDRFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && len(f.validationList) > 0 {
 		if _, ok := f.validationList[cidr.String()]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+			return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 		}
 	}
 

@@ -192,7 +192,7 @@ func (f *UInt8Flag) Set(value string) error {
 	}
 	v, err := strconv.ParseUint(value, 10, 8)
 	if err != nil {
-		return internal.InvalidValueErr(value, f.long, f.Type())
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {
@@ -205,7 +205,7 @@ func (f *UInt8Flag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && len(f.validationList) > 0 {
 		if _, ok := f.validationList[uint8(v)]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+			return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 		}
 	}
 

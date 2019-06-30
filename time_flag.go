@@ -318,7 +318,7 @@ func (f *TimeFlag) Set(value string) error {
 			return nil
 		}
 	}
-	return internal.InvalidValueErr(value, f.long, f.Type())
+	return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 }
 
 // ResetToDefault resets the value of this flag to default if a default value is specified.

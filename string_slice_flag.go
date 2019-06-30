@@ -256,7 +256,7 @@ func (f *StringSliceFlag) Set(value string) error {
 				if internal.IsEmpty(item) {
 					item = "'" + item + "'"
 				}
-				return internal.OutOfRangeErr(item, f.long, f.acceptableItems)
+				return internal.OutOfRangeErr(item, f.long, f.short, f.acceptableItems)
 			}
 		}
 	}

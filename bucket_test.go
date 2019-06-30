@@ -13,6 +13,65 @@ import (
 	"go.xitonix.io/flags/test"
 )
 
+func TestBucket_Parse_Deprecated_And_Required(t *testing.T) {
+	w := mocks.NewInMemoryWriter()
+	lg := &mocks.Logger{}
+	tm := &mocks.Terminator{}
+	env := mocks.NewEnvReader()
+	bucket := newBucket([]string{"--flag"}, env,
+		config.WithHelpWriter(w),
+		config.WithLogger(lg),
+		config.WithTerminator(tm))
+
+	f := mocks.NewFlag("flag", "f").Required()
+	f.SetDeprecated(true)
+	bucket.flags = append(bucket.flags, f)
+
+	bucket.Parse()
+
+	if !tm.IsTerminated {
+		t.Errorf("Expectced to terminate, but it did not happen")
+	}
+
+	if tm.Code != core.FailureExitCode {
+		t.Errorf("Expectced termination code %d, actual: %d", core.FailureExitCode, tm.Code)
+	}
+
+	expectedErr := "-f, --flag is marked as deprecated. An obsolete flag cannot be mandatory"
+	if !test.ErrorContainsExact(lg.Error, expectedErr) {
+		t.Errorf("Expected '%v', but received %v", expectedErr, lg.Error)
+	}
+}
+
+func TestBucket_Parse_Required(t *testing.T) {
+	w := mocks.NewInMemoryWriter()
+	lg := &mocks.Logger{}
+	tm := &mocks.Terminator{}
+	env := mocks.NewEnvReader()
+	bucket := newBucket([]string{}, env,
+		config.WithHelpWriter(w),
+		config.WithLogger(lg),
+		config.WithTerminator(tm))
+
+	f := mocks.NewFlag("flag", "f").Required()
+	bucket.flags = append(bucket.flags, f)
+
+	bucket.Parse()
+
+	if !tm.IsTerminated {
+		t.Errorf("Expectced to terminate, but it did not happen")
+	}
+
+	if tm.Code != core.FailureExitCode {
+		t.Errorf("Expectced termination code %d, actual: %d", core.FailureExitCode, tm.Code)
+	}
+
+	expectedErr := "-f, --flag flag is required"
+	if !test.ErrorContainsExact(lg.Error, expectedErr) {
+		t.Errorf("Expected '%v', but received %v", expectedErr, lg.Error)
+	}
+}
+
 func TestBucket_Parse_Validation(t *testing.T) {
 	testCases := []struct {
 		title                   string
@@ -402,7 +461,7 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 		defaultValue  string
 		args          []string
 		flag          *mocks.Flag
-		MakeSetToFail bool
+		makeSetToFail bool
 	}{
 		{
 			title:         "long name provided",
@@ -432,7 +491,7 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 			flag:          mocks.NewFlag("flag", "f"),
 			args:          []string{"--flag", "flag_value"},
 			expectedValue: nil,
-			MakeSetToFail: true,
+			makeSetToFail: true,
 		},
 	}
 
@@ -448,13 +507,13 @@ func TestBucket_Parse_Value_Args_Source(t *testing.T) {
 				config.WithTerminator(tm))
 
 			tc.flag.SetDefaultValue(tc.defaultValue)
-			tc.flag.MakeSetToFail = tc.MakeSetToFail
+			tc.flag.MakeSetToFail = tc.makeSetToFail
 
 			bucket.flags = []core.Flag{tc.flag}
 
 			bucket.Parse()
 
-			if tc.MakeSetToFail {
+			if tc.makeSetToFail {
 				if !test.ErrorContains(lg.Error, mocks.ErrExpected.Error()) {
 					t.Errorf("Expected to receive '%s' error, but received: %v", mocks.ErrExpected, lg.Error)
 				}

@@ -281,6 +281,34 @@ func TestCIDRFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
+func TestCIDRFlag_IsRequired(t *testing.T) {
+	testCases := []struct {
+		title      string
+		isRequired bool
+	}{
+		{
+			title: "not required by default",
+		},
+		{
+			title:      "required flag",
+			isRequired: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.CIDR("long", "usage")
+			if tc.isRequired {
+				f = f.Required()
+			}
+			actual := f.IsRequired()
+			if actual != tc.isRequired {
+				t.Errorf("Expected IsRequired: %v, Actual: %v", tc.isRequired, actual)
+			}
+		})
+	}
+}
+
 func TestCIDRFlag_Set(t *testing.T) {
 	const (
 		ipV4Network = "192.168.1.1/24"

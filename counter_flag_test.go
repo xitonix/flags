@@ -240,6 +240,34 @@ func TestCounterFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
+func TestCounterFlag_IsRequired(t *testing.T) {
+	testCases := []struct {
+		title      string
+		isRequired bool
+	}{
+		{
+			title: "not required by default",
+		},
+		{
+			title:      "required flag",
+			isRequired: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.CounterP("long", "usage", "s")
+			if tc.isRequired {
+				f = f.Required()
+			}
+			actual := f.IsRequired()
+			if actual != tc.isRequired {
+				t.Errorf("Expected IsRequired: %v, Actual: %v", tc.isRequired, actual)
+			}
+		})
+	}
+}
+
 func TestCounterFlag_Set(t *testing.T) {
 	testCases := []struct {
 		title         string
@@ -340,28 +368,28 @@ func TestCounterFlag_Validation(t *testing.T) {
 			validationList:    []int{100},
 			setValidationList: true,
 			value:             "200",
-			expectedError:     "200 is not an acceptable value for --long. The expected value is 100.",
+			expectedError:     "200 is not an acceptable value for -s, --long. The expected value is 100.",
 		},
 		{
 			title:             "non unique items in the validation list",
 			validationList:    []int{100, 100, 100},
 			setValidationList: true,
 			value:             "200",
-			expectedError:     "200 is not an acceptable value for --long. The expected value is 100.",
+			expectedError:     "200 is not an acceptable value for -s, --long. The expected value is 100.",
 		},
 		{
 			title:             "two items in the validation list",
 			validationList:    []int{100, 200},
 			setValidationList: true,
 			value:             "300",
-			expectedError:     "300 is not an acceptable value for --long. The expected values are 100,200.",
+			expectedError:     "300 is not an acceptable value for -s, --long. The expected values are 100,200.",
 		},
 		{
 			title:             "three items in the validation list",
 			validationList:    []int{100, 200, 300},
 			setValidationList: true,
 			value:             "400",
-			expectedError:     "400 is not an acceptable value for --long. The expected values are 100,200,300.",
+			expectedError:     "400 is not an acceptable value for -s, --long. The expected values are 100,200,300.",
 		},
 		{
 			title: "validation callback with no validation error",

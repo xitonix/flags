@@ -191,7 +191,7 @@ func (f *IntFlag) Set(value string) error {
 	}
 	v, err := strconv.Atoi(value)
 	if err != nil {
-		return internal.InvalidValueErr(value, f.long, f.Type())
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {
@@ -204,7 +204,7 @@ func (f *IntFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && len(f.validationList) > 0 {
 		if _, ok := f.validationList[v]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+			return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 		}
 	}
 

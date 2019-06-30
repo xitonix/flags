@@ -203,7 +203,7 @@ func (f *IPAddressFlag) Set(value string) error {
 	}
 	ip := net.ParseIP(value)
 	if ip == nil {
-		return internal.InvalidValueErr(value, f.long, f.Type())
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {
@@ -216,7 +216,7 @@ func (f *IPAddressFlag) Set(value string) error {
 	// Validation callback takes priority over validation list
 	if f.validate == nil && len(f.validationList) > 0 {
 		if _, ok := f.validationList[ip.String()]; !ok {
-			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+			return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 		}
 	}
 

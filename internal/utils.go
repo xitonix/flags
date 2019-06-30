@@ -26,20 +26,20 @@ func SanitiseShortName(name string) string {
 	return strings.TrimLeft(name, "-")
 }
 
-func OutOfRangeErr(value interface{}, longName string, valid []string) error {
+func OutOfRangeErr(value interface{}, longName, shortName string, valid []string) error {
 	if len(valid) == 0 {
-		return fmt.Errorf("%v is not an acceptable value for --%s.", value, longName)
+		return fmt.Errorf("%v is not an acceptable value for %s.", value, GetPrintName(longName, shortName))
 	}
 
 	plural := " is"
 	if len(valid) > 1 {
 		plural = "s are"
 	}
-	return fmt.Errorf("%v is not an acceptable value for --%s. The expected value%s %s.", value, longName, plural, strings.Join(valid, ","))
+	return fmt.Errorf("%v is not an acceptable value for %s. The expected value%s %s.", value, GetPrintName(longName, shortName), plural, strings.Join(valid, ","))
 }
 
-func InvalidValueErr(value interface{}, longName, flagType string) error {
-	return fmt.Errorf("'%v' is not a valid %s value for --%s", value, flagType, longName)
+func InvalidValueErr(value interface{}, longName, shortName, flagType string) error {
+	return fmt.Errorf("'%v' is not a valid %s value for %s", value, flagType, GetPrintName(longName, shortName))
 }
 
 func GetPrintName(long, short string) string {

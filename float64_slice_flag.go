@@ -217,7 +217,7 @@ func (f *Float64SliceFlag) Set(value string) error {
 		}
 		item, err := strconv.ParseFloat(value, 64)
 		if err != nil {
-			return internal.InvalidValueErr(value, f.long, f.Type())
+			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 		}
 		list = append(list, item)
 	}
@@ -235,7 +235,7 @@ func (f *Float64SliceFlag) Set(value string) error {
 	if f.validate == nil && len(f.validationList) > 0 {
 		for _, item := range list {
 			if _, ok := f.validationList[item]; !ok {
-				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 			}
 		}
 	}

@@ -222,7 +222,7 @@ func (f *DurationSliceFlag) Set(value string) error {
 		}
 		item, err := time.ParseDuration(value)
 		if err != nil {
-			return internal.InvalidValueErr(value, f.long, f.Type())
+			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 		}
 		list = append(list, item)
 	}
@@ -240,7 +240,7 @@ func (f *DurationSliceFlag) Set(value string) error {
 	if f.validate == nil && len(f.validationList) > 0 {
 		for _, item := range list {
 			if _, ok := f.validationList[item]; !ok {
-				return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 			}
 		}
 	}

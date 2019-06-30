@@ -6,6 +6,44 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
+func TestGetPrintName(t *testing.T) {
+	testCases := []struct {
+		title       string
+		long, short string
+		expected    string
+	}{
+		{
+			title:    "empty input",
+			expected: "--",
+		},
+		{
+			title:    "long name only",
+			long:     "long",
+			expected: "--long",
+		},
+		{
+			title:    "short name only",
+			short:    "s",
+			expected: "-s, --",
+		},
+		{
+			title:    "long and short names",
+			short:    "s",
+			long:     "long",
+			expected: "-s, --long",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			actual := internal.GetPrintName(tc.long, tc.short)
+			if actual != tc.expected {
+				t.Errorf("Expected %v, Actual: %v", tc.expected, actual)
+			}
+		})
+	}
+}
+
 func TestIsEmpty(t *testing.T) {
 	testCases := []struct {
 		title    string
@@ -103,6 +141,7 @@ func TestOutOfRangeErr(t *testing.T) {
 		title       string
 		value       interface{}
 		longName    string
+		shortName   string
 		valid       []string
 		expectedErr string
 	}{
@@ -134,11 +173,43 @@ func TestOutOfRangeErr(t *testing.T) {
 			valid:       []string{},
 			expectedErr: "abc is not an acceptable value for --long.",
 		},
+		{
+			title:       "short named flag and a list with single item",
+			value:       "abc",
+			longName:    "long",
+			shortName:   "S",
+			valid:       []string{"A"},
+			expectedErr: "abc is not an acceptable value for -S, --long. The expected value is A.",
+		},
+		{
+			title:       "short named flag and a list with two items",
+			value:       "abc",
+			longName:    "long",
+			shortName:   "S",
+			valid:       []string{"A", "B"},
+			expectedErr: "abc is not an acceptable value for -S, --long. The expected values are A,B.",
+		},
+		{
+			title:       "short named flag and a list with three items",
+			value:       "abc",
+			longName:    "long",
+			shortName:   "S",
+			valid:       []string{"A", "B", "C"},
+			expectedErr: "abc is not an acceptable value for -S, --long. The expected values are A,B,C.",
+		},
+		{
+			title:       "short named flag and a empty valid range string",
+			value:       "abc",
+			longName:    "long",
+			shortName:   "S",
+			valid:       []string{},
+			expectedErr: "abc is not an acceptable value for -S, --long.",
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			err := internal.OutOfRangeErr(tc.value, tc.longName, tc.valid)
+			err := internal.OutOfRangeErr(tc.value, tc.longName, tc.shortName, tc.valid)
 			if err.Error() != tc.expectedErr {
 				t.Errorf("Expected error: '%v', Actual: '%v'", tc.expectedErr, err)
 			}
@@ -147,8 +218,8 @@ func TestOutOfRangeErr(t *testing.T) {
 }
 
 func TestInvalidValueErr(t *testing.T) {
-	expected := `'abc' is not a valid type value for --flag`
-	actual := internal.InvalidValueErr("abc", "flag", "type")
+	expected := `'abc' is not a valid type value for -s, --flag`
+	actual := internal.InvalidValueErr("abc", "flag", "s", "type")
 	if actual.Error() != expected {
 		t.Errorf("Expected: '%s', Actual: '%s'", expected, actual)
 	}

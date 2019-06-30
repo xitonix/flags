@@ -167,7 +167,7 @@ func (f *BoolFlag) Set(value string) error {
 	}
 	v, err := strconv.ParseBool(value)
 	if err != nil {
-		return internal.InvalidValueErr(value, f.long, f.Type())
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {

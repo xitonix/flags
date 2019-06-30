@@ -280,6 +280,34 @@ func TestTimeFlag_IsDeprecated(t *testing.T) {
 	}
 }
 
+func TestTimeFlag_IsRequired(t *testing.T) {
+	testCases := []struct {
+		title      string
+		isRequired bool
+	}{
+		{
+			title: "not required by default",
+		},
+		{
+			title:      "required flag",
+			isRequired: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.Time("long", "usage")
+			if tc.isRequired {
+				f = f.Required()
+			}
+			actual := f.IsRequired()
+			if actual != tc.isRequired {
+				t.Errorf("Expected IsRequired: %v, Actual: %v", tc.isRequired, actual)
+			}
+		})
+	}
+}
+
 func TestTimeFlag_Set(t *testing.T) {
 	zero := time.Time{}
 	testCases := []struct {

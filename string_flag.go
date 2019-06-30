@@ -207,7 +207,7 @@ func (f *StringFlag) Set(value string) error {
 			if internal.IsEmpty(value) {
 				value = "'" + value + "'"
 			}
-			return internal.OutOfRangeErr(value, f.long, f.acceptableItems)
+			return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 		}
 	}
 	f.set(value)

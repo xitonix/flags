@@ -66,7 +66,7 @@ func TestBucket_Parse_Required(t *testing.T) {
 		t.Errorf("Expectced termination code %d, actual: %d", core.FailureExitCode, tm.Code)
 	}
 
-	expectedErr := "-f, --flag flag is required"
+	expectedErr := "-f, --flag flag is required."
 	if !test.ErrorContainsExact(lg.Error, expectedErr) {
 		t.Errorf("Expected '%v', but received %v", expectedErr, lg.Error)
 	}

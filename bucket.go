@@ -168,7 +168,7 @@ func (b *Bucket) Parse() {
 		}
 		if f.IsRequired() && !f.IsSet() {
 			pn := internal.GetPrintName(f.LongName(), f.ShortName())
-			b.terminateWithError(fmt.Errorf("%s flag is required", pn))
+			b.terminateWithError(fmt.Errorf("%s flag is required.", pn))
 			return
 		}
 	}

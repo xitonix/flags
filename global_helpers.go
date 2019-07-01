@@ -342,6 +342,31 @@ func BoolP(longName, usage, shortName string) *BoolFlag {
 	return DefaultBucket.BoolP(longName, usage, shortName)
 }
 
+// BoolSlice adds a new boolean slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. bits).
+//
+// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// For example --bits "0, 1, true, false"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func BoolSlice(longName, usage string) *BoolSliceFlag {
+	return DefaultBucket.BoolSlice(longName, usage)
+}
+
+// BoolSliceP adds a new boolean slice flag with a short name to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. bits).
+// A valid short name is a case sensitive single character string (i.e. b or B).
+//
+// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// For example --bits "0, 1, true, false"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func BoolSliceP(longName, usage, shortName string) *BoolSliceFlag {
+	return DefaultBucket.BoolSliceP(longName, usage, shortName)
+}
+
 // Float64 adds a new Float64 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).

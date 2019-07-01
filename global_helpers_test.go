@@ -708,6 +708,58 @@ func TestGlobalDurationSliceP(t *testing.T) {
 	}
 }
 
+func TestGlobalBool(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Bool("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestGlobalBoolP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestGlobalBoolSlice(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolSlice("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
+func TestGlobalBoolSliceP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolSliceP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
 func TestGlobalTime(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Time("long", "usage")

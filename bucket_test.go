@@ -2058,6 +2058,32 @@ func TestBucket_Parse_Bool(t *testing.T) {
 	}
 }
 
+func TestBucket_BoolSlice(t *testing.T) {
+	bucket := NewBucket()
+	bucket.BoolSlice("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
+func TestBucket_BoolSliceP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.BoolSliceP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
 func TestBucket_Float64(t *testing.T) {
 	bucket := NewBucket()
 	bucket.Float64("long", "usage")

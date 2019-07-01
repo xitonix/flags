@@ -218,25 +218,22 @@ func (f *IntSliceFlag) Set(value string) error {
 		if err != nil {
 			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 		}
-		list = append(list, item)
-	}
 
-	if f.validate != nil {
-		for _, item := range list {
+		if f.validate != nil {
 			err := f.validate(item)
 			if err != nil {
 				return err
 			}
 		}
-	}
 
-	// Validation callback takes priority over validation list
-	if f.validate == nil && len(f.validationList) > 0 {
-		for _, item := range list {
+		// Validation callback takes priority over validation list
+		if f.validate == nil && len(f.validationList) > 0 {
 			if _, ok := f.validationList[item]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 			}
 		}
+
+		list = append(list, item)
 	}
 
 	f.set(list)

@@ -220,25 +220,22 @@ func (f *IPAddressSliceFlag) Set(value string) error {
 		if ip == nil {
 			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 		}
-		list = append(list, ip)
-	}
 
-	if f.validate != nil {
-		for _, item := range list {
-			err := f.validate(item)
+		if f.validate != nil {
+			err := f.validate(ip)
 			if err != nil {
 				return err
 			}
 		}
-	}
 
-	// Validation callback takes priority over validation list
-	if f.validate == nil && len(f.validationList) > 0 {
-		for _, item := range list {
-			if _, ok := f.validationList[item.String()]; !ok {
+		// Validation callback takes priority over validation list
+		if f.validate == nil && len(f.validationList) > 0 {
+			if _, ok := f.validationList[ip.String()]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 			}
 		}
+
+		list = append(list, ip)
 	}
 
 	f.set(list)

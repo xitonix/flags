@@ -147,7 +147,7 @@ func AddSource(src core.Source, index int) {
 	DefaultBucket.AddSource(src, index)
 }
 
-// FullString adds a new string flag to the default bucket.
+// String adds a new string flag to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library.
 func String(longName, usage string) *StringFlag {

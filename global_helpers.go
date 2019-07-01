@@ -116,6 +116,13 @@ func Parse() {
 	DefaultBucket.Parse()
 }
 
+// Add adds a new custom flag type to the default bucket.
+//
+// This method must be called before calling Parse().
+func Add(f core.Flag) {
+	DefaultBucket.Add(f)
+}
+
 // AppendSource appends a new source to the default bucket.
 //
 // With the default configuration, the order will be:

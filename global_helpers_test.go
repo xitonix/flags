@@ -149,6 +149,19 @@ func TestPrependSource(t *testing.T) {
 	}
 }
 
+func TestAddFlag(t *testing.T) {
+	f := mocks.NewFlag("long", "short")
+	Add(f)
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	af := DefaultBucket.Flags()[0]
+	if _, ok := af.(*mocks.Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &mocks.Flag{}, af)
+	}
+}
+
 func TestAddSource(t *testing.T) {
 	testCases := []struct {
 		title          string

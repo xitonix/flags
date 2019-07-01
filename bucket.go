@@ -893,6 +893,13 @@ func (b *Bucket) CIDRSliceP(longName, usage, shortName string) *CIDRSliceFlag {
 	return f
 }
 
+// Add adds a new custom flag type to the bucket.
+//
+// This method must be called before calling Parse().
+func (b *Bucket) Add(f core.Flag) {
+	b.flags = append(b.flags, f)
+}
+
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {

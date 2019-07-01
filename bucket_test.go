@@ -1556,6 +1556,20 @@ func TestBucket_PrependSource(t *testing.T) {
 	}
 }
 
+func TestBucket_Add(t *testing.T) {
+	bucket := NewBucket()
+	f := mocks.NewFlag("long", "short")
+	bucket.Add(f)
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	af := bucket.Flags()[0]
+	if _, ok := af.(*mocks.Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &mocks.Flag{}, af)
+	}
+}
+
 func TestBucket_String(t *testing.T) {
 	bucket := NewBucket()
 	bucket.String("long", "usage")

@@ -69,6 +69,40 @@ func checkIPSliceFlagValues(t *testing.T, expectedValue, actual []net.IP, actual
 	}
 }
 
+func checkCIDRSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual []core.CIDR, actualVar *[]core.CIDR) {
+	t.Helper()
+	if !test.ErrorContainsExact(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkCIDRSliceFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkCIDRSliceFlagValues(t *testing.T, expectedValue, actual []core.CIDR, actualVar *[]core.CIDR) {
+	t.Helper()
+	if len(actual) != len(expectedValue) {
+		t.Errorf("Expected value length: %v, Actual length: %v", len(expectedValue), len(actual))
+		return
+	}
+	if len(*actualVar) != len(expectedValue) {
+		t.Errorf("Expected variable length: %v, Actual variable length: %v", len(expectedValue), len(actual))
+		return
+	}
+	for i, act := range actual {
+		if !expectedValue[i].Equal(act) {
+			t.Errorf("Expected value: %v, Actual: %v", expectedValue[i], act)
+		}
+		av := (*actualVar)[i]
+		if !expectedValue[i].Equal(av) {
+			t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue[i], av)
+		}
+	}
+}
+
 func checkFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual, actualVar interface{}) {
 	t.Helper()
 	if !test.ErrorContains(err, expectedErr) {

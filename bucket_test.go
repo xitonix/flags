@@ -2607,6 +2607,32 @@ func TestBucket_CIDRP(t *testing.T) {
 	}
 }
 
+func TestBucket_CIDRSlice(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CIDRSlice("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
+	}
+}
+
+func TestBucket_CIDRSliceP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CIDRSliceP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
+	}
+}
+
 func testTermination(t *testing.T, mustTerminate, isTerminated bool, expectedCode, actualCode int) {
 	t.Helper()
 	if mustTerminate {

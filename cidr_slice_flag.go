@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// CIDRSliceFlag represents a CIDR slice flag
+// CIDRSliceFlag represents a CIDR (Classless Inter-Domain Routing) slice flag.
 //
 // The value of a CIDR slice flag can be defined using a list of CIDR notation IP addresses and prefix length,
 // like "192.0.2.0/24, 2001:db8::/32", as defined in RFC 4632 and RFC 4291. Each item will be parsed to the
@@ -45,7 +45,7 @@ func newCIDRSlice(name, usage, short string) *CIDRSliceFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --networks).
 func (f *CIDRSliceFlag) LongName() string {
@@ -256,9 +256,9 @@ func (f *CIDRSliceFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *CIDRSliceFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

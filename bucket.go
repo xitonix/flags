@@ -410,15 +410,15 @@ func (b *Bucket) UInt8P(longName, usage, shortName string) *UInt8Flag {
 
 // Byte adds a new byte flag to the bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
+// Long names will be automatically converted to lowercase by the library (i.e. byte).
 func (b *Bucket) Byte(longName, usage string) *ByteFlag {
 	return b.ByteP(longName, usage, "")
 }
 
 // ByteP adds a new byte flag with a short name to the bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
+// Long names will be automatically converted to lowercase by the library (i.e. byte).
+// A valid short name is a case sensitive single character string (i.e. b or B).
 func (b *Bucket) ByteP(longName, usage, shortName string) *ByteFlag {
 	f := newByte(longName, usage, shortName)
 	b.flags = append(b.flags, f)
@@ -452,7 +452,7 @@ func (b *Bucket) BoolP(longName, usage, shortName string) *BoolFlag {
 //
 // The long names will be automatically converted to lowercase by the library (i.e. bits)
 //
-// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// The value of a boolean slice flag can be set using a comma (or any custom delimiter) separated string of true, false, 0 or 1.
 // For example --bits "0, 1, true, false"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -465,7 +465,7 @@ func (b *Bucket) BoolSlice(longName, usage string) *BoolSliceFlag {
 // The long names will be automatically converted to lowercase by the library (i.e. bits)
 // A valid short name is a case sensitive single character string (i.e. b or B).
 //
-// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// The value of a boolean slice flag can be set using a comma (or any custom delimiter) separated string of true, false, 0 or 1.
 // For example --bits "0, 1, true, false"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -763,9 +763,9 @@ func (b *Bucket) UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
 
 // Float64Slice adds a new float64 slice flag to the bucket.
 //
-// The long names will be automatically converted to lowercase by the library (i.e. numbers)
+// The long names will be automatically converted to lowercase by the library (i.e. rates)
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -775,10 +775,10 @@ func (b *Bucket) Float64Slice(longName, usage string) *Float64SliceFlag {
 
 // Float64SliceP adds a new float64 slice flag with a short name to the bucket.
 //
-// The long names will be automatically converted to lowercase by the library (i.e. numbers)
-// A valid short name is a case sensitive single character string (i.e. n or N).
+// The long names will be automatically converted to lowercase by the library (i.e. rates)
+// A valid short name is a case sensitive single character string (i.e. r or R).
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -840,7 +840,7 @@ func (b *Bucket) IPAddressSliceP(longName, usage, shortName string) *IPAddressSl
 	return f
 }
 
-// CIDR adds a new CIDR flag to the bucket.
+// CIDR adds a new CIDR (Classless Inter-Domain Routing) flag to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. network).
 //
@@ -853,7 +853,7 @@ func (b *Bucket) CIDR(longName, usage string) *CIDRFlag {
 	return b.CIDRP(longName, usage, "")
 }
 
-// CIDRP adds a new CIDR flag with a short name to the bucket.
+// CIDRP adds a new CIDR (Classless Inter-Domain Routing) flag with a short name to the bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. network).
 // A valid short name is a case sensitive single character string (i.e. n or N).
@@ -869,9 +869,9 @@ func (b *Bucket) CIDRP(longName, usage, shortName string) *CIDRFlag {
 	return f
 }
 
-// CIDRSlice adds a new CIDR slice flag to the bucket.
+// CIDRSlice adds a new CIDR (Classless Inter-Domain Routing) slice flag to the bucket.
 //
-// The long names will be automatically converted to lowercase by the library (i.e. durations)
+// The long names will be automatically converted to lowercase by the library (i.e. networks).
 //
 // The value of a CIDR slice flag can be defined using a list of CIDR notation IP addresses and prefix length,
 // like "192.0.2.0/24, 2001:db8::/32", as defined in RFC 4632 and RFC 4291. Each item will be parsed to the
@@ -884,7 +884,10 @@ func (b *Bucket) CIDRSlice(longName, usage string) *CIDRSliceFlag {
 	return b.CIDRSliceP(longName, usage, "")
 }
 
-// CIDRSliceP adds a new CIDR slice flag with a short name to the bucket.
+// CIDRSliceP adds a new CIDR (Classless Inter-Domain Routing) slice flag with a short name to the bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. networks).
+// A valid short name is a case sensitive single character string (i.e. n or N).
 //
 // The value of a CIDR slice flag can be defined using a list of CIDR notation IP addresses and prefix length,
 // like "192.0.2.0/24, 2001:db8::/32", as defined in RFC 4632 and RFC 4291. Each item will be parsed to the

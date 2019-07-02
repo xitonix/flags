@@ -11,8 +11,8 @@ import (
 
 // BoolSliceFlag represents a boolean slice flag.
 //
-// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
-// For example --bits "0, 1, true, false"
+// The value of a boolean slice flag can be set using a comma (or any custom delimiter) separated string of true, false, 0 or 1.
+// For example --bits "0, 1, true, false".
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 type BoolSliceFlag struct {
@@ -180,7 +180,7 @@ func (f *BoolSliceFlag) WithValidationCallback(validate func(in bool) error) *Bo
 
 // Set sets the flag value.
 //
-// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// The value of a boolean slice flag can be set using a comma (or any custom delimiter) separated string of true, false, 0 or 1.
 // For example --bits "0, 1, true, false"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -224,9 +224,9 @@ func (f *BoolSliceFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *BoolSliceFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

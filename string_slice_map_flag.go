@@ -247,9 +247,9 @@ func (f *StringSliceMapFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *StringSliceMapFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

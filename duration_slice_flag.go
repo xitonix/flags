@@ -89,7 +89,7 @@ func (f *DurationSliceFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -D).
 func (f *DurationSliceFlag) ShortName() string {
 	return f.short
 }
@@ -259,9 +259,9 @@ func (f *DurationSliceFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *DurationSliceFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

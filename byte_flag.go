@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// ByteFlag represents an byte flag
+// ByteFlag represents a byte flag.
 type ByteFlag struct {
 	key                 *data.Key
 	defaultValue, value byte
@@ -37,9 +37,9 @@ func newByte(name, usage, short string) *ByteFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --byte).
 func (f *ByteFlag) LongName() string {
 	return f.long
 }
@@ -78,7 +78,7 @@ func (f *ByteFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -B).
 func (f *ByteFlag) ShortName() string {
 	return f.short
 }
@@ -225,9 +225,9 @@ func (f *ByteFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *ByteFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

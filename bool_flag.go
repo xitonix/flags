@@ -38,7 +38,7 @@ func newBool(name, usage, short string) *BoolFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --enabled).
 func (f *BoolFlag) LongName() string {
@@ -202,7 +202,7 @@ func (f *BoolFlag) ResetToDefault() {
 
 // Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *BoolFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

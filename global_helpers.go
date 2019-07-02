@@ -387,14 +387,14 @@ func BoolSliceP(longName, usage, shortName string) *BoolSliceFlag {
 	return DefaultBucket.BoolSliceP(longName, usage, shortName)
 }
 
-// Float64 adds a new Float64 flag to the default bucket.
+// Float64 adds a new float64 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 func Float64(longName, usage string) *Float64Flag {
 	return DefaultBucket.Float64(longName, usage)
 }
 
-// Float64P adds a new Float64 flag with short name to the default bucket.
+// Float64P adds a new float64 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 // A valid short name is a case sensitive single character string (i.e. c or C).
@@ -402,14 +402,14 @@ func Float64P(longName, usage, shortName string) *Float64Flag {
 	return DefaultBucket.Float64P(longName, usage, shortName)
 }
 
-// Float32 adds a new Float32 flag to the default bucket.
+// Float32 adds a new float32 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 func Float32(longName, usage string) *Float32Flag {
 	return DefaultBucket.Float32(longName, usage)
 }
 
-// Float32P adds a new Float32 flag with short name to the default bucket.
+// Float32P adds a new float32 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 // A valid short name is a case sensitive single character string (i.e. c or C).
@@ -659,7 +659,7 @@ func UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -672,7 +672,7 @@ func Float64Slice(longName, usage string) *Float64SliceFlag {
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.

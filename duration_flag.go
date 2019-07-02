@@ -42,9 +42,9 @@ func newDuration(name, usage, short string) *DurationFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --duration).
 func (f *DurationFlag) LongName() string {
 	return f.long
 }
@@ -83,7 +83,7 @@ func (f *DurationFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -D).
 func (f *DurationFlag) ShortName() string {
 	return f.short
 }
@@ -235,9 +235,9 @@ func (f *DurationFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *DurationFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

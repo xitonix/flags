@@ -37,7 +37,7 @@ func newInt16(name, usage, short string) *Int16Flag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *Int16Flag) LongName() string {
@@ -225,9 +225,9 @@ func (f *Int16Flag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *Int16Flag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

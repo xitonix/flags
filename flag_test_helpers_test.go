@@ -9,6 +9,43 @@ import (
 	"go.xitonix.io/flags/test"
 )
 
+func checkSliceMapFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual map[string][]string, actualVar *map[string][]string) {
+	t.Helper()
+	if !test.ErrorContainsExact(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkSliceMapFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkSliceMapFlagValues(t *testing.T, expectedValue, actual map[string][]string, actualVar *map[string][]string) {
+	t.Helper()
+
+	if len(expectedValue) != len(actual) {
+		t.Errorf("Expected %d keys in the map, Actual: %d", len(expectedValue), len(actual))
+	}
+
+	if len(expectedValue) != len(*actualVar) {
+		t.Errorf("Expected %d keys in the map variable, Actual: %d", len(expectedValue), len(*actualVar))
+	}
+
+	fVar := *actualVar
+
+	for eKey, eVal := range expectedValue {
+		if aVal, ok := actual[eKey]; !ok || len(aVal) != len(eVal) || !reflect.DeepEqual(aVal, eVal) {
+			t.Errorf("Expected value for '%s' key: %s Actual: %s", eKey, eVal, aVal)
+		}
+
+		if aVal, ok := fVar[eKey]; !ok || len(aVal) != len(eVal) || !reflect.DeepEqual(aVal, eVal) {
+			t.Errorf("Expected flag variable value for '%s' key: %s Actual: %s", eKey, eVal, aVal)
+		}
+	}
+}
+
 func checkMapFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual map[string]string, actualVar *map[string]string) {
 	t.Helper()
 	if !test.ErrorContainsExact(err, expectedErr) {

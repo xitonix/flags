@@ -791,3 +791,40 @@ func StringMap(longName, usage string) *StringMapFlag {
 func StringMapP(longName, usage, shortName string) *StringMapFlag {
 	return DefaultBucket.StringMapP(longName, usage, shortName)
 }
+
+// StringSliceMap adds a new string slice map flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. days)
+//
+// The value of a StringSliceMap flag can be set using standard map initialisation strings.
+// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
+// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
+func StringSliceMap(longName, usage string) *StringSliceMapFlag {
+	return DefaultBucket.StringSliceMapP(longName, usage, "")
+}
+
+// StringSliceMapP adds a new string slice map flag with a short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. days).
+// A valid short name is a case sensitive single character string (i.e. d or D).
+//
+// The value of a StringSliceMap flag can be set using standard map initialisation strings.
+// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
+// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
+func StringSliceMapP(longName, usage, shortName string) *StringSliceMapFlag {
+	return DefaultBucket.StringSliceMapP(longName, usage, shortName)
+}

@@ -157,8 +157,6 @@ func (f *StringMapFlag) Required() *StringMapFlag {
 // WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
 //
 // The set operation will fail if the callback returns an error.
-// You can also define a list of acceptable values using WithValidRange(...) method.
-// Remember that setting the valid range will have no effect if a validation callback has been specified.
 func (f *StringMapFlag) WithValidationCallback(validate func(key, value string) error) *StringMapFlag {
 	f.validate = validate
 	return f

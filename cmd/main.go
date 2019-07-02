@@ -20,6 +20,7 @@ func main() {
 	ip := flags.IPAddressP("ip-address", "IP address usage", "i").WithValidRange(net.ParseIP("10.10.10.10"))
 	sl := flags.StringSlice("ss", "string slice").WithValidRange(false, "A", "B")
 	cid := flags.CIDR("network", "network usage")
+	mp := flags.StringMapP("mappings", "String map flag", "M")
 	flags.Parse()
 	fmt.Println("Value:", *str)
 	fmt.Println("Int:", i.Get())
@@ -28,4 +29,5 @@ func main() {
 	fmt.Printf("IP:%v\n", ip.Get())
 	fmt.Printf("SL:%v\n", sl.Get())
 	fmt.Printf("CID:%v\n", cid.Get().String())
+	fmt.Printf("MAP:%v\n", mp.Get())
 }

@@ -1596,6 +1596,32 @@ func TestBucket_StringP(t *testing.T) {
 	}
 }
 
+func TestBucket_StringMap(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringMap("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	}
+}
+
+func TestBucket_StringMapP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringMapP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	}
+}
+
 func TestBucket_Int(t *testing.T) {
 	bucket := NewBucket()
 	bucket.Int("long", "usage")

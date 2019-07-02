@@ -80,6 +80,15 @@ func TestSetDeprecationMark(t *testing.T) {
 	}
 }
 
+func TestSetRequiredMark(t *testing.T) {
+	expected := "**"
+	SetRequiredFlagMark(expected)
+	actual := DefaultBucket.opts.RequiredFlagMark
+	if actual != expected {
+		t.Errorf("The default bucket's Required mark was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
 func TestSetDefaultValueFormatString(t *testing.T) {
 	expected := "Format FullString"
 	SetDefaultValueFormatString(expected)

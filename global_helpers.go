@@ -96,6 +96,13 @@ func SetDeprecationMark(m string) {
 	DefaultBucket.opts.DeprecationMark = m
 }
 
+// SetRequiredFlagMark sets the indicator for the required flags within the default bucket.
+//
+// The required mark is used in the help output to draw the users' attention.
+func SetRequiredFlagMark(m string) {
+	DefaultBucket.opts.RequiredFlagMark = m
+}
+
 // SetDefaultValueFormatString sets the default bucket's Default value format string.
 //
 // The string is used to format the default value in the help output (i.e. [Default: %v])
@@ -334,17 +341,23 @@ func ByteP(longName, usage, shortName string) *ByteFlag {
 	return DefaultBucket.ByteP(longName, usage, shortName)
 }
 
-// Bool adds a new Bool flag to the default bucket.
+// Bool adds a new boolean flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
+// Long names will be automatically converted to lowercase by the library.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func Bool(longName, usage string) *BoolFlag {
 	return DefaultBucket.Bool(longName, usage)
 }
 
-// BoolP adds a new Bool flag with short name to the default bucket.
+// BoolP adds a new boolean flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
+// Long names will be automatically converted to lowercase by the library.
+// A valid short name is a case sensitive single character string.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func BoolP(longName, usage, shortName string) *BoolFlag {
 	return DefaultBucket.BoolP(longName, usage, shortName)
 }

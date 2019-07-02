@@ -13,6 +13,8 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 		title                    string
 		defaultValueFormatString string
 		deprecatedFormatString   string
+		requiredMark             string
+		isRequired               bool
 		flag                     *mocks.Flag
 		isHidden                 bool
 		defaultValue             string
@@ -69,6 +71,19 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 			isDeprecated: true,
 			flag:         mocks.NewFlagWithUsage("long", "", "usage"),
 		},
+		{
+			title:      "required without a mark",
+			expected:   fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", "", "long", "", "generic", "usage", "", ""),
+			isRequired: true,
+			flag:       mocks.NewFlagWithUsage("long", "", "usage"),
+		},
+		{
+			title:        "required with a mark",
+			expected:     fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", "", "long", "", "generic*", "usage", "", ""),
+			requiredMark: "*",
+			isRequired:   true,
+			flag:         mocks.NewFlagWithUsage("long", "", "usage"),
+		},
 	}
 
 	for _, tc := range testCases {
@@ -79,11 +94,13 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 			if tc.setDefault {
 				tc.flag.SetDefaultValue(tc.defaultValue)
 			}
-			actual := f.Format(tc.flag, tc.deprecatedFormatString, tc.defaultValueFormatString)
+			if tc.isRequired {
+				tc.flag = tc.flag.Required()
+			}
+			actual := f.Format(tc.flag, tc.deprecatedFormatString, tc.defaultValueFormatString, tc.requiredMark)
 			if actual != tc.expected {
 				t.Errorf("Expected formatted result: '%s', Actual: %s", tc.expected, actual)
 			}
-
 		})
 	}
 }

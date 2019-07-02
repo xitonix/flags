@@ -51,6 +51,8 @@ type Options struct {
 	//
 	// The string is used to format the default value in help output (i.e. [Default: %v])
 	DefaultValueFormatString string
+	// RequiredFlagMark is used to mark a required flag in the help output.
+	RequiredFlagMark string
 	// PreSetCallback is a callback which will be called before the flag value has been set by a source.
 	PreSetCallback core.Callback
 	// PostSetCallback is a callback which will be called after the flag value has been set by a source.
@@ -69,6 +71,7 @@ func NewOptions() *Options {
 		HelpWriter:               core.NewTabbedHelpWriter(os.Stdout),
 		DeprecationMark:          DeprecatedFlagIndicatorDefault,
 		DefaultValueFormatString: DefaultValueFormatStringDefault,
+		RequiredFlagMark:         RequiredFlagMarkDefault,
 		PreSetCallback:           nil,
 		PostSetCallback:          nil,
 	}
@@ -112,6 +115,15 @@ func WithSortOrder(c by.Comparer) Option {
 func WithDeprecationMark(deprecationMark string) Option {
 	return func(options *Options) {
 		options.DeprecationMark = deprecationMark
+	}
+}
+
+// WithRequiredMark sets the indicator for the required flags within the bucket.
+//
+// The required mark is used in the help output to draw the users' attention.
+func WithRequiredMark(requiredMark string) Option {
+	return func(options *Options) {
+		options.RequiredFlagMark = requiredMark
 	}
 }
 

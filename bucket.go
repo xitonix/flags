@@ -425,17 +425,23 @@ func (b *Bucket) ByteP(longName, usage, shortName string) *ByteFlag {
 	return f
 }
 
-// Bool adds a new bool flag to the bucket.
+// Bool adds a new boolean flag to the bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. enable-write-access).
+// Long names will be automatically converted to lowercase by the library.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func (b *Bucket) Bool(longName, usage string) *BoolFlag {
 	return b.BoolP(longName, usage, "")
 }
 
-// BoolP adds a new bool flag with a short name to the bucket.
+// BoolP adds a new boolean flag with short name to the bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. enable-write-access).
-// A valid short name is a case sensitive single character string (i.e. e or E).
+// Long names will be automatically converted to lowercase by the library.
+// A valid short name is a case sensitive single character string.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func (b *Bucket) BoolP(longName, usage, shortName string) *BoolFlag {
 	f := newBool(longName, usage, shortName)
 	b.flags = append(b.flags, f)
@@ -965,7 +971,7 @@ func (b *Bucket) Add(f core.Flag) {
 func (b *Bucket) help() error {
 	flags := b.sortFlags()
 	for _, flag := range flags {
-		_, err := b.opts.HelpWriter.Write([]byte(b.opts.HelpFormatter.Format(flag, b.opts.DeprecationMark, b.opts.DefaultValueFormatString)))
+		_, err := b.opts.HelpWriter.Write([]byte(b.opts.HelpFormatter.Format(flag, b.opts.DeprecationMark, b.opts.DefaultValueFormatString, b.opts.RequiredFlagMark)))
 		if err != nil {
 			return err
 		}

@@ -9,6 +9,9 @@ import (
 )
 
 // BoolFlag represents a boolean flag.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled)
 type BoolFlag struct {
 	key                 *data.Key
 	defaultValue, value bool
@@ -160,6 +163,9 @@ func (f *BoolFlag) WithValidationCallback(validate func(in bool) error) *BoolFla
 }
 
 // Set sets the flag value.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled)
 func (f *BoolFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
@@ -194,7 +200,7 @@ func (f *BoolFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
 // The default value can be defined using WithDefault(...) method
 func (f *BoolFlag) Default() interface{} {

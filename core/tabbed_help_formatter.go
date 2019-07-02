@@ -10,7 +10,7 @@ import (
 type TabbedHelpFormatter struct{}
 
 // Format returns a tab separated help string for the flag.
-func (t *TabbedHelpFormatter) Format(f Flag, deprecationMark, defaultValueFormatString string) string {
+func (t *TabbedHelpFormatter) Format(f Flag, deprecationMark, defaultValueFormatString, requiredMark string) string {
 	if f.IsHidden() {
 		return ""
 	}
@@ -28,5 +28,10 @@ func (t *TabbedHelpFormatter) Format(f Flag, deprecationMark, defaultValueFormat
 		dep = " " + deprecationMark
 	}
 
-	return fmt.Sprintf("%s\t--%s\t%s\t%s\t\t\t%s%s%s\n", short, f.LongName(), f.Key(), f.Type(), f.Usage(), def, dep)
+	var required string
+	if f.IsRequired() {
+		required = requiredMark
+	}
+
+	return fmt.Sprintf("%s\t--%s\t%s\t%s%s\t\t\t%s%s%s\n", short, f.LongName(), f.Key(), f.Type(), required, f.Usage(), def, dep)
 }

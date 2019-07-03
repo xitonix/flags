@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Int16Flag represents an int16 flag
+// Int16Flag represents an int16 flag.
 type Int16Flag struct {
 	key                 *data.Key
 	defaultValue, value int16

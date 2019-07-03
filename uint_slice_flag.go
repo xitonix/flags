@@ -9,9 +9,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// UIntSliceFlag represents an UIntSlice flag.
+// UIntSliceFlag represents an uint flag.
 //
-// The value of a UIntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -73,7 +73,7 @@ func (f *UIntSliceFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -N).
 func (f *UIntSliceFlag) ShortName() string {
 	return f.short
 }
@@ -202,7 +202,7 @@ func (f *UIntSliceFlag) WithValidRange(valid ...uint) *UIntSliceFlag {
 
 // Set sets the flag value.
 //
-// The value of a UIntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.

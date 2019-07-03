@@ -8,9 +8,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// StringSliceFlag represents a StringSlice flag.
+// StringSliceFlag represents a string slice flag.
 //
-// The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
+// The value of a string slice flag can be set using comma (or any custom delimiter) separated strings.
 // For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -92,7 +92,7 @@ func (f *StringSliceFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -C).
 func (f *StringSliceFlag) ShortName() string {
 	return f.short
 }
@@ -219,7 +219,7 @@ func (f *StringSliceFlag) WithValidRange(ignoreCase bool, valid ...string) *Stri
 
 // Set sets the flag value.
 //
-// The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
+// The value of a string slice flag can be set using comma (or any custom delimiter) separated strings.
 // For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.

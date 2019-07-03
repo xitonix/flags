@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Int64Flag represents an int64 flag
+// Int64Flag represents an int64 flag.
 type Int64Flag struct {
 	key                 *data.Key
 	defaultValue, value int64

@@ -9,9 +9,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// StringSliceMapFlag represents a map[string][]string flag.
+// StringSliceMapFlag represents a map of []string flag.
 //
-// The value of a StringSliceMap flag can be set using standard map initialisation strings.
+// The value of a string slice map flag can be set using standard map initialisation strings.
 // Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
 // For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
 //
@@ -52,7 +52,7 @@ func newStringSliceMap(name, usage, short string) *StringSliceMapFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --numbers).
+// Long name is case insensitive and always lower case (i.e. --mappings).
 func (f *StringSliceMapFlag) LongName() string {
 	return f.long
 }
@@ -84,7 +84,7 @@ func (f *StringSliceMapFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -M).
 func (f *StringSliceMapFlag) ShortName() string {
 	return f.short
 }
@@ -191,7 +191,7 @@ func (f *StringSliceMapFlag) WithValidationCallback(validate func(key string, va
 
 // Set sets the flag value.
 //
-// The value of a StringSliceMap flag can be set using standard map initialisation strings.
+// The value of a string slice map flag can be set using standard map initialisation strings.
 // Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
 // For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
 //

@@ -10,7 +10,7 @@ import (
 
 // StringMapFlag represents a string map flag.
 //
-// The value of a StringMap flag can be set using standard map initialisation strings.
+// The value of a string map flag can be set using standard map initialisation strings.
 // For example --mappings '{"key1":"value1", "key2":"value2"}'
 type StringMapFlag struct {
 	key                 *data.Key
@@ -40,7 +40,7 @@ func newStringMap(name, usage, short string) *StringMapFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --numbers).
+// Long name is case insensitive and always lower case (i.e. --mappings).
 func (f *StringMapFlag) LongName() string {
 	return f.long
 }
@@ -66,7 +66,7 @@ func (f *StringMapFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -M).
 func (f *StringMapFlag) ShortName() string {
 	return f.short
 }
@@ -164,7 +164,7 @@ func (f *StringMapFlag) WithValidationCallback(validate func(key, value string) 
 
 // Set sets the flag value.
 //
-// The value of a StringMap flag can be set using standard map initialisation strings.
+// The value of a string map flag can be set using standard map initialisation strings.
 // For example --mappings '{"key1":"value1", "key2":"value2"}'
 func (f *StringMapFlag) Set(value string) error {
 	value = strings.TrimSpace(value)

@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// UInt16Flag represents an uint16 flag
+// UInt16Flag represents an uint16 flag.
 type UInt16Flag struct {
 	key                 *data.Key
 	defaultValue, value uint16

@@ -9,7 +9,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// IPAddressSliceFlag represents an IP Address slice flag
+// IPAddressSliceFlag represents an IP Address slice flag.
 //
 // The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
 // IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
@@ -46,7 +46,7 @@ func newIPAddressSlice(name, usage, short string) *IPAddressSliceFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --endpoints).
 func (f *IPAddressSliceFlag) LongName() string {
 	return f.long
 }
@@ -85,7 +85,7 @@ func (f *IPAddressSliceFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -E).
 func (f *IPAddressSliceFlag) ShortName() string {
 	return f.short
 }

@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Int32Flag represents an int32 flag
+// Int32Flag represents an int32 flag.
 type Int32Flag struct {
 	key                 *data.Key
 	defaultValue, value int32

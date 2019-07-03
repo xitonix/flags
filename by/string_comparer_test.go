@@ -7,9 +7,9 @@ import (
 	"go.xitonix.io/flags/mocks"
 )
 
-func TestFlagComparer_LessThan(t *testing.T) {
+func TestStringComparer_LessThan(t *testing.T) {
 	testCases := []struct {
-		field            by.ComparisonField
+		field            by.StringComparisonField
 		isAscending      bool
 		expectedLessThan bool
 		f1, f2           *mocks.Flag
@@ -236,7 +236,7 @@ func TestFlagComparer_LessThan(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			c := by.FlagComparer{
+			c := by.StringComparer{
 				Ascending: tc.isAscending,
 				Field:     tc.field,
 			}

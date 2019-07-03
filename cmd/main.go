@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"go.xitonix.io/flags"
+	"go.xitonix.io/flags/by"
 )
 
 func main() {
 
 	flags.SetKeyPrefix("ALG")
 	flags.EnableAutoKeyGeneration()
+	flags.SetSortOrder(by.RequiredFirst)
 	str := flags.StringP("flag", "usage of name", "A").WithKey("ABC").WithDefault("abc").Var()
 	i := flags.Int("int-flag", "usage of int flag").WithKey("IntK")
 	_ = flags.StringP("x-flag", `usage of name is a bit longer`, "x").Var()

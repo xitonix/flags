@@ -89,7 +89,10 @@ func TestTabbedHelpFormatter_Format(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := core.TabbedHelpFormatter{}
-			tc.flag.SetDeprecated(tc.isDeprecated)
+			if tc.isDeprecated {
+				tc.flag = tc.flag.MarkAsDeprecated()
+			}
+
 			tc.flag.SetHidden(tc.isHidden)
 			if tc.setDefault {
 				tc.flag.SetDefaultValue(tc.defaultValue)

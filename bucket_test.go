@@ -23,8 +23,7 @@ func TestBucket_Parse_Deprecated_And_Required(t *testing.T) {
 		config.WithLogger(lg),
 		config.WithTerminator(tm))
 
-	f := mocks.NewFlag("flag", "f").Required()
-	f.SetDeprecated(true)
+	f := mocks.NewFlag("flag", "f").Required().MarkAsDeprecated()
 	bucket.flags = append(bucket.flags, f)
 
 	bucket.Parse()
@@ -348,6 +347,34 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 			comparer:      by.UsageDescending,
 			flags:         []core.Flag{mocks.NewFlagWithUsage("a-long", "a", "a usage"), mocks.NewFlagWithUsage("x-long", "x", "x usage")},
 			expectedLines: []string{"x usage", "a usage"},
+		},
+		{
+			title:         "required flags first",
+			args:          []string{"--help"},
+			comparer:      by.RequiredFirst,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a").Required()},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "required flags last",
+			args:          []string{"--help"},
+			comparer:      by.RequiredLast,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x").Required(), mocks.NewFlag("a-long", "a")},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "deprecated flags first",
+			args:          []string{"--help"},
+			comparer:      by.DeprecatedFirst,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a").MarkAsDeprecated()},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "deprecated flags last",
+			args:          []string{"--help"},
+			comparer:      by.DeprecatedLast,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x").MarkAsDeprecated(), mocks.NewFlag("a-long", "a")},
+			expectedLines: []string{"a-long", "x-long"},
 		},
 	}
 

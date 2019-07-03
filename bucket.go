@@ -17,7 +17,7 @@ import (
 // preconfigured sources by default. A command line argument source which is responsible to parse the provided command
 // line arguments and an Environment Variable source which queries the system's environment variable registry to extract
 // the flag value. By default, the command line argument source has a higher priority over the environment variable source.
-// That means the values provided with command line will override their environment variable counterpart.
+// That means the values provided by command line will override their environment variable counterparts.
 //
 // Apart from the predefined sources, any custom implementation of the `core.Source` interface can be added to the bucket's
 // chain of sources (See `flags.MemorySource` for an example). Custom sources can be added using AddSource(), AppendSource()
@@ -25,8 +25,8 @@ import (
 //
 // The Parse method will query all the available sources for a specified key in order.
 // The querying process will be stopped as soon as a source has provided a value. If none of the sources has a value to offer,
-// the flag will be set to the Default value. In cases where the flag does not have a default value, it will be set to
-// the flag type's zero value (for example 0, for an Int flag).
+// the flag will be set to the Default value. In cases the flag does not have a default value, it will be set to
+// the flag type's zero value (for example 0, for an int flag).
 type Bucket struct {
 	opts          *config.Options
 	reg           *registry
@@ -90,10 +90,10 @@ func (b *Bucket) Help() {
 //
 // The order of the default sources is Command Line Arguments > Environment Variables > [Default Value]
 //
-// Remember that in order for the flag values to be extractable from the environment variables
-// (or all the other custom sources) it MUST have a key associated with it.
+// Remember that in order for the values to be extractable from the environment variables
+// (or all the other custom sources), each flag MUST have a UNIQUE key associated with it.
 //
-// See flags.EnableAutoKeyGeneration(), flags.SetKeyPrefix() and different flags' WithKey() method for more details.
+// See flags.EnableAutoKeyGeneration(), flags.SetKeyPrefix() and each flag types' WithKey() method for more details.
 func (b *Bucket) Parse() {
 	b.init()
 
@@ -174,7 +174,7 @@ func (b *Bucket) Parse() {
 	}
 }
 
-// AppendSource appends a new source to the end of the chain.
+// AppendSource appends a new source to the end of the source chain.
 //
 // With the default configuration, the order will be:
 // Command Line Arguments > Environment Variables > src > [Default Value]
@@ -187,7 +187,7 @@ func (b *Bucket) AppendSource(src core.Source) {
 	b.sources = append(b.sources, src)
 }
 
-// PrependSource prepends a new source to the beginning of the chain.
+// PrependSource prepends a new source to the beginning of the source chain.
 // This is an alias for AddSource(src, 0)
 //
 // With the default configuration, the order will be:

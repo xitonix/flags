@@ -412,15 +412,7 @@ func (b *Bucket) UInt8P(longName, usage, shortName string) *UInt8Flag {
 //
 // Long names will be automatically converted to lowercase by the library (i.e. byte).
 func (b *Bucket) Byte(longName, usage string) *ByteFlag {
-	return b.ByteP(longName, usage, "")
-}
-
-// ByteP adds a new byte flag with a short name to the bucket.
-//
-// Long names will be automatically converted to lowercase by the library (i.e. byte).
-// A valid short name is a case sensitive single character string (i.e. b or B).
-func (b *Bucket) ByteP(longName, usage, shortName string) *ByteFlag {
-	f := newByte(longName, usage, shortName)
+	f := newByte(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

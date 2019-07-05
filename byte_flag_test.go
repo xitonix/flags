@@ -63,7 +63,7 @@ func TestByte(t *testing.T) {
 	}
 }
 
-func TestByteP(t *testing.T) {
+func TestByteFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestByteP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.ByteP(tc.long, tc.usage, tc.short)
+			f := flags.Byte(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "byte", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, byte(0), f.Get(), f.Var())
 		})

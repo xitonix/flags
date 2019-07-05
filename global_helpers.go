@@ -328,17 +328,9 @@ func UInt8P(longName, usage, shortName string) *UInt8Flag {
 
 // Byte adds a new Byte flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
+// Long names will be automatically converted to lowercase by the library (i.e. byte).
 func Byte(longName, usage string) *ByteFlag {
 	return DefaultBucket.Byte(longName, usage)
-}
-
-// ByteP adds a new Byte flag with short name to the default bucket.
-//
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func ByteP(longName, usage, shortName string) *ByteFlag {
-	return DefaultBucket.ByteP(longName, usage, shortName)
 }
 
 // Bool adds a new boolean flag to the default bucket.

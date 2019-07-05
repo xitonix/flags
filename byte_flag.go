@@ -25,10 +25,9 @@ type ByteFlag struct {
 	acceptableItems     []string
 }
 
-func newByte(name, usage, short string) *ByteFlag {
+func newByte(name, usage string) *ByteFlag {
 	f := &ByteFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(byte),
@@ -59,6 +58,14 @@ func (f *ByteFlag) IsDeprecated() bool {
 // IsRequired returns true if the flag value must be provided.
 func (f *ByteFlag) IsRequired() bool {
 	return f.isRequired
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -b).
+func (f *ByteFlag) WithShort(short string) *ByteFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // Required makes the flag mandatory.

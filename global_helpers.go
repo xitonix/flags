@@ -724,22 +724,6 @@ func CIDRSlice(longName, usage string) *CIDRSliceFlag {
 	return DefaultBucket.CIDRSlice(longName, usage)
 }
 
-// CIDRSliceP adds a new boolean slice flag with a short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. networks).
-// A valid short name is a case sensitive single character string (i.e. n or N).
-//
-// The value of a CIDR slice flag can be defined using a list of CIDR notation IP addresses and prefix length,
-// like "192.0.2.0/24, 2001:db8::/32", as defined in RFC 4632 and RFC 4291. Each item will be parsed to the
-// address and the network implied by the IP and prefix length.
-//
-// For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-func CIDRSliceP(longName, usage, shortName string) *CIDRSliceFlag {
-	return DefaultBucket.CIDRSliceP(longName, usage, shortName)
-}
-
 // StringMap adds a new string map flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. mappings)

@@ -32,10 +32,9 @@ type CIDRSliceFlag struct {
 	acceptableItems     []string
 }
 
-func newCIDRSlice(name, usage, short string) *CIDRSliceFlag {
+func newCIDRSlice(name, usage string) *CIDRSliceFlag {
 	f := &CIDRSliceFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]core.CIDR),
@@ -62,6 +61,14 @@ func (f *CIDRSliceFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *CIDRSliceFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -N).
+func (f *CIDRSliceFlag) WithShort(short string) *CIDRSliceFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsRequired returns true if the flag value must be provided.

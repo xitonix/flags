@@ -63,7 +63,7 @@ func TestCIDRSlice(t *testing.T) {
 	}
 }
 
-func TestCIDRSliceP(t *testing.T) {
+func TestCIDRSliceFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestCIDRSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CIDRSliceP(tc.long, tc.usage, tc.short)
+			f := flags.CIDRSlice(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[]cidr", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkCIDRSliceFlagValues(t, []core.CIDR{}, f.Get(), f.Var())
 		})

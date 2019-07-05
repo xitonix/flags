@@ -1002,16 +1002,3 @@ func TestGlobalCIDRSlice(t *testing.T) {
 		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
 	}
 }
-
-func TestGlobalCIDRSliceP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	CIDRSliceP("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*CIDRSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
-	}
-}

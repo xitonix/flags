@@ -3,7 +3,7 @@ package flags
 import (
 	"testing"
 
-	"go.xitonix.io/flags/mocks"
+	"github.com/xitonix/flags/mocks"
 )
 
 func TestArgSource_Read(t *testing.T) {

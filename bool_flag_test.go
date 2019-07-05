@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestBool(t *testing.T) {
@@ -61,7 +61,7 @@ func TestBool(t *testing.T) {
 	}
 }
 
-func TestBoolP(t *testing.T) {
+func TestBoolFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -140,7 +140,7 @@ func TestBoolP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.BoolP(tc.long, tc.usage, tc.short)
+			f := flags.Bool(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "bool", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, false, f.Get(), f.Var())
 		})

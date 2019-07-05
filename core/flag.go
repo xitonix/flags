@@ -1,6 +1,6 @@
 package core
 
-import "go.xitonix.io/flags/data"
+import "github.com/xitonix/flags/data"
 
 // Flag is the interface for defining a CLI flag.
 type Flag interface {

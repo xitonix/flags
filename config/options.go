@@ -4,9 +4,9 @@ import (
 	"io"
 	"os"
 
-	"go.xitonix.io/flags/by"
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/by"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/internal"
 )
 
 // Options holds the configuration settings of a bucket

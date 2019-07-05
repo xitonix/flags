@@ -6,7 +6,7 @@ import (
 	"math"
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestInt16(t *testing.T) {

@@ -6,9 +6,9 @@ import (
 	"sort"
 	"strconv"
 
-	"go.xitonix.io/flags/config"
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/config"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/internal"
 )
 
 // Bucket represents a container that holds a group of unique flags.
@@ -432,18 +432,7 @@ func (b *Bucket) ByteP(longName, usage, shortName string) *ByteFlag {
 // The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
 // The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func (b *Bucket) Bool(longName, usage string) *BoolFlag {
-	return b.BoolP(longName, usage, "")
-}
-
-// BoolP adds a new boolean flag with short name to the bucket.
-//
-// Long names will be automatically converted to lowercase by the library.
-// A valid short name is a case sensitive single character string.
-//
-// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
-// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
-func (b *Bucket) BoolP(longName, usage, shortName string) *BoolFlag {
-	f := newBool(longName, usage, shortName)
+	f := newBool(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

@@ -4,8 +4,8 @@ import (
 	"net"
 	"strings"
 
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/internal"
 )
 
 // IPAddressFlag represents an IP Address flag.

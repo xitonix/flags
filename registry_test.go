@@ -3,9 +3,9 @@ package flags
 import (
 	"testing"
 
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/mocks"
-	"go.xitonix.io/flags/test"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/mocks"
+	"github.com/xitonix/flags/test"
 )
 
 func TestRegistry_Add(t *testing.T) {

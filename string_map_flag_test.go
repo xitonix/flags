@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestStringMap(t *testing.T) {

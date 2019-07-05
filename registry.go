@@ -3,8 +3,8 @@ package flags
 import (
 	"strings"
 
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/internal"
 )
 
 type registry struct {

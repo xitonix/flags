@@ -3,7 +3,7 @@ package data_test
 import (
 	"testing"
 
-	"go.xitonix.io/flags/data"
+	"github.com/xitonix/flags/data"
 )
 
 func TestKey_SetPrefix(t *testing.T) {

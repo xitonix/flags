@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestDurationSlice(t *testing.T) {

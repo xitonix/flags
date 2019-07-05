@@ -1,7 +1,7 @@
 package data
 
 import (
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/internal"
 )
 
 // Key represents a unique flag identifier.

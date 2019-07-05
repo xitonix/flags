@@ -3,9 +3,9 @@ package flags
 import (
 	"io"
 
-	"go.xitonix.io/flags/by"
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/by"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/internal"
 )
 
 var (
@@ -349,17 +349,6 @@ func ByteP(longName, usage, shortName string) *ByteFlag {
 // The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func Bool(longName, usage string) *BoolFlag {
 	return DefaultBucket.Bool(longName, usage)
-}
-
-// BoolP adds a new boolean flag with short name to the default bucket.
-//
-// Long names will be automatically converted to lowercase by the library.
-// A valid short name is a case sensitive single character string.
-//
-// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
-// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
-func BoolP(longName, usage, shortName string) *BoolFlag {
-	return DefaultBucket.BoolP(longName, usage, shortName)
 }
 
 // BoolSlice adds a new boolean slice flag to the default bucket.

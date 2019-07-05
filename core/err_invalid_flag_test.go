@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags/core"
 )
 
 func TestErrInvalidFlag_Error(t *testing.T) {

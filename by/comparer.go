@@ -1,6 +1,6 @@
 package by
 
-import "go.xitonix.io/flags/core"
+import "github.com/xitonix/flags/core"
 
 // Comparer is the interface for comparing two flags.
 //

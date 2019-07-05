@@ -1,6 +1,6 @@
 package core
 
-import "go.xitonix.io/flags/internal"
+import "github.com/xitonix/flags/internal"
 
 // ErrInvalidFlag occurs when an attempt to add an invalid flag to a bucket has been made.
 type ErrInvalidFlag struct {

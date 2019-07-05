@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/internal"
 )
 
 // TabbedHelpFormatter represents a tab separated help formatter.

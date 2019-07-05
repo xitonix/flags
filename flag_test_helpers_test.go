@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/test"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/test"
 )
 
 func checkSliceMapFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual map[string][]string, actualVar *map[string][]string) {

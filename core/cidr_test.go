@@ -4,7 +4,7 @@ import (
 	"net"
 	"testing"
 
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags/core"
 )
 
 func TestCIDR_Equals(t *testing.T) {

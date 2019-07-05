@@ -3,8 +3,8 @@ package by_test
 import (
 	"testing"
 
-	"go.xitonix.io/flags/by"
-	"go.xitonix.io/flags/mocks"
+	"github.com/xitonix/flags/by"
+	"github.com/xitonix/flags/mocks"
 )
 
 func TestStringComparer_LessThan(t *testing.T) {

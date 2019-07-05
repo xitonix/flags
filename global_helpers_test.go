@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"go.xitonix.io/flags/by"
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/mocks"
+	"github.com/xitonix/flags/by"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/mocks"
 )
 
 func TestEnableAutoKeyGeneration(t *testing.T) {
@@ -785,19 +785,6 @@ func TestGlobalDurationSliceP(t *testing.T) {
 func TestGlobalBool(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Bool("long", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*BoolFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
-	}
-}
-
-func TestGlobalBoolP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	BoolP("long", "s", "usage")
 	actual := len(DefaultBucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)

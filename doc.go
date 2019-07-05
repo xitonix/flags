@@ -13,7 +13,7 @@ flag for your custom type and ask the library to pass it through the processing 
 
 Usage
 
-	import "go.xitonix.io/flags"
+	import "github.com/xitonix/flags"
 
 The package uses the concept of Buckets to organise the flags. You may create a new bucket to register your flags, or go with the default
 bucket instead.

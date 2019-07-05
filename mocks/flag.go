@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"go.xitonix.io/flags/data"
+	"github.com/xitonix/flags/data"
 )
 
 type Flag struct {

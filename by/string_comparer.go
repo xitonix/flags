@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"strings"
 
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags/core"
 )
 
 // StringComparisonField the string field the comparison will be based on.

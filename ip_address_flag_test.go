@@ -6,7 +6,7 @@ import (
 	"net"
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestIPAddress(t *testing.T) {

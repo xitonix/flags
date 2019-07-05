@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"go.xitonix.io/flags/by"
-	"go.xitonix.io/flags/config"
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/mocks"
-	"go.xitonix.io/flags/test"
+	"github.com/xitonix/flags/by"
+	"github.com/xitonix/flags/config"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/mocks"
+	"github.com/xitonix/flags/test"
 )
 
 func TestBucket_Parse_Deprecated_And_Required(t *testing.T) {
@@ -1974,19 +1974,6 @@ func TestBucket_Bool(t *testing.T) {
 	}
 }
 
-func TestBucket_BoolP(t *testing.T) {
-	bucket := NewBucket()
-	bucket.BoolP("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*BoolFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
-	}
-}
-
 func TestBucket_Parse_Bool(t *testing.T) {
 	testCases := []struct {
 		title         string
@@ -2006,13 +1993,13 @@ func TestBucket_Parse_Bool(t *testing.T) {
 		},
 		{
 			title:         "short name has been provided",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			args:          []string{"-b"},
 			expectedValue: true,
 		},
 		{
 			title:         "both short and long names are provided",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			args:          []string{"-b", "--boolean"},
 			expectedValue: true,
 		},
@@ -2043,45 +2030,45 @@ func TestBucket_Parse_Bool(t *testing.T) {
 
 		{
 			title:         "short name with explicit boolean value has been provided no equal sign",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			args:          []string{"-b", "false"},
 			expectedValue: false,
 		},
 		{
 			title:         "short name with explicit boolean value has been provided with equal sign",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			args:          []string{"-b=false"},
 			expectedValue: false,
 		},
 		{
 			title:         "short name with explicit integer value has been provided no equal sign",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			args:          []string{"-b", "0"},
 			expectedValue: false,
 		},
 		{
 			title:         "short name with explicit integer value has been provided with equal sign",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			args:          []string{"-b=0"},
 			expectedValue: false,
 		},
 		{
 			title:         "with true default value",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			setDefault:    true,
 			defaultValue:  true,
 			expectedValue: true,
 		},
 		{
 			title:         "with false default value",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			setDefault:    true,
 			defaultValue:  false,
 			expectedValue: false,
 		},
 		{
 			title:         "no default value",
-			flag:          BoolP("boolean", "usage", "b"),
+			flag:          Bool("boolean", "usage").WithShort("b"),
 			setDefault:    false,
 			expectedValue: false,
 		},

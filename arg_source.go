@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags/core"
 )
 
 type argSource struct {

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestStringSlice(t *testing.T) {

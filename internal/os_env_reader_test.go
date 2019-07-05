@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/internal"
 )
 
 func TestOSEnvReader_Get(t *testing.T) {

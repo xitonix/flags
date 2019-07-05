@@ -3,7 +3,7 @@ package by
 import (
 	"reflect"
 
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags/core"
 )
 
 // BooleanComparisonField the boolean field the comparison will be based on.

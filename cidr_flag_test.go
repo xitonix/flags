@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"go.xitonix.io/flags"
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags"
+	"github.com/xitonix/flags/core"
 )
 
 func TestCIDR(t *testing.T) {

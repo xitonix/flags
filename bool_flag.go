@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/internal"
 )
 
 // BoolFlag represents a boolean flag.
@@ -26,10 +26,9 @@ type BoolFlag struct {
 	validate            func(in bool) error
 }
 
-func newBool(name, usage, short string) *BoolFlag {
+func newBool(name, usage string) *BoolFlag {
 	f := &BoolFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(bool),
@@ -60,6 +59,14 @@ func (f *BoolFlag) IsDeprecated() bool {
 // IsRequired returns true if the flag value must be provided.
 func (f *BoolFlag) IsRequired() bool {
 	return f.isRequired
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -E).
+func (f *BoolFlag) WithShort(short string) *BoolFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // Required makes the flag mandatory.

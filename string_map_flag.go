@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/internal"
 )
 
 // StringMapFlag represents a string map flag.

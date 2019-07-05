@@ -3,7 +3,7 @@ package flags_test
 import (
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestMemorySource_Add(t *testing.T) {

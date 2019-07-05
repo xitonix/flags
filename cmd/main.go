@@ -5,8 +5,8 @@ import (
 	"net"
 	"time"
 
-	"go.xitonix.io/flags"
-	"go.xitonix.io/flags/by"
+	"github.com/xitonix/flags"
+	"github.com/xitonix/flags/by"
 )
 
 func main() {

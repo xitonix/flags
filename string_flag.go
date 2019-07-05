@@ -3,8 +3,8 @@ package flags
 import (
 	"strings"
 
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/internal"
 )
 
 // StringFlag represents a string flag.

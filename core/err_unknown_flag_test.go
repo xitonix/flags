@@ -3,7 +3,7 @@ package core_test
 import (
 	"testing"
 
-	"go.xitonix.io/flags/core"
+	"github.com/xitonix/flags/core"
 )
 
 func TestErrUnknownFlag_Error(t *testing.T) {

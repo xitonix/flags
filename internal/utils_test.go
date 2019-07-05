@@ -3,7 +3,7 @@ package internal_test
 import (
 	"testing"
 
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/internal"
 )
 
 func TestGetPrintName(t *testing.T) {

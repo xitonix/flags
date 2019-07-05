@@ -1,6 +1,6 @@
 package flags
 
-import "go.xitonix.io/flags/internal"
+import "github.com/xitonix/flags/internal"
 
 // MemorySource represents an in-memory implementation of `core.Source` interface.
 type MemorySource struct {

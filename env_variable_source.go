@@ -1,7 +1,7 @@
 package flags
 
 import (
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/internal"
 )
 
 type envVariableSource struct {

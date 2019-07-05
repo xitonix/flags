@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/internal"
 )
 
 // Float32Flag represents a float32 flag.

@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"go.xitonix.io/flags"
+	"github.com/xitonix/flags"
 )
 
 func TestFloat64Slice(t *testing.T) {

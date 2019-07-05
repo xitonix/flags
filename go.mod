@@ -1,3 +1,3 @@
-module go.xitonix.io/flags
+module github.com/xitonix/flags
 
 go 1.12

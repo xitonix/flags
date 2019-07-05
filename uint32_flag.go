@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"go.xitonix.io/flags/data"
-	"go.xitonix.io/flags/internal"
+	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/internal"
 )
 
 // UInt32Flag represents an uint32 flag.

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"go.xitonix.io/flags/core"
-	"go.xitonix.io/flags/mocks"
+	"github.com/xitonix/flags/core"
+	"github.com/xitonix/flags/mocks"
 )
 
 func TestTabbedHelpFormatter_Format(t *testing.T) {

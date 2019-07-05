@@ -63,7 +63,7 @@ func TestCIDR(t *testing.T) {
 	}
 }
 
-func TestCIDRP(t *testing.T) {
+func TestCIDRFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestCIDRP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CIDRP(tc.long, tc.usage, tc.short)
+			f := flags.CIDR(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "cidr", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkCIDRFlagValues(t, core.CIDR{}, f.Get(), f.Var())
 		})

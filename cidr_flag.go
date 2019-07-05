@@ -31,10 +31,9 @@ type CIDRFlag struct {
 	acceptableItems     []string
 }
 
-func newCIDR(name, usage, short string) *CIDRFlag {
+func newCIDR(name, usage string) *CIDRFlag {
 	f := &CIDRFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(core.CIDR),
@@ -45,7 +44,7 @@ func newCIDR(name, usage, short string) *CIDRFlag {
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --network).
 func (f *CIDRFlag) LongName() string {
 	return f.long
 }
@@ -67,6 +66,14 @@ func (f *CIDRFlag) IsRequired() bool {
 	return f.isRequired
 }
 
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -N).
+func (f *CIDRFlag) WithShort(short string) *CIDRFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
+}
+
 // Required makes the flag mandatory.
 //
 // Setting the default value of a required flag will have no effect.
@@ -84,7 +91,7 @@ func (f *CIDRFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -N).
 func (f *CIDRFlag) ShortName() string {
 	return f.short
 }

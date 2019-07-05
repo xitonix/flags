@@ -1,93 +1,80 @@
 package flags
 
 import (
-	"strconv"
+	"encoding/json"
 	"strings"
 
 	"go.xitonix.io/flags/data"
 	"go.xitonix.io/flags/internal"
 )
 
-// BoolFlag represents a boolean flag.
+// StringMapFlag represents a string map flag.
 //
-// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
-// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled)
-type BoolFlag struct {
+// The value of a string map flag can be set using standard map initialisation strings.
+// For example --mappings '{"key1":"value1", "key2":"value2"}'
+type StringMapFlag struct {
 	key                 *data.Key
-	defaultValue, value bool
+	defaultValue, value map[string]string
 	hasDefault          bool
-	ptr                 *bool
+	ptr                 *map[string]string
 	long, short         string
 	usage               string
 	isSet               bool
 	isDeprecated        bool
 	isRequired          bool
 	isHidden            bool
-	validate            func(in bool) error
+	validate            func(key, value string) error
 }
 
-func newBool(name, usage, short string) *BoolFlag {
-	f := &BoolFlag{
+func newStringMap(name, usage, short string) *StringMapFlag {
+	f := &StringMapFlag{
 		key:   &data.Key{},
 		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
-		ptr:   new(bool),
+		ptr:   new(map[string]string),
 	}
-	f.set(false)
+	f.set(make(map[string]string))
 	return f
 }
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --enabled).
-func (f *BoolFlag) LongName() string {
+// Long name is case insensitive and always lower case (i.e. --mappings).
+func (f *StringMapFlag) LongName() string {
 	return f.long
 }
 
 // IsHidden returns true if the flag is hidden.
 //
 // A hidden flag won't be printed in the help output.
-func (f *BoolFlag) IsHidden() bool {
+func (f *StringMapFlag) IsHidden() bool {
 	return f.isHidden
 }
 
 // IsDeprecated returns true if the flag is deprecated.
-func (f *BoolFlag) IsDeprecated() bool {
+func (f *StringMapFlag) IsDeprecated() bool {
 	return f.isDeprecated
-}
-
-// IsRequired returns true if the flag value must be provided.
-func (f *BoolFlag) IsRequired() bool {
-	return f.isRequired
-}
-
-// Required makes the flag mandatory.
-//
-// Setting the default value of a required flag will have no effect.
-func (f *BoolFlag) Required() *BoolFlag {
-	f.isRequired = true
-	return f
 }
 
 // Type returns the string representation of the flag's type.
 //
 // This will be printed in the help output.
-func (f *BoolFlag) Type() string {
-	return "bool"
+func (f *StringMapFlag) Type() string {
+	return "[string]string"
 }
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -E).
-func (f *BoolFlag) ShortName() string {
+// Short name is a single case sensitive character (i.e. -M).
+func (f *StringMapFlag) ShortName() string {
 	return f.short
 }
 
 // Usage returns the usage string of the flag.
 //
 // This will be printed in the help output.
-func (f *BoolFlag) Usage() string {
+func (f *StringMapFlag) Usage() string {
 	return f.usage
 }
 
@@ -95,19 +82,19 @@ func (f *BoolFlag) Usage() string {
 //
 // This method returns false if none of the sources has a value to offer, or the value
 // has been set to Default (if specified).
-func (f *BoolFlag) IsSet() bool {
+func (f *StringMapFlag) IsSet() bool {
 	return f.isSet
 }
 
 // Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
-func (f *BoolFlag) Var() *bool {
+func (f *StringMapFlag) Var() *map[string]string {
 	return f.ptr
 }
 
 // Get returns the current value of the flag.
-func (f *BoolFlag) Get() bool {
+func (f *StringMapFlag) Get() map[string]string {
 	return f.value
 }
 
@@ -117,7 +104,7 @@ func (f *BoolFlag) Get() bool {
 //
 // In order for the flag value to be extractable from the environment variables, or all the other custom sources,
 // it MUST have a key associated with it.
-func (f *BoolFlag) WithKey(keyID string) *BoolFlag {
+func (f *StringMapFlag) WithKey(keyID string) *StringMapFlag {
 	f.key.SetID(keyID)
 	return f
 }
@@ -125,7 +112,7 @@ func (f *BoolFlag) WithKey(keyID string) *BoolFlag {
 // WithDefault sets the default value of the flag.
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
-func (f *BoolFlag) WithDefault(defaultValue bool) *BoolFlag {
+func (f *StringMapFlag) WithDefault(defaultValue map[string]string) *StringMapFlag {
 	f.defaultValue = defaultValue
 	f.hasDefault = true
 	return f
@@ -134,7 +121,7 @@ func (f *BoolFlag) WithDefault(defaultValue bool) *BoolFlag {
 // Hide marks the flag as hidden.
 //
 // A hidden flag will not be displayed in the help output.
-func (f *BoolFlag) Hide() *BoolFlag {
+func (f *StringMapFlag) Hide() *StringMapFlag {
 	f.isHidden = true
 	return f
 }
@@ -149,41 +136,56 @@ func (f *BoolFlag) Hide() *BoolFlag {
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 // 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
-func (f *BoolFlag) MarkAsDeprecated() *BoolFlag {
+func (f *StringMapFlag) MarkAsDeprecated() *StringMapFlag {
 	f.isDeprecated = true
+	return f
+}
+
+// IsRequired returns true if the flag value must be provided.
+func (f *StringMapFlag) IsRequired() bool {
+	return f.isRequired
+}
+
+// Required makes the flag mandatory.
+//
+// Setting the default value of a required flag will have no effect.
+func (f *StringMapFlag) Required() *StringMapFlag {
+	f.isRequired = true
 	return f
 }
 
 // WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
 //
 // The set operation will fail if the callback returns an error.
-func (f *BoolFlag) WithValidationCallback(validate func(in bool) error) *BoolFlag {
+func (f *StringMapFlag) WithValidationCallback(validate func(key, value string) error) *StringMapFlag {
 	f.validate = validate
 	return f
 }
 
 // Set sets the flag value.
 //
-// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
-// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled)
-func (f *BoolFlag) Set(value string) error {
+// The value of a string map flag can be set using standard map initialisation strings.
+// For example --mappings '{"key1":"value1", "key2":"value2"}'
+func (f *StringMapFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
-	if len(value) == 0 {
-		value = "false"
+	if value == "" {
+		value = "{}"
 	}
-	v, err := strconv.ParseBool(value)
+	mp := make(map[string]string)
+	err := json.Unmarshal([]byte(value), &mp)
 	if err != nil {
 		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 	}
 
 	if f.validate != nil {
-		err := f.validate(v)
-		if err != nil {
-			return err
+		for k, v := range mp {
+			if err := f.validate(k, v); err != nil {
+				return err
+			}
 		}
 	}
 
-	f.set(v)
+	f.set(mp)
 	f.isSet = true
 	return nil
 }
@@ -192,7 +194,7 @@ func (f *BoolFlag) Set(value string) error {
 //
 // Calling this method on a flag without a default value will have no effect.
 // The default value can be defined using WithDefault(...) method.
-func (f *BoolFlag) ResetToDefault() {
+func (f *StringMapFlag) ResetToDefault() {
 	if !f.hasDefault {
 		return
 	}
@@ -203,22 +205,11 @@ func (f *BoolFlag) ResetToDefault() {
 // Default returns the default value if specified, otherwise returns nil.
 //
 // The default value can be defined using WithDefault(...) method.
-func (f *BoolFlag) Default() interface{} {
+func (f *StringMapFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil
 	}
-
 	return f.defaultValue
-}
-
-// EmptyValue returns the value which will automatically be assigned to the flag if none of the sources has
-// provided a none-empty value.
-//
-// Remember that this is different to Default values in which none of the sources provides any value.
-// For example the presence of --boolean or -b command line argument will be enough to set the value
-// of a BoolFlag type to true.
-func (f *BoolFlag) EmptyValue() string {
-	return "true"
 }
 
 // Key returns the current key of the flag.
@@ -226,11 +217,11 @@ func (f *BoolFlag) EmptyValue() string {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *BoolFlag) Key() *data.Key {
+func (f *StringMapFlag) Key() *data.Key {
 	return f.key
 }
 
-func (f *BoolFlag) set(value bool) {
+func (f *StringMapFlag) set(value map[string]string) {
 	f.value = value
 	*f.ptr = value
 }

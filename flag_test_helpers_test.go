@@ -9,6 +9,80 @@ import (
 	"go.xitonix.io/flags/test"
 )
 
+func checkSliceMapFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual map[string][]string, actualVar *map[string][]string) {
+	t.Helper()
+	if !test.ErrorContainsExact(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkSliceMapFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkSliceMapFlagValues(t *testing.T, expectedValue, actual map[string][]string, actualVar *map[string][]string) {
+	t.Helper()
+
+	if len(expectedValue) != len(actual) {
+		t.Errorf("Expected %d keys in the map, Actual: %d", len(expectedValue), len(actual))
+	}
+
+	if len(expectedValue) != len(*actualVar) {
+		t.Errorf("Expected %d keys in the map variable, Actual: %d", len(expectedValue), len(*actualVar))
+	}
+
+	fVar := *actualVar
+
+	for eKey, eVal := range expectedValue {
+		if aVal, ok := actual[eKey]; !ok || len(aVal) != len(eVal) || !reflect.DeepEqual(aVal, eVal) {
+			t.Errorf("Expected value for '%s' key: %s Actual: %s", eKey, eVal, aVal)
+		}
+
+		if aVal, ok := fVar[eKey]; !ok || len(aVal) != len(eVal) || !reflect.DeepEqual(aVal, eVal) {
+			t.Errorf("Expected flag variable value for '%s' key: %s Actual: %s", eKey, eVal, aVal)
+		}
+	}
+}
+
+func checkMapFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual map[string]string, actualVar *map[string]string) {
+	t.Helper()
+	if !test.ErrorContainsExact(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkMapFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkMapFlagValues(t *testing.T, expectedValue, actual map[string]string, actualVar *map[string]string) {
+	t.Helper()
+
+	if len(expectedValue) != len(actual) {
+		t.Errorf("Expected %d keys in the map, Actual: %d", len(expectedValue), len(actual))
+	}
+
+	if len(expectedValue) != len(*actualVar) {
+		t.Errorf("Expected %d keys in the map variable, Actual: %d", len(expectedValue), len(*actualVar))
+	}
+
+	fVar := *actualVar
+
+	for eKey, eVal := range expectedValue {
+		if aVal, ok := actual[eKey]; !ok || aVal != eVal {
+			t.Errorf("Expected value for '%s' key: %s Actual: %s", eKey, eVal, aVal)
+		}
+
+		if aVal, ok := fVar[eKey]; !ok || aVal != eVal {
+			t.Errorf("Expected flag variable value for '%s' key: %s Actual: %s", eKey, eVal, aVal)
+		}
+	}
+}
+
 func checkSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual, actualVar interface{}) {
 	t.Helper()
 	if !test.ErrorContainsExact(err, expectedErr) {
@@ -49,6 +123,40 @@ func checkIPSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, 
 }
 
 func checkIPSliceFlagValues(t *testing.T, expectedValue, actual []net.IP, actualVar *[]net.IP) {
+	t.Helper()
+	if len(actual) != len(expectedValue) {
+		t.Errorf("Expected value length: %v, Actual length: %v", len(expectedValue), len(actual))
+		return
+	}
+	if len(*actualVar) != len(expectedValue) {
+		t.Errorf("Expected variable length: %v, Actual variable length: %v", len(expectedValue), len(actual))
+		return
+	}
+	for i, act := range actual {
+		if !expectedValue[i].Equal(act) {
+			t.Errorf("Expected value: %v, Actual: %v", expectedValue[i], act)
+		}
+		av := (*actualVar)[i]
+		if !expectedValue[i].Equal(av) {
+			t.Errorf("Expected flag variable: %v, Actual: %v", expectedValue[i], av)
+		}
+	}
+}
+
+func checkCIDRSliceFlag(t *testing.T, f core.Flag, err error, expectedErr string, expectedValue, actual []core.CIDR, actualVar *[]core.CIDR) {
+	t.Helper()
+	if !test.ErrorContainsExact(err, expectedErr) {
+		t.Errorf("Expected to receive an error with '%s', but received %s", expectedErr, err)
+	}
+
+	if expectedErr == "" && !f.IsSet() {
+		t.Error("IsSet(), Expected value: true, Actual: false")
+	}
+
+	checkCIDRSliceFlagValues(t, expectedValue, actual, actualVar)
+}
+
+func checkCIDRSliceFlagValues(t *testing.T, expectedValue, actual []core.CIDR, actualVar *[]core.CIDR) {
 	t.Helper()
 	if len(actual) != len(expectedValue) {
 		t.Errorf("Expected value length: %v, Actual length: %v", len(expectedValue), len(actual))

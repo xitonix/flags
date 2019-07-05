@@ -96,6 +96,13 @@ func SetDeprecationMark(m string) {
 	DefaultBucket.opts.DeprecationMark = m
 }
 
+// SetRequiredFlagMark sets the indicator for the required flags within the default bucket.
+//
+// The required mark is used in the help output to draw the users' attention.
+func SetRequiredFlagMark(m string) {
+	DefaultBucket.opts.RequiredFlagMark = m
+}
+
 // SetDefaultValueFormatString sets the default bucket's Default value format string.
 //
 // The string is used to format the default value in the help output (i.e. [Default: %v])
@@ -114,6 +121,13 @@ func SetDefaultValueFormatString(f string) {
 // The order of the default sources is Command Line Arguments > Environment Variables > [Default Value]
 func Parse() {
 	DefaultBucket.Parse()
+}
+
+// Add adds a new custom flag type to the default bucket.
+//
+// This method must be called before calling Parse().
+func Add(f core.Flag) {
+	DefaultBucket.Add(f)
 }
 
 // AppendSource appends a new source to the default bucket.
@@ -147,7 +161,7 @@ func AddSource(src core.Source, index int) {
 	DefaultBucket.AddSource(src, index)
 }
 
-// FullString adds a new string flag to the default bucket.
+// String adds a new string flag to the default bucket.
 //
 // The long names will be automatically converted to lowercase by the library.
 func String(longName, usage string) *StringFlag {
@@ -162,14 +176,14 @@ func StringP(longName, usage, shortName string) *StringFlag {
 	return DefaultBucket.StringP(longName, usage, shortName)
 }
 
-// Int adds a new Int flag to the default bucket.
+// Int adds a new int flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func Int(longName, usage string) *IntFlag {
 	return DefaultBucket.Int(longName, usage)
 }
 
-// IntP adds a new Int flag with short name to the default bucket.
+// IntP adds a new int flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -177,14 +191,14 @@ func IntP(longName, usage, shortName string) *IntFlag {
 	return DefaultBucket.IntP(longName, usage, shortName)
 }
 
-// Int8 adds a new Int8 flag to the default bucket.
+// Int8 adds a new int8 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func Int8(longName, usage string) *Int8Flag {
 	return DefaultBucket.Int8(longName, usage)
 }
 
-// Int8P adds a new Int8 flag with short name to the default bucket.
+// Int8P adds a new int8 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -192,14 +206,14 @@ func Int8P(longName, usage, shortName string) *Int8Flag {
 	return DefaultBucket.Int8P(longName, usage, shortName)
 }
 
-// Int16 adds a new Int16 flag to the default bucket.
+// Int16 adds a new int16 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func Int16(longName, usage string) *Int16Flag {
 	return DefaultBucket.Int16(longName, usage)
 }
 
-// Int16P adds a new Int16 flag with short name to the default bucket.
+// Int16P adds a new int16 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -207,14 +221,14 @@ func Int16P(longName, usage, shortName string) *Int16Flag {
 	return DefaultBucket.Int16P(longName, usage, shortName)
 }
 
-// Int32 adds a new Int32 flag to the default bucket.
+// Int32 adds a new int32 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func Int32(longName, usage string) *Int32Flag {
 	return DefaultBucket.Int32(longName, usage)
 }
 
-// Int32P adds a new Int32 flag with short name to the default bucket.
+// Int32P adds a new int32 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -222,14 +236,14 @@ func Int32P(longName, usage, shortName string) *Int32Flag {
 	return DefaultBucket.Int32P(longName, usage, shortName)
 }
 
-// Int64 adds a new Int64 flag to the default bucket.
+// Int64 adds a new int64 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func Int64(longName, usage string) *Int64Flag {
 	return DefaultBucket.Int64(longName, usage)
 }
 
-// Int64P adds a new Int64 flag with short name to the default bucket.
+// Int64P adds a new int64 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -237,14 +251,14 @@ func Int64P(longName, usage, shortName string) *Int64Flag {
 	return DefaultBucket.Int64P(longName, usage, shortName)
 }
 
-// UInt adds a new UInt flag to the default bucket.
+// UInt adds a new uint flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func UInt(longName, usage string) *UIntFlag {
 	return DefaultBucket.UInt(longName, usage)
 }
 
-// UIntP adds a new UInt flag with short name to the default bucket.
+// UIntP adds a new uint flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -252,14 +266,14 @@ func UIntP(longName, usage, shortName string) *UIntFlag {
 	return DefaultBucket.UIntP(longName, usage, shortName)
 }
 
-// UInt64 adds a new UInt64 flag to the default bucket.
+// UInt64 adds a new uint64 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func UInt64(longName, usage string) *UInt64Flag {
 	return DefaultBucket.UInt64(longName, usage)
 }
 
-// UInt64P adds a new UInt64 flag with short name to the default bucket.
+// UInt64P adds a new uint64 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -267,14 +281,14 @@ func UInt64P(longName, usage, shortName string) *UInt64Flag {
 	return DefaultBucket.UInt64P(longName, usage, shortName)
 }
 
-// UInt32 adds a new UInt32 flag to the default bucket.
+// UInt32 adds a new uint32 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func UInt32(longName, usage string) *UInt32Flag {
 	return DefaultBucket.UInt32(longName, usage)
 }
 
-// UInt32P adds a new UInt32 flag with short name to the default bucket.
+// UInt32P adds a new uint32 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -282,14 +296,14 @@ func UInt32P(longName, usage, shortName string) *UInt32Flag {
 	return DefaultBucket.UInt32P(longName, usage, shortName)
 }
 
-// UInt16 adds a new UInt16 flag to the default bucket.
+// UInt16 adds a new uint16 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func UInt16(longName, usage string) *UInt16Flag {
 	return DefaultBucket.UInt16(longName, usage)
 }
 
-// UInt16P adds a new UInt16 flag with short name to the default bucket.
+// UInt16P adds a new uint16 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -297,14 +311,14 @@ func UInt16P(longName, usage, shortName string) *UInt16Flag {
 	return DefaultBucket.UInt16P(longName, usage, shortName)
 }
 
-// UInt8 adds a new UInt8 flag to the default bucket.
+// UInt8 adds a new uint8 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 func UInt8(longName, usage string) *UInt8Flag {
 	return DefaultBucket.UInt8(longName, usage)
 }
 
-// UInt8P adds a new UInt8 flag with short name to the default bucket.
+// UInt8P adds a new uint8 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. port-number).
 // A valid short name is a case sensitive single character string (i.e. p or P).
@@ -327,29 +341,60 @@ func ByteP(longName, usage, shortName string) *ByteFlag {
 	return DefaultBucket.ByteP(longName, usage, shortName)
 }
 
-// Bool adds a new Bool flag to the default bucket.
+// Bool adds a new boolean flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
+// Long names will be automatically converted to lowercase by the library.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func Bool(longName, usage string) *BoolFlag {
 	return DefaultBucket.Bool(longName, usage)
 }
 
-// BoolP adds a new Bool flag with short name to the default bucket.
+// BoolP adds a new boolean flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
+// Long names will be automatically converted to lowercase by the library.
+// A valid short name is a case sensitive single character string.
+//
+// The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
+// The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
 func BoolP(longName, usage, shortName string) *BoolFlag {
 	return DefaultBucket.BoolP(longName, usage, shortName)
 }
 
-// Float64 adds a new Float64 flag to the default bucket.
+// BoolSlice adds a new boolean slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. bits).
+//
+// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// For example --bits "0, 1, true, false"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func BoolSlice(longName, usage string) *BoolSliceFlag {
+	return DefaultBucket.BoolSlice(longName, usage)
+}
+
+// BoolSliceP adds a new boolean slice flag with a short name to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. bits).
+// A valid short name is a case sensitive single character string (i.e. b or B).
+//
+// The value of a BoolSlice flag can be set using a comma (or any custom delimiter) separated string of booleans.
+// For example --bits "0, 1, true, false"
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func BoolSliceP(longName, usage, shortName string) *BoolSliceFlag {
+	return DefaultBucket.BoolSliceP(longName, usage, shortName)
+}
+
+// Float64 adds a new float64 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 func Float64(longName, usage string) *Float64Flag {
 	return DefaultBucket.Float64(longName, usage)
 }
 
-// Float64P adds a new Float64 flag with short name to the default bucket.
+// Float64P adds a new float64 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 // A valid short name is a case sensitive single character string (i.e. c or C).
@@ -357,14 +402,14 @@ func Float64P(longName, usage, shortName string) *Float64Flag {
 	return DefaultBucket.Float64P(longName, usage, shortName)
 }
 
-// Float32 adds a new Float32 flag to the default bucket.
+// Float32 adds a new float32 flag to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 func Float32(longName, usage string) *Float32Flag {
 	return DefaultBucket.Float32(longName, usage)
 }
 
-// Float32P adds a new Float32 flag with short name to the default bucket.
+// Float32P adds a new float32 flag with short name to the default bucket.
 //
 // Long names will be automatically converted to lowercase by the library (i.e. conversion-rate).
 // A valid short name is a case sensitive single character string (i.e. c or C).
@@ -529,7 +574,7 @@ func TimeP(longName, usage, shortName string) *TimeFlag {
 //
 // The long names will be automatically converted to lowercase by the library (i.e. week-days).
 //
-// The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
+// The value of a string slice flag can be set using comma (or any custom delimiter) separated strings.
 // For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -547,7 +592,7 @@ func StringSlice(longName, usage string) *StringSliceFlag {
 // Long names will be automatically converted to lowercase by the library (i.e. week-days).
 // A valid short name is a case sensitive single character string (i.e. w or W).
 //
-// The value of a StringSlice flag can be set using comma (or any custom delimiter) separated strings.
+// The value of a string slice flag can be set using comma (or any custom delimiter) separated strings.
 // For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -564,7 +609,7 @@ func StringSliceP(longName, usage, shortName string) *StringSliceFlag {
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
-// The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of an int slice flag can be set using a comma (or any custom delimiter) separated string of integers.
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -577,7 +622,7 @@ func IntSlice(longName, usage string) *IntSliceFlag {
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
 //
-// The value of a IntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of an int slice flag can be set using a comma (or any custom delimiter) separated string of integers.
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -589,7 +634,7 @@ func IntSliceP(longName, usage, shortName string) *IntSliceFlag {
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
-// The value of a UIntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -602,7 +647,7 @@ func UIntSlice(longName, usage string) *UIntSliceFlag {
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
 //
-// The value of a UIntSlice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -614,7 +659,7 @@ func UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
 //
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -627,7 +672,7 @@ func Float64Slice(longName, usage string) *Float64SliceFlag {
 // The long names will be automatically converted to lowercase by the library (i.e. numbers)
 // A valid short name is a case sensitive single character string (i.e. n or N).
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -635,22 +680,22 @@ func Float64SliceP(longName, usage, shortName string) *Float64SliceFlag {
 	return DefaultBucket.Float64SliceP(longName, usage, shortName)
 }
 
-// IPAddress adds a new IPAddress flag to the default bucket.
+// IPAddress adds a new IP address flag to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
+// Long names will be automatically converted to lowercase by the library (i.e. endpoint).
 //
-// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
 func IPAddress(longName, usage string) *IPAddressFlag {
 	return DefaultBucket.IPAddress(longName, usage)
 }
 
-// IPAddressP adds a new IPAddress flag with short name to the default bucket.
+// IPAddressP adds a new IP address flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
-// A valid short name is a case sensitive single character string (i.e. i or I).
+// Long names will be automatically converted to lowercase by the library (i.e. endpoint).
+// A valid short name is a case sensitive single character string (i.e. e or E).
 //
-// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
 func IPAddressP(longName, usage, shortName string) *IPAddressFlag {
 	return DefaultBucket.IPAddressP(longName, usage, shortName)
@@ -658,7 +703,7 @@ func IPAddressP(longName, usage, shortName string) *IPAddressFlag {
 
 // IPAddressSlice adds a new IP address slice flag to the default bucket.
 //
-// The long names will be automatically converted to lowercase by the library (i.e. ip-addresses)
+// The long names will be automatically converted to lowercase by the library (i.e. endpoints)
 //
 // The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
 // IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
@@ -671,8 +716,8 @@ func IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
 
 // IPAddressSliceP adds a new IP address slice flag with a short name to the default bucket.
 //
-// The long names will be automatically converted to lowercase by the library (i.e. ip-addresses)
-// A valid short name is a case sensitive single character string (i.e. i or I).
+// The long names will be automatically converted to lowercase by the library (i.e. endpoints)
+// A valid short name is a case sensitive single character string (i.e. e or E).
 //
 // The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
 // IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
@@ -699,11 +744,100 @@ func CIDR(longName, usage string) *CIDRFlag {
 
 // CIDRP adds a new CIDR flag with short name to the default bucket.
 //
-// Long names will be automatically converted to lowercase by the library (i.e. ip-address).
-// A valid short name is a case sensitive single character string (i.e. i or I).
+// Long names will be automatically converted to lowercase by the library (i.e. network).
+// A valid short name is a case sensitive single character string (i.e. n or N).
 //
-// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
 func CIDRP(longName, usage, shortName string) *CIDRFlag {
 	return DefaultBucket.CIDRP(longName, usage, shortName)
+}
+
+// CIDRSlice adds a new boolean slice flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. networks).
+//
+// The value of a CIDR slice flag can be defined using a list of CIDR notation IP addresses and prefix length,
+// like "192.0.2.0/24, 2001:db8::/32", as defined in RFC 4632 and RFC 4291. Each item will be parsed to the
+// address and the network implied by the IP and prefix length.
+//
+// For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func CIDRSlice(longName, usage string) *CIDRSliceFlag {
+	return DefaultBucket.CIDRSlice(longName, usage)
+}
+
+// CIDRSliceP adds a new boolean slice flag with a short name to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. networks).
+// A valid short name is a case sensitive single character string (i.e. n or N).
+//
+// The value of a CIDR slice flag can be defined using a list of CIDR notation IP addresses and prefix length,
+// like "192.0.2.0/24, 2001:db8::/32", as defined in RFC 4632 and RFC 4291. Each item will be parsed to the
+// address and the network implied by the IP and prefix length.
+//
+// For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+func CIDRSliceP(longName, usage, shortName string) *CIDRSliceFlag {
+	return DefaultBucket.CIDRSliceP(longName, usage, shortName)
+}
+
+// StringMap adds a new string map flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. mappings)
+//
+// The value of a string map flag can be set using standard map initialisation strings.
+// For example --mappings '{"key1":"value1", "key2":"value2"}'
+func StringMap(longName, usage string) *StringMapFlag {
+	return DefaultBucket.StringMapP(longName, usage, "")
+}
+
+// StringMapP adds a new string map flag with a short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. mappings).
+// A valid short name is a case sensitive single character string (i.e. m or M).
+//
+// The value of a string map flag can be set using standard map initialisation strings.
+// For example --mappings '{"key1":"value1", "key2":"value2"}'
+func StringMapP(longName, usage, shortName string) *StringMapFlag {
+	return DefaultBucket.StringMapP(longName, usage, shortName)
+}
+
+// StringSliceMap adds a new string slice map flag to the default bucket.
+//
+// The long names will be automatically converted to lowercase by the library (i.e. days)
+//
+// The value of a string slice map flag can be set using standard map initialisation strings.
+// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
+// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
+func StringSliceMap(longName, usage string) *StringSliceMapFlag {
+	return DefaultBucket.StringSliceMapP(longName, usage, "")
+}
+
+// StringSliceMapP adds a new string slice map flag with a short name to the default bucket.
+//
+// Long names will be automatically converted to lowercase by the library (i.e. days).
+// A valid short name is a case sensitive single character string (i.e. d or D).
+//
+// The value of a string slice map flag can be set using standard map initialisation strings.
+// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
+// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
+//
+// A custom delimiter string can be defined using WithDelimiter() method.
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
+func StringSliceMapP(longName, usage, shortName string) *StringSliceMapFlag {
+	return DefaultBucket.StringSliceMapP(longName, usage, shortName)
 }

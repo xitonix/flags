@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// UInt8Flag represents an uint8 flag
+// UInt8Flag represents an uint8 flag.
 type UInt8Flag struct {
 	key                 *data.Key
 	defaultValue, value uint8
@@ -37,7 +37,7 @@ func newUInt8(name, usage, short string) *UInt8Flag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UInt8Flag) LongName() string {
@@ -226,9 +226,9 @@ func (f *UInt8Flag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *UInt8Flag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

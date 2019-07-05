@@ -23,8 +23,7 @@ func TestBucket_Parse_Deprecated_And_Required(t *testing.T) {
 		config.WithLogger(lg),
 		config.WithTerminator(tm))
 
-	f := mocks.NewFlag("flag", "f").Required()
-	f.SetDeprecated(true)
+	f := mocks.NewFlag("flag", "f").Required().MarkAsDeprecated()
 	bucket.flags = append(bucket.flags, f)
 
 	bucket.Parse()
@@ -348,6 +347,34 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 			comparer:      by.UsageDescending,
 			flags:         []core.Flag{mocks.NewFlagWithUsage("a-long", "a", "a usage"), mocks.NewFlagWithUsage("x-long", "x", "x usage")},
 			expectedLines: []string{"x usage", "a usage"},
+		},
+		{
+			title:         "required flags first",
+			args:          []string{"--help"},
+			comparer:      by.RequiredFirst,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a").Required()},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "required flags last",
+			args:          []string{"--help"},
+			comparer:      by.RequiredLast,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x").Required(), mocks.NewFlag("a-long", "a")},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "deprecated flags first",
+			args:          []string{"--help"},
+			comparer:      by.DeprecatedFirst,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x"), mocks.NewFlag("a-long", "a").MarkAsDeprecated()},
+			expectedLines: []string{"a-long", "x-long"},
+		},
+		{
+			title:         "deprecated flags last",
+			args:          []string{"--help"},
+			comparer:      by.DeprecatedLast,
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x").MarkAsDeprecated(), mocks.NewFlag("a-long", "a")},
+			expectedLines: []string{"a-long", "x-long"},
 		},
 	}
 
@@ -1556,6 +1583,20 @@ func TestBucket_PrependSource(t *testing.T) {
 	}
 }
 
+func TestBucket_Add(t *testing.T) {
+	bucket := NewBucket()
+	f := mocks.NewFlag("long", "short")
+	bucket.Add(f)
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	af := bucket.Flags()[0]
+	if _, ok := af.(*mocks.Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &mocks.Flag{}, af)
+	}
+}
+
 func TestBucket_String(t *testing.T) {
 	bucket := NewBucket()
 	bucket.String("long", "usage")
@@ -1579,6 +1620,58 @@ func TestBucket_StringP(t *testing.T) {
 	f := bucket.Flags()[0]
 	if _, ok := f.(*StringFlag); !ok {
 		t.Errorf("Expected %T, but received %T", &StringFlag{}, f)
+	}
+}
+
+func TestBucket_StringMap(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringMap("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	}
+}
+
+func TestBucket_StringMapP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringMapP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	}
+}
+
+func TestBucket_StringSliceMap(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringSliceMap("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringSliceMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
+	}
+}
+
+func TestBucket_StringSliceMapP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.StringSliceMapP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*StringSliceMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
 	}
 }
 
@@ -2055,6 +2148,32 @@ func TestBucket_Parse_Bool(t *testing.T) {
 				t.Errorf("Expected Value: %v, Actual: %v", tc.expectedValue, tc.flag.Get())
 			}
 		})
+	}
+}
+
+func TestBucket_BoolSlice(t *testing.T) {
+	bucket := NewBucket()
+	bucket.BoolSlice("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
+func TestBucket_BoolSliceP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.BoolSliceP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
 	}
 }
 
@@ -2578,6 +2697,32 @@ func TestBucket_CIDRP(t *testing.T) {
 	f := bucket.Flags()[0]
 	if _, ok := f.(*CIDRFlag); !ok {
 		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	}
+}
+
+func TestBucket_CIDRSlice(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CIDRSlice("long", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
+	}
+}
+
+func TestBucket_CIDRSliceP(t *testing.T) {
+	bucket := NewBucket()
+	bucket.CIDRSliceP("long", "s", "usage")
+	actual := len(bucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := bucket.Flags()[0]
+	if _, ok := f.(*CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
 	}
 }
 

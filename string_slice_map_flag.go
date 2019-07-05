@@ -1,7 +1,7 @@
 package flags
 
 import (
-	"strconv"
+	"encoding/json"
 	"strings"
 
 	"go.xitonix.io/flags/core"
@@ -9,79 +9,90 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// UIntSliceFlag represents an uint flag.
+// StringSliceMapFlag represents a map of []string flag.
 //
-// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
-// For example --numbers "1,8,70,60,100"
+// The value of a string slice map flag can be set using standard map initialisation strings.
+// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
+// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-type UIntSliceFlag struct {
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
+type StringSliceMapFlag struct {
 	key                 *data.Key
-	defaultValue, value []uint
+	defaultValue, value map[string][]string
 	hasDefault          bool
-	ptr                 *[]uint
+	ptr                 *map[string][]string
 	long, short         string
 	usage               string
 	isSet               bool
 	isDeprecated        bool
 	isRequired          bool
 	isHidden            bool
+	validate            func(key string, value []string) error
+	trimSpaces          bool
 	delimiter           string
-	validate            func(in uint) error
-	validationList      map[uint]interface{}
-	acceptableItems     []string
 }
 
-func newUIntSlice(name, usage, short string) *UIntSliceFlag {
-	f := &UIntSliceFlag{
+func newStringSliceMap(name, usage, short string) *StringSliceMapFlag {
+	f := &StringSliceMapFlag{
 		key:       &data.Key{},
 		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
-		ptr:       new([]uint),
+		ptr:       new(map[string][]string),
 		delimiter: core.DefaultSliceDelimiter,
 	}
-	f.set(make([]uint, 0))
+	f.set(make(map[string][]string))
 	return f
 }
 
 // LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --numbers).
-func (f *UIntSliceFlag) LongName() string {
+// Long name is case insensitive and always lower case (i.e. --mappings).
+func (f *StringSliceMapFlag) LongName() string {
 	return f.long
 }
 
 // IsHidden returns true if the flag is hidden.
 //
 // A hidden flag won't be printed in the help output.
-func (f *UIntSliceFlag) IsHidden() bool {
+func (f *StringSliceMapFlag) IsHidden() bool {
 	return f.isHidden
 }
 
 // IsDeprecated returns true if the flag is deprecated.
-func (f *UIntSliceFlag) IsDeprecated() bool {
+func (f *StringSliceMapFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// WithTrimming enables trimming the leading and trailing white space characters from each list item.
+func (f *StringSliceMapFlag) WithTrimming() *StringSliceMapFlag {
+	f.trimSpaces = true
+	return f
 }
 
 // Type returns the string representation of the flag's type.
 //
 // This will be printed in the help output.
-func (f *UIntSliceFlag) Type() string {
-	return "[]uint"
+func (f *StringSliceMapFlag) Type() string {
+	return "[string][]string"
 }
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -N).
-func (f *UIntSliceFlag) ShortName() string {
+// Short name is a single case sensitive character (i.e. -M).
+func (f *StringSliceMapFlag) ShortName() string {
 	return f.short
 }
 
 // Usage returns the usage string of the flag.
 //
 // This will be printed in the help output.
-func (f *UIntSliceFlag) Usage() string {
+func (f *StringSliceMapFlag) Usage() string {
 	return f.usage
 }
 
@@ -89,19 +100,19 @@ func (f *UIntSliceFlag) Usage() string {
 //
 // This method returns false if none of the sources has a value to offer, or the value
 // has been set to Default (if specified).
-func (f *UIntSliceFlag) IsSet() bool {
+func (f *StringSliceMapFlag) IsSet() bool {
 	return f.isSet
 }
 
 // Var returns a pointer to the underlying variable.
 //
 // You can also use the Get() method as an alternative.
-func (f *UIntSliceFlag) Var() *[]uint {
+func (f *StringSliceMapFlag) Var() *map[string][]string {
 	return f.ptr
 }
 
 // Get returns the current value of the flag.
-func (f *UIntSliceFlag) Get() []uint {
+func (f *StringSliceMapFlag) Get() map[string][]string {
 	return f.value
 }
 
@@ -111,7 +122,7 @@ func (f *UIntSliceFlag) Get() []uint {
 //
 // In order for the flag value to be extractable from the environment variables, or all the other custom sources,
 // it MUST have a key associated with it.
-func (f *UIntSliceFlag) WithKey(keyID string) *UIntSliceFlag {
+func (f *StringSliceMapFlag) WithKey(keyID string) *StringSliceMapFlag {
 	f.key.SetID(keyID)
 	return f
 }
@@ -119,16 +130,25 @@ func (f *UIntSliceFlag) WithKey(keyID string) *UIntSliceFlag {
 // WithDefault sets the default value of the flag.
 //
 // If none of the available sources offers a value, the default value will be assigned to the flag.
-func (f *UIntSliceFlag) WithDefault(defaultValue []uint) *UIntSliceFlag {
+func (f *StringSliceMapFlag) WithDefault(defaultValue map[string][]string) *StringSliceMapFlag {
 	f.defaultValue = defaultValue
 	f.hasDefault = true
+	return f
+}
+
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+func (f *StringSliceMapFlag) WithDelimiter(delimiter string) *StringSliceMapFlag {
+	if len(delimiter) == 0 {
+		delimiter = core.DefaultSliceDelimiter
+	}
+	f.delimiter = delimiter
 	return f
 }
 
 // Hide marks the flag as hidden.
 //
 // A hidden flag will not be displayed in the help output.
-func (f *UIntSliceFlag) Hide() *UIntSliceFlag {
+func (f *StringSliceMapFlag) Hide() *StringSliceMapFlag {
 	f.isHidden = true
 	return f
 }
@@ -143,100 +163,74 @@ func (f *UIntSliceFlag) Hide() *UIntSliceFlag {
 // 	flags.SetDeprecationMark("**DEPRECATED**")
 //  OR
 // 	bucket := flags.NewBucket(config.WithDeprecationMark("**DEPRECATED**"))
-func (f *UIntSliceFlag) MarkAsDeprecated() *UIntSliceFlag {
+func (f *StringSliceMapFlag) MarkAsDeprecated() *StringSliceMapFlag {
 	f.isDeprecated = true
 	return f
 }
 
 // IsRequired returns true if the flag value must be provided.
-func (f *UIntSliceFlag) IsRequired() bool {
+func (f *StringSliceMapFlag) IsRequired() bool {
 	return f.isRequired
 }
 
 // Required makes the flag mandatory.
 //
 // Setting the default value of a required flag will have no effect.
-func (f *UIntSliceFlag) Required() *UIntSliceFlag {
+func (f *StringSliceMapFlag) Required() *StringSliceMapFlag {
 	f.isRequired = true
-	return f
-}
-
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
-func (f *UIntSliceFlag) WithDelimiter(delimiter string) *UIntSliceFlag {
-	if len(delimiter) == 0 {
-		delimiter = core.DefaultSliceDelimiter
-	}
-	f.delimiter = delimiter
 	return f
 }
 
 // WithValidationCallback sets the validation callback function which will be called when the flag value is being set.
 //
 // The set operation will fail if the callback returns an error.
-// You can also define a list of acceptable values using WithValidRange(...) method.
-// Remember that setting the valid range will have no effect if a validation callback has been specified.
-func (f *UIntSliceFlag) WithValidationCallback(validate func(in uint) error) *UIntSliceFlag {
+func (f *StringSliceMapFlag) WithValidationCallback(validate func(key string, value []string) error) *StringSliceMapFlag {
 	f.validate = validate
-	return f
-}
-
-// WithValidRange defines a list of acceptable values from which the final flag value can be chosen.
-//
-// The set operation will fail if the flag value is not from the specified list.
-// You can also define a custom validation callback function using WithValidationCallback(...) method.
-// Remember that setting the valid range will have no effect if a validation callback has been specified.
-func (f *UIntSliceFlag) WithValidRange(valid ...uint) *UIntSliceFlag {
-	if len(valid) == 0 {
-		return f
-	}
-	f.validationList = make(map[uint]interface{})
-	f.acceptableItems = make([]string, 0)
-	for _, v := range valid {
-		if _, ok := f.validationList[v]; !ok {
-			f.validationList[v] = nil
-			f.acceptableItems = append(f.acceptableItems, strconv.FormatUint(uint64(v), 10))
-		}
-	}
 	return f
 }
 
 // Set sets the flag value.
 //
-// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
-// For example --numbers "1,8,70,60,100"
+// The value of a string slice map flag can be set using standard map initialisation strings.
+// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
+// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (f *UIntSliceFlag) Set(value string) error {
-	parts := strings.Split(strings.TrimSpace(value), f.delimiter)
-	list := make([]uint, 0)
-	for _, v := range parts {
-		value = strings.TrimSpace(v)
-		if internal.IsEmpty(v) {
-			continue
-		}
-		item, err := strconv.ParseUint(value, 10, 64)
-		if err != nil {
-			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
-		}
+//
+// You can also trim the leading and trailing white spaces from each list item by enabling the feature
+// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
+// Notice that the leading white space before " Sun" has been removed.
+func (f *StringSliceMapFlag) Set(value string) error {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		value = "{}"
+	}
+	mp := make(map[string]string)
+	err := json.Unmarshal([]byte(value), &mp)
+	if err != nil {
+		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
+	}
 
+	result := make(map[string][]string)
+	for k, v := range mp {
+		parts := strings.Split(v, f.delimiter)
 		if f.validate != nil {
-			err := f.validate(uint(item))
-			if err != nil {
+			if err := f.validate(k, parts); err != nil {
 				return err
 			}
 		}
-
-		// Validation callback takes priority over validation list
-		if f.validate == nil && len(f.validationList) > 0 {
-			if _, ok := f.validationList[uint(item)]; !ok {
-				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
+		slice := make([]string, len(parts))
+		for i, item := range parts {
+			if f.trimSpaces {
+				item = strings.TrimSpace(item)
 			}
+			slice[i] = item
 		}
-
-		list = append(list, uint(item))
+		result[k] = slice
 	}
 
-	f.set(list)
+	f.set(result)
 	f.isSet = true
 	return nil
 }
@@ -245,7 +239,7 @@ func (f *UIntSliceFlag) Set(value string) error {
 //
 // Calling this method on a flag without a default value will have no effect.
 // The default value can be defined using WithDefault(...) method.
-func (f *UIntSliceFlag) ResetToDefault() {
+func (f *StringSliceMapFlag) ResetToDefault() {
 	if !f.hasDefault {
 		return
 	}
@@ -256,7 +250,7 @@ func (f *UIntSliceFlag) ResetToDefault() {
 // Default returns the default value if specified, otherwise returns nil.
 //
 // The default value can be defined using WithDefault(...) method.
-func (f *UIntSliceFlag) Default() interface{} {
+func (f *StringSliceMapFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil
 	}
@@ -268,11 +262,11 @@ func (f *UIntSliceFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *UIntSliceFlag) Key() *data.Key {
+func (f *StringSliceMapFlag) Key() *data.Key {
 	return f.key
 }
 
-func (f *UIntSliceFlag) set(value []uint) {
+func (f *StringSliceMapFlag) set(value map[string][]string) {
 	f.value = value
 	*f.ptr = value
 }

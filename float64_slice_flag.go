@@ -10,9 +10,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Float64SliceFlag represents a Float64Slice flag.
+// Float64SliceFlag represents a float64 slice flag.
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -203,7 +203,7 @@ func (f *Float64SliceFlag) WithValidRange(valid ...float64) *Float64SliceFlag {
 
 // Set sets the flag value.
 //
-// The value of a Float64Slice flag can be set using a comma (or any custom delimiter) separated string of integers.
+// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
@@ -219,25 +219,22 @@ func (f *Float64SliceFlag) Set(value string) error {
 		if err != nil {
 			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 		}
-		list = append(list, item)
-	}
 
-	if f.validate != nil {
-		for _, item := range list {
+		if f.validate != nil {
 			err := f.validate(item)
 			if err != nil {
 				return err
 			}
 		}
-	}
 
-	// Validation callback takes priority over validation list
-	if f.validate == nil && len(f.validationList) > 0 {
-		for _, item := range list {
+		// Validation callback takes priority over validation list
+		if f.validate == nil && len(f.validationList) > 0 {
 			if _, ok := f.validationList[item]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 			}
 		}
+
+		list = append(list, item)
 	}
 
 	f.set(list)
@@ -257,9 +254,9 @@ func (f *Float64SliceFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *Float64SliceFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

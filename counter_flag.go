@@ -40,7 +40,7 @@ func newCounter(name, usage, short string) *CounterFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --verbosity).
 func (f *CounterFlag) LongName() string {
@@ -81,7 +81,7 @@ func (f *CounterFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -v or -V).
 func (f *CounterFlag) ShortName() string {
 	return f.short
 }
@@ -187,6 +187,9 @@ func (f *CounterFlag) WithValidRange(valid ...int) *CounterFlag {
 }
 
 // Set sets the flag value.
+//
+// The value of a counter flag can be increased by repeating the short form.
+// For example the presence of -vv command line argument will set the value of the counter to 2.
 func (f *CounterFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
@@ -228,9 +231,9 @@ func (f *CounterFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *CounterFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

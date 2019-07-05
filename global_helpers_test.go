@@ -80,6 +80,15 @@ func TestSetDeprecationMark(t *testing.T) {
 	}
 }
 
+func TestSetRequiredMark(t *testing.T) {
+	expected := "**"
+	SetRequiredFlagMark(expected)
+	actual := DefaultBucket.opts.RequiredFlagMark
+	if actual != expected {
+		t.Errorf("The default bucket's Required mark was expected to be %T, but it was %T", expected, actual)
+	}
+}
+
 func TestSetDefaultValueFormatString(t *testing.T) {
 	expected := "Format FullString"
 	SetDefaultValueFormatString(expected)
@@ -146,6 +155,19 @@ func TestPrependSource(t *testing.T) {
 	actual := DefaultBucket.sources[0]
 	if actual != src {
 		t.Error("The default bucket's source has not been prepended as expected")
+	}
+}
+
+func TestAddFlag(t *testing.T) {
+	f := mocks.NewFlag("long", "short")
+	Add(f)
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	af := DefaultBucket.Flags()[0]
+	if _, ok := af.(*mocks.Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &mocks.Flag{}, af)
 	}
 }
 
@@ -283,6 +305,58 @@ func TestGlobalStringP(t *testing.T) {
 	f := DefaultBucket.Flags()[0]
 	if _, ok := f.(*StringFlag); !ok {
 		t.Errorf("Expected %T, but received %T", &StringFlag{}, f)
+	}
+}
+
+func TestGlobalStringMap(t *testing.T) {
+	DefaultBucket = NewBucket()
+	StringMap("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	}
+}
+
+func TestGlobalStringMapP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	StringMapP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	}
+}
+
+func TestGlobalStringSliceMap(t *testing.T) {
+	DefaultBucket = NewBucket()
+	StringSliceMap("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*StringSliceMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
+	}
+}
+
+func TestGlobalStringSliceMapP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	StringSliceMapP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*StringSliceMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
 	}
 }
 
@@ -708,6 +782,58 @@ func TestGlobalDurationSliceP(t *testing.T) {
 	}
 }
 
+func TestGlobalBool(t *testing.T) {
+	DefaultBucket = NewBucket()
+	Bool("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestGlobalBoolP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	}
+}
+
+func TestGlobalBoolSlice(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolSlice("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
+func TestGlobalBoolSliceP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	BoolSliceP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	}
+}
+
 func TestGlobalTime(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Time("long", "usage")
@@ -887,5 +1013,57 @@ func TestGlobalIPAddressSliceP(t *testing.T) {
 	f := DefaultBucket.Flags()[0]
 	if _, ok := f.(*IPAddressSliceFlag); !ok {
 		t.Errorf("Expected %T, but received %T", &IPAddressSliceFlag{}, f)
+	}
+}
+
+func TestGlobalCIDR(t *testing.T) {
+	DefaultBucket = NewBucket()
+	CIDR("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*CIDRFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	}
+}
+
+func TestGlobalCIDRP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	CIDRP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*CIDRFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	}
+}
+
+func TestGlobalCIDRSlice(t *testing.T) {
+	DefaultBucket = NewBucket()
+	CIDRSlice("long", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
+	}
+}
+
+func TestGlobalCIDRSliceP(t *testing.T) {
+	DefaultBucket = NewBucket()
+	CIDRSliceP("long", "s", "usage")
+	actual := len(DefaultBucket.Flags())
+	if actual != 1 {
+		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
+	}
+	f := DefaultBucket.Flags()[0]
+	if _, ok := f.(*CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
 	}
 }

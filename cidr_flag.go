@@ -8,7 +8,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// CIDRFlag represents a CIDR flag.
+// CIDRFlag represents a CIDR (Classless Inter-Domain Routing) flag.
 //
 // The value of a CIDR flag can be defined using a CIDR notation IP address and prefix length,
 // like "192.0.2.0/24" or "2001:db8::/32", as defined in RFC 4632 and RFC 4291. The input will be
@@ -43,7 +43,7 @@ func newCIDR(name, usage, short string) *CIDRFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *CIDRFlag) LongName() string {
@@ -243,9 +243,9 @@ func (f *CIDRFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *CIDRFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

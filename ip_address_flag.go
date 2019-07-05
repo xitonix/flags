@@ -8,9 +8,9 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// IPAddressFlag represents an IP Address flag
+// IPAddressFlag represents an IP Address flag.
 //
-// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
 type IPAddressFlag struct {
 	key                 *data.Key
@@ -40,9 +40,9 @@ func newIPAddress(name, usage, short string) *IPAddressFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --endpoint).
 func (f *IPAddressFlag) LongName() string {
 	return f.long
 }
@@ -81,7 +81,7 @@ func (f *IPAddressFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -E).
 func (f *IPAddressFlag) ShortName() string {
 	return f.short
 }
@@ -192,7 +192,7 @@ func (f *IPAddressFlag) WithValidRange(valid ...net.IP) *IPAddressFlag {
 
 // Set sets the flag value.
 //
-// The value of an IP address flag can be specified using a dotted decimal (i.e. "192.0.2.1")
+// The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
 func (f *IPAddressFlag) Set(value string) error {
 	value = strings.TrimSpace(value)
@@ -237,9 +237,9 @@ func (f *IPAddressFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *IPAddressFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

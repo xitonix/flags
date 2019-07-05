@@ -9,7 +9,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// IPAddressSliceFlag represents an IP Address slice flag
+// IPAddressSliceFlag represents an IP Address slice flag.
 //
 // The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
 // IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
@@ -44,9 +44,9 @@ func newIPAddressSlice(name, usage, short string) *IPAddressSliceFlag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --endpoints).
 func (f *IPAddressSliceFlag) LongName() string {
 	return f.long
 }
@@ -85,7 +85,7 @@ func (f *IPAddressSliceFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -E).
 func (f *IPAddressSliceFlag) ShortName() string {
 	return f.short
 }
@@ -220,25 +220,22 @@ func (f *IPAddressSliceFlag) Set(value string) error {
 		if ip == nil {
 			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
 		}
-		list = append(list, ip)
-	}
 
-	if f.validate != nil {
-		for _, item := range list {
-			err := f.validate(item)
+		if f.validate != nil {
+			err := f.validate(ip)
 			if err != nil {
 				return err
 			}
 		}
-	}
 
-	// Validation callback takes priority over validation list
-	if f.validate == nil && len(f.validationList) > 0 {
-		for _, item := range list {
-			if _, ok := f.validationList[item.String()]; !ok {
+		// Validation callback takes priority over validation list
+		if f.validate == nil && len(f.validationList) > 0 {
+			if _, ok := f.validationList[ip.String()]; !ok {
 				return internal.OutOfRangeErr(value, f.long, f.short, f.acceptableItems)
 			}
 		}
+
+		list = append(list, ip)
 	}
 
 	f.set(list)
@@ -258,9 +255,9 @@ func (f *IPAddressSliceFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *IPAddressSliceFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

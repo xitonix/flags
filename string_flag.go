@@ -7,7 +7,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// StringFlag represents a string flag
+// StringFlag represents a string flag.
 type StringFlag struct {
 	key                 *data.Key
 	defaultValue, value string
@@ -37,7 +37,7 @@ func newString(name, usage, short string) *StringFlag {
 	return f
 }
 
-// LongName returns the long name of the flag. (i.e. --file).
+// LongName returns the long name of the flag.
 //
 // Long name is case insensitive and always lower case (i.e. --file-path).
 func (f *StringFlag) LongName() string {
@@ -78,7 +78,7 @@ func (f *StringFlag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -f).
 func (f *StringFlag) ShortName() string {
 	return f.short
 }
@@ -227,9 +227,9 @@ func (f *StringFlag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *StringFlag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

@@ -116,8 +116,9 @@ func (f *Flag) Default() interface{} {
 	return f.defaultValue
 }
 
-func (f *Flag) SetDeprecated(deprecated bool) {
-	f.isDeprecated = deprecated
+func (f *Flag) MarkAsDeprecated() *Flag {
+	f.isDeprecated = true
+	return f
 }
 
 func (f *Flag) SetHidden(hidden bool) {

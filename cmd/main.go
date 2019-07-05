@@ -6,11 +6,13 @@ import (
 	"time"
 
 	"go.xitonix.io/flags"
+	"go.xitonix.io/flags/by"
 )
 
 func main() {
 	flags.SetKeyPrefix("ALG")
 	flags.EnableAutoKeyGeneration()
+	flags.SetSortOrder(by.RequiredFirst)
 	str := flags.StringP("flag", "usage of name", "A").WithKey("ABC").WithDefault("abc").Var()
 	i := flags.Int("int-flag", "usage of int flag").WithKey("IntK")
 	_ = flags.StringP("x-flag", `usage of name is a bit longer`, "x").Var()
@@ -18,7 +20,8 @@ func main() {
 	ss := flags.StringSliceP("colours", "Colour pallet", "c").WithDefault([]string{"Pink"})
 	ip := flags.IPAddressP("ip-address", "IP address usage", "i").WithValidRange(net.ParseIP("10.10.10.10"))
 	sl := flags.StringSlice("ss", "string slice").WithValidRange(false, "A", "B")
-	cid := flags.CIDR("network", "network usage")
+	cid := flags.CIDR("network", "network usage").Required()
+	mp := flags.StringMapP("mappings", "String map flag", "M").Required()
 	flags.Parse()
 	fmt.Println("Value:", *str)
 	fmt.Println("Int:", i.Get())
@@ -27,4 +30,5 @@ func main() {
 	fmt.Printf("IP:%v\n", ip.Get())
 	fmt.Printf("SL:%v\n", sl.Get())
 	fmt.Printf("CID:%v\n", cid.Get().String())
+	fmt.Printf("MAP:%v\n", mp.Get())
 }

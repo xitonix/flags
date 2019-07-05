@@ -9,7 +9,7 @@ import (
 	"go.xitonix.io/flags/internal"
 )
 
-// Float32Flag represents a float32 flag
+// Float32Flag represents a float32 flag.
 type Float32Flag struct {
 	key                 *data.Key
 	defaultValue, value float32
@@ -38,9 +38,9 @@ func newFloat32(name, usage, short string) *Float32Flag {
 	return f
 }
 
-// LongName returns the long name of the flag..
+// LongName returns the long name of the flag.
 //
-// Long name is case insensitive and always lower case (i.e. --port-number).
+// Long name is case insensitive and always lower case (i.e. --rate).
 func (f *Float32Flag) LongName() string {
 	return f.long
 }
@@ -79,7 +79,7 @@ func (f *Float32Flag) Type() string {
 
 // ShortName returns the flag's short name.
 //
-// Short name is a single case sensitive character (i.e. -P).
+// Short name is a single case sensitive character (i.e. -R).
 func (f *Float32Flag) ShortName() string {
 	return f.short
 }
@@ -226,9 +226,9 @@ func (f *Float32Flag) ResetToDefault() {
 	f.set(f.defaultValue)
 }
 
-// Default returns the default value if specified, otherwise returns nil
+// Default returns the default value if specified, otherwise returns nil.
 //
-// The default value can be defined using WithDefault(...) method
+// The default value can be defined using WithDefault(...) method.
 func (f *Float32Flag) Default() interface{} {
 	if !f.hasDefault {
 		return nil

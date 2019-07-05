@@ -808,19 +808,6 @@ func TestGlobalBoolSlice(t *testing.T) {
 	}
 }
 
-func TestGlobalBoolSliceP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	BoolSliceP("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*BoolSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
-	}
-}
-
 func TestGlobalTime(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Time("long", "usage")

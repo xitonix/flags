@@ -62,7 +62,7 @@ func TestBoolSlice(t *testing.T) {
 	}
 }
 
-func TestBoolSliceP(t *testing.T) {
+func TestBoolSliceFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -141,7 +141,7 @@ func TestBoolSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.BoolSliceP(tc.long, tc.usage, tc.short)
+			f := flags.BoolSlice(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[]bool", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkSliceFlagValues(t, []bool{}, f.Get(), f.Var())
 		})

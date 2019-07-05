@@ -30,10 +30,9 @@ type BoolSliceFlag struct {
 	validate            func(in bool) error
 }
 
-func newBoolSlice(name, usage, short string) *BoolSliceFlag {
+func newBoolSlice(name, usage string) *BoolSliceFlag {
 	f := &BoolSliceFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]bool),
@@ -60,6 +59,14 @@ func (f *BoolSliceFlag) IsHidden() bool {
 // IsDeprecated returns true if the flag is deprecated.
 func (f *BoolSliceFlag) IsDeprecated() bool {
 	return f.isDeprecated
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -B).
+func (f *BoolSliceFlag) WithShort(short string) *BoolSliceFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // Type returns the string representation of the flag's type.

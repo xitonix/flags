@@ -406,19 +406,6 @@ func UIntSlice(longName, usage string) *UIntSliceFlag {
 	return DefaultBucket.UIntSlice(longName, usage)
 }
 
-// UIntSliceP adds a new uint slice flag with a short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. numbers)
-// A valid short name is a case sensitive single character string (i.e. n or N).
-//
-// The value of a uint slice flag can be set using a comma (or any custom delimiter) separated string of unsigned integers.
-// For example --numbers "1,8,70,60,100"
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-func UIntSliceP(longName, usage, shortName string) *UIntSliceFlag {
-	return DefaultBucket.UIntSliceP(longName, usage, shortName)
-}
-
 // Float64Slice adds a new float64 slice flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. numbers)

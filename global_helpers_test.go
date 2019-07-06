@@ -626,19 +626,6 @@ func TestGlobalUIntSlice(t *testing.T) {
 	}
 }
 
-func TestGlobalUIntSliceP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	UIntSliceP("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UIntSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &UIntSliceFlag{}, f)
-	}
-}
-
 func TestGlobalFloat64Slice(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Float64Slice("long", "usage")

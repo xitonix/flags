@@ -32,10 +32,9 @@ type UIntSliceFlag struct {
 	acceptableItems     []string
 }
 
-func newUIntSlice(name, usage, short string) *UIntSliceFlag {
+func newUIntSlice(name, usage string) *UIntSliceFlag {
 	f := &UIntSliceFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]uint),
@@ -50,6 +49,14 @@ func newUIntSlice(name, usage, short string) *UIntSliceFlag {
 // Long name is case insensitive and always lower case (i.e. --numbers).
 func (f *UIntSliceFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -n).
+func (f *UIntSliceFlag) WithShort(short string) *UIntSliceFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

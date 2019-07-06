@@ -507,20 +507,7 @@ func (b *Bucket) Verbosity(usage string) *CounterFlag {
 // such as "300ms", "-1.5h" or "2h45m".
 // Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
 func (b *Bucket) Duration(longName, usage string) *DurationFlag {
-	return b.DurationP(longName, usage, "")
-}
-
-// DurationP adds a new Duration flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. ttl).
-// A valid short name is a case sensitive single character string (i.e. t or T).
-//
-// A duration string is a possibly signed sequence of
-// decimal numbers, each with optional fraction and a unit suffix,
-// such as "300ms", "-1.5h" or "2h45m".
-// Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
-func (b *Bucket) DurationP(longName, usage, shortName string) *DurationFlag {
-	f := newDuration(longName, usage, shortName)
+	f := newDuration(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

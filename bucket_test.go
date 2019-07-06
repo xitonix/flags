@@ -2414,19 +2414,6 @@ func TestBucket_Duration(t *testing.T) {
 	}
 }
 
-func TestBucket_DurationP(t *testing.T) {
-	bucket := NewBucket()
-	bucket.DurationP("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*DurationFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &DurationFlag{}, f)
-	}
-}
-
 func TestBucket_DurationSlice(t *testing.T) {
 	bucket := NewBucket()
 	bucket.DurationSlice("long", "usage")

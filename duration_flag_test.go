@@ -62,7 +62,7 @@ func TestDuration(t *testing.T) {
 	}
 }
 
-func TestDurationP(t *testing.T) {
+func TestDurationFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -141,7 +141,7 @@ func TestDurationP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.DurationP(tc.long, tc.usage, tc.short)
+			f := flags.Duration(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "duration", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, time.Duration(0), f.Get(), f.Var())
 		})

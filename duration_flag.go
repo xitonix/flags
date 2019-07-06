@@ -30,10 +30,9 @@ type DurationFlag struct {
 	acceptableItems     []string
 }
 
-func newDuration(name, usage, short string) *DurationFlag {
+func newDuration(name, usage string) *DurationFlag {
 	f := &DurationFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(time.Duration),
@@ -47,6 +46,14 @@ func newDuration(name, usage, short string) *DurationFlag {
 // Long name is case insensitive and always lower case (i.e. --duration).
 func (f *DurationFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -d).
+func (f *DurationFlag) WithShort(short string) *DurationFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

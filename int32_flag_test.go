@@ -63,7 +63,7 @@ func TestInt32(t *testing.T) {
 	}
 }
 
-func TestInt32P(t *testing.T) {
+func TestInt32Flag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestInt32P(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int32P(tc.long, tc.usage, tc.short)
+			f := flags.Int32(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "int32", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, int32(0), f.Get(), f.Var())
 		})

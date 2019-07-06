@@ -25,10 +25,9 @@ type Int32Flag struct {
 	acceptableItems     []string
 }
 
-func newInt32(name, usage, short string) *Int32Flag {
+func newInt32(name, usage string) *Int32Flag {
 	f := &Int32Flag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(int32),
@@ -42,6 +41,14 @@ func newInt32(name, usage, short string) *Int32Flag {
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *Int32Flag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -p).
+func (f *Int32Flag) WithShort(short string) *Int32Flag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

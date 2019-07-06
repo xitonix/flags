@@ -242,15 +242,7 @@ func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
 func (b *Bucket) Int(longName, usage string) *IntFlag {
-	return b.IntP(longName, usage, "")
-}
-
-// IntP adds a new int flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func (b *Bucket) IntP(longName, usage, shortName string) *IntFlag {
-	f := newInt(longName, usage, shortName)
+	f := newInt(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

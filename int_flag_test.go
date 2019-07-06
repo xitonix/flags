@@ -61,7 +61,7 @@ func TestInt(t *testing.T) {
 	}
 }
 
-func TestIntP(t *testing.T) {
+func TestIntFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -140,7 +140,7 @@ func TestIntP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntP(tc.long, tc.usage, tc.short)
+			f := flags.Int(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "int", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, 0, f.Get(), f.Var())
 		})

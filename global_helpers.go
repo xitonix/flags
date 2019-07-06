@@ -183,14 +183,6 @@ func Int(longName, usage string) *IntFlag {
 	return DefaultBucket.Int(longName, usage)
 }
 
-// IntP adds a new int flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func IntP(longName, usage, shortName string) *IntFlag {
-	return DefaultBucket.IntP(longName, usage, shortName)
-}
-
 // Int8 adds a new int8 flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).

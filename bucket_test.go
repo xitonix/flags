@@ -1636,19 +1636,6 @@ func TestBucket_StringSliceMap(t *testing.T) {
 	}
 }
 
-func TestBucket_StringSliceMapP(t *testing.T) {
-	bucket := NewBucket()
-	bucket.StringSliceMapP("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*StringSliceMapFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
-	}
-}
-
 func TestBucket_Int(t *testing.T) {
 	bucket := NewBucket()
 	bucket.Int("long", "usage")

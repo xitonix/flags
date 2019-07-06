@@ -62,7 +62,7 @@ func TestStringSliceMap(t *testing.T) {
 	}
 }
 
-func TestStringSliceMapP(t *testing.T) {
+func TestStringSliceMapFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -141,7 +141,7 @@ func TestStringSliceMapP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringSliceMapP(tc.long, tc.usage, tc.short)
+			f := flags.StringSliceMap(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[string][]string", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkSliceMapFlagValues(t, map[string][]string{}, f.Get(), f.Var())
 		})

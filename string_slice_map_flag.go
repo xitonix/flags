@@ -37,10 +37,9 @@ type StringSliceMapFlag struct {
 	delimiter           string
 }
 
-func newStringSliceMap(name, usage, short string) *StringSliceMapFlag {
+func newStringSliceMap(name, usage string) *StringSliceMapFlag {
 	f := &StringSliceMapFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new(map[string][]string),
@@ -55,6 +54,14 @@ func newStringSliceMap(name, usage, short string) *StringSliceMapFlag {
 // Long name is case insensitive and always lower case (i.e. --mappings).
 func (f *StringSliceMapFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -m).
+func (f *StringSliceMapFlag) WithShort(short string) *StringSliceMapFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

@@ -704,26 +704,7 @@ func (b *Bucket) StringMap(longName, usage string) *StringMapFlag {
 // {"Sat", "Sun"} instead of {"Sat", " Sun"}.
 // Notice that the leading white space before " Sun" has been removed.
 func (b *Bucket) StringSliceMap(longName, usage string) *StringSliceMapFlag {
-	return b.StringSliceMapP(longName, usage, "")
-}
-
-// StringSliceMapP adds a new string slice map flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. days).
-// A valid short name is a case sensitive single character string (i.e. d or D).
-//
-// The value of a string slice map flag can be set using standard map initialisation strings.
-// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
-// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-//
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
-func (b *Bucket) StringSliceMapP(longName, usage, shortName string) *StringSliceMapFlag {
-	f := newStringSliceMap(longName, usage, shortName)
+	f := newStringSliceMap(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

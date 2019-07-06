@@ -25,10 +25,9 @@ type UIntFlag struct {
 	acceptableItems     []string
 }
 
-func newUInt(name, usage, short string) *UIntFlag {
+func newUInt(name, usage string) *UIntFlag {
 	f := &UIntFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(uint),
@@ -42,6 +41,14 @@ func newUInt(name, usage, short string) *UIntFlag {
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UIntFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -p).
+func (f *UIntFlag) WithShort(short string) *UIntFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

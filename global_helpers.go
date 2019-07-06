@@ -210,14 +210,6 @@ func UInt(longName, usage string) *UIntFlag {
 	return DefaultBucket.UInt(longName, usage)
 }
 
-// UIntP adds a new uint flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func UIntP(longName, usage, shortName string) *UIntFlag {
-	return DefaultBucket.UIntP(longName, usage, shortName)
-}
-
 // UInt64 adds a new uint64 flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).

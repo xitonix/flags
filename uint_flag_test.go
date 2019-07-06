@@ -63,7 +63,7 @@ func TestUInt(t *testing.T) {
 	}
 }
 
-func TestUIntP(t *testing.T) {
+func TestUIntFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestUIntP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.UIntP(tc.long, tc.usage, tc.short)
+			f := flags.UInt(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "uint", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, uint(0), f.Get(), f.Var())
 		})

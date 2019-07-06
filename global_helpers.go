@@ -168,14 +168,6 @@ func String(longName, usage string) *StringFlag {
 	return DefaultBucket.String(longName, usage)
 }
 
-// StringP adds a new string flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. file-path).
-// A valid short name is a case sensitive single character string (i.e. f or F).
-func StringP(longName, usage, shortName string) *StringFlag {
-	return DefaultBucket.StringP(longName, usage, shortName)
-}
-
 // Int adds a new int flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).

@@ -225,15 +225,7 @@ func (b *Bucket) AddSource(src core.Source, index int) {
 //
 // The long name will be automatically converted to lowercase by the library.
 func (b *Bucket) String(longName, usage string) *StringFlag {
-	return b.StringP(longName, usage, "")
-}
-
-// StringP adds a new string flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. file-path).
-// A valid short name is a case sensitive single character string (i.e. f or F).
-func (b *Bucket) StringP(longName, usage, shortName string) *StringFlag {
-	f := newString(longName, usage, shortName)
+	f := newString(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

@@ -63,7 +63,7 @@ func TestIPAddressSlice(t *testing.T) {
 	}
 }
 
-func TestIPAddressSliceP(t *testing.T) {
+func TestIPAddressSliceFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestIPAddressSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IPAddressSliceP(tc.long, tc.usage, tc.short)
+			f := flags.IPAddressSlice(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[]ip", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkIPSliceFlagValues(t, []net.IP{}, f.Get(), f.Var())
 		})

@@ -559,20 +559,6 @@ func IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
 	return DefaultBucket.IPAddressSlice(longName, usage)
 }
 
-// IPAddressSliceP adds a new IP address slice flag with a short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. endpoints)
-// A valid short name is a case sensitive single character string (i.e. e or E).
-//
-// The value of an IP address slice flag can be specified using a comma (or any custom delimiter) separated string of
-// IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
-// Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-func IPAddressSliceP(longName, usage, shortName string) *IPAddressSliceFlag {
-	return DefaultBucket.IPAddressSliceP(longName, usage, shortName)
-}
-
 // CIDR adds a new CIDR flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. network).

@@ -205,14 +205,6 @@ func Int16(longName, usage string) *Int16Flag {
 	return DefaultBucket.Int16(longName, usage)
 }
 
-// Int16P adds a new int16 flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func Int16P(longName, usage, shortName string) *Int16Flag {
-	return DefaultBucket.Int16P(longName, usage, shortName)
-}
-
 // Int32 adds a new int32 flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).

@@ -1766,19 +1766,6 @@ func TestBucket_Int16(t *testing.T) {
 	}
 }
 
-func TestBucket_Int16P(t *testing.T) {
-	bucket := NewBucket()
-	bucket.Int16P("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*Int16Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
-	}
-}
-
 func TestBucket_Int8(t *testing.T) {
 	bucket := NewBucket()
 	bucket.Int8("long", "usage")

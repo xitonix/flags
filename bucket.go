@@ -268,15 +268,7 @@ func (b *Bucket) Int8(longName, usage string) *Int8Flag {
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
 func (b *Bucket) Int16(longName, usage string) *Int16Flag {
-	return b.Int16P(longName, usage, "")
-}
-
-// Int16P adds a new int16 flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func (b *Bucket) Int16P(longName, usage, shortName string) *Int16Flag {
-	f := newInt16(longName, usage, shortName)
+	f := newInt16(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

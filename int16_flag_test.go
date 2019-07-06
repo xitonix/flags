@@ -63,7 +63,7 @@ func TestInt16(t *testing.T) {
 	}
 }
 
-func TestInt16P(t *testing.T) {
+func TestInt16Flag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestInt16P(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Int16P(tc.long, tc.usage, tc.short)
+			f := flags.Int16(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "int16", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, int16(0), f.Get(), f.Var())
 		})

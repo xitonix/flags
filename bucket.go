@@ -286,15 +286,7 @@ func (b *Bucket) Int32(longName, usage string) *Int32Flag {
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
 func (b *Bucket) Int64(longName, usage string) *Int64Flag {
-	return b.Int64P(longName, usage, "")
-}
-
-// Int64P adds a new int64 flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func (b *Bucket) Int64P(longName, usage, shortName string) *Int64Flag {
-	f := newInt64(longName, usage, shortName)
+	f := newInt64(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

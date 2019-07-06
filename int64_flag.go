@@ -25,10 +25,9 @@ type Int64Flag struct {
 	acceptableItems     []string
 }
 
-func newInt64(name, usage, short string) *Int64Flag {
+func newInt64(name, usage string) *Int64Flag {
 	f := &Int64Flag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(int64),
@@ -42,6 +41,14 @@ func newInt64(name, usage, short string) *Int64Flag {
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *Int64Flag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -p).
+func (f *Int64Flag) WithShort(short string) *Int64Flag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

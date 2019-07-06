@@ -377,14 +377,6 @@ func Float32(longName, usage string) *Float32Flag {
 	return DefaultBucket.Float32(longName, usage)
 }
 
-// Float32P adds a new float32 flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
-// A valid short name is a case sensitive single character string (i.e. c or C).
-func Float32P(longName, usage, shortName string) *Float32Flag {
-	return DefaultBucket.Float32P(longName, usage, shortName)
-}
-
 // Counter adds a new counter flag to the default bucket.
 //
 // The value of a counter flag can be increased by repeating the short or the long form of the flag.

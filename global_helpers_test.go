@@ -672,19 +672,6 @@ func TestGlobalFloat32(t *testing.T) {
 	}
 }
 
-func TestGlobalFloat32P(t *testing.T) {
-	DefaultBucket = NewBucket()
-	Float32P("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
-	}
-}
-
 func TestGlobalCounter(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Counter("long", "usage").WithShort("c")

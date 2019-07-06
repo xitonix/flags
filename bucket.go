@@ -464,15 +464,7 @@ func (b *Bucket) Float64P(longName, usage, shortName string) *Float64Flag {
 //
 // The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
 func (b *Bucket) Float32(longName, usage string) *Float32Flag {
-	return b.Float32P(longName, usage, "")
-}
-
-// Float32P adds a new float32 flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
-// A valid short name is a case sensitive single character string (i.e. c or C).
-func (b *Bucket) Float32P(longName, usage, shortName string) *Float32Flag {
-	f := newFloat32(longName, usage, shortName)
+	f := newFloat32(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

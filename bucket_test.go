@@ -2177,19 +2177,6 @@ func TestBucket_Float32(t *testing.T) {
 	}
 }
 
-func TestBucket_Float32P(t *testing.T) {
-	bucket := NewBucket()
-	bucket.Float32P("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*Float32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
-	}
-}
-
 func TestBucket_Counter(t *testing.T) {
 	bucket := NewBucket()
 	bucket.Counter("long", "usage").WithShort("s")

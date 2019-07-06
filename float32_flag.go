@@ -26,10 +26,9 @@ type Float32Flag struct {
 	acceptableItems     []string
 }
 
-func newFloat32(name, usage, short string) *Float32Flag {
+func newFloat32(name, usage string) *Float32Flag {
 	f := &Float32Flag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(float32),
@@ -43,6 +42,14 @@ func newFloat32(name, usage, short string) *Float32Flag {
 // Long name is case insensitive and always lower case (i.e. --rate).
 func (f *Float32Flag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -r).
+func (f *Float32Flag) WithShort(short string) *Float32Flag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

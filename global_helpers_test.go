@@ -646,19 +646,6 @@ func TestGlobalFloat64(t *testing.T) {
 	}
 }
 
-func TestGlobalFloat64P(t *testing.T) {
-	DefaultBucket = NewBucket()
-	Float64P("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float64Flag{}, f)
-	}
-}
-
 func TestGlobalFloat32(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Float32("long", "usage")

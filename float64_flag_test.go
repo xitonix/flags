@@ -63,7 +63,7 @@ func TestFloat64(t *testing.T) {
 	}
 }
 
-func TestFloat64P(t *testing.T) {
+func TestFloat64Flag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestFloat64P(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Float64P(tc.long, tc.usage, tc.short)
+			f := flags.Float64(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "float64", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, float64(0), f.Get(), f.Var())
 		})

@@ -362,14 +362,6 @@ func Float64(longName, usage string) *Float64Flag {
 	return DefaultBucket.Float64(longName, usage)
 }
 
-// Float64P adds a new float64 flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
-// A valid short name is a case sensitive single character string (i.e. c or C).
-func Float64P(longName, usage, shortName string) *Float64Flag {
-	return DefaultBucket.Float64P(longName, usage, shortName)
-}
-
 // Float32 adds a new float32 flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).

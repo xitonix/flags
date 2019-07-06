@@ -447,15 +447,7 @@ func (b *Bucket) BoolSlice(longName, usage string) *BoolSliceFlag {
 //
 // The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
 func (b *Bucket) Float64(longName, usage string) *Float64Flag {
-	return b.Float64P(longName, usage, "")
-}
-
-// Float64P adds a new float64 flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
-// A valid short name is a case sensitive single character string (i.e. c or C).
-func (b *Bucket) Float64P(longName, usage, shortName string) *Float64Flag {
-	f := newFloat64(longName, usage, shortName)
+	f := newFloat64(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

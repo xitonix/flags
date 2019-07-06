@@ -225,14 +225,6 @@ func UInt64(longName, usage string) *UInt64Flag {
 	return DefaultBucket.UInt64(longName, usage)
 }
 
-// UInt64P adds a new uint64 flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. port-number).
-// A valid short name is a case sensitive single character string (i.e. p or P).
-func UInt64P(longName, usage, shortName string) *UInt64Flag {
-	return DefaultBucket.UInt64P(longName, usage, shortName)
-}
-
 // UInt32 adds a new uint32 flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).

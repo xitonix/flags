@@ -1740,19 +1740,6 @@ func TestBucket_UInt64(t *testing.T) {
 	}
 }
 
-func TestBucket_UInt64P(t *testing.T) {
-	bucket := NewBucket()
-	bucket.UInt64P("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*UInt64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
-	}
-}
-
 func TestBucket_UInt32(t *testing.T) {
 	bucket := NewBucket()
 	bucket.UInt32("long", "usage")

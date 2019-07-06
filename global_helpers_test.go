@@ -860,19 +860,6 @@ func TestGlobalFloat64Slice(t *testing.T) {
 	}
 }
 
-func TestGlobalFloat64SliceP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	Float64SliceP("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float64SliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float64SliceFlag{}, f)
-	}
-}
-
 func TestGlobalIPAddress(t *testing.T) {
 	DefaultBucket = NewBucket()
 	IPAddress("long", "usage")

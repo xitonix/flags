@@ -589,19 +589,6 @@ func Float64Slice(longName, usage string) *Float64SliceFlag {
 	return DefaultBucket.Float64Slice(longName, usage)
 }
 
-// Float64SliceP adds a new float64 slice flag with a short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. numbers)
-// A valid short name is a case sensitive single character string (i.e. n or N).
-//
-// The value of a float64 slice flag can be set using a comma (or any custom delimiter) separated string of floating point numbers.
-// For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-func Float64SliceP(longName, usage, shortName string) *Float64SliceFlag {
-	return DefaultBucket.Float64SliceP(longName, usage, shortName)
-}
-
 // IPAddress adds a new IP address flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. endpoint).

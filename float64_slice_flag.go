@@ -33,10 +33,9 @@ type Float64SliceFlag struct {
 	acceptableItems     []string
 }
 
-func newFloat64Slice(name, usage, short string) *Float64SliceFlag {
+func newFloat64Slice(name, usage string) *Float64SliceFlag {
 	f := &Float64SliceFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]float64),
@@ -51,6 +50,14 @@ func newFloat64Slice(name, usage, short string) *Float64SliceFlag {
 // Long name is case insensitive and always lower case (i.e. --rates).
 func (f *Float64SliceFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -r).
+func (f *Float64SliceFlag) WithShort(short string) *Float64SliceFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

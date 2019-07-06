@@ -64,7 +64,7 @@ func TestFloat64Slice(t *testing.T) {
 	}
 }
 
-func TestFloat64SliceP(t *testing.T) {
+func TestFloat64SliceFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -143,7 +143,7 @@ func TestFloat64SliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.Float64SliceP(tc.long, tc.usage, tc.short)
+			f := flags.Float64Slice(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[]float64", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkSliceFlagValues(t, []float64{}, f.Get(), f.Var())
 		})

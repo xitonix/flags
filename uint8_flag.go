@@ -25,10 +25,9 @@ type UInt8Flag struct {
 	acceptableItems     []string
 }
 
-func newUInt8(name, usage, short string) *UInt8Flag {
+func newUInt8(name, usage string) *UInt8Flag {
 	f := &UInt8Flag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(uint8),
@@ -42,6 +41,14 @@ func newUInt8(name, usage, short string) *UInt8Flag {
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UInt8Flag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -p).
+func (f *UInt8Flag) WithShort(short string) *UInt8Flag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

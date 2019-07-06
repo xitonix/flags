@@ -1792,19 +1792,6 @@ func TestBucket_Int8(t *testing.T) {
 	}
 }
 
-func TestBucket_Int8P(t *testing.T) {
-	bucket := NewBucket()
-	bucket.Int8P("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*Int8Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
-	}
-}
-
 func TestBucket_UInt(t *testing.T) {
 	bucket := NewBucket()
 	bucket.UInt("long", "usage")

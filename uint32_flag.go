@@ -25,10 +25,9 @@ type UInt32Flag struct {
 	acceptableItems     []string
 }
 
-func newUInt32(name, usage, short string) *UInt32Flag {
+func newUInt32(name, usage string) *UInt32Flag {
 	f := &UInt32Flag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(uint32),
@@ -42,6 +41,14 @@ func newUInt32(name, usage, short string) *UInt32Flag {
 // Long name is case insensitive and always lower case (i.e. --port-number).
 func (f *UInt32Flag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -p).
+func (f *UInt32Flag) WithShort(short string) *UInt32Flag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

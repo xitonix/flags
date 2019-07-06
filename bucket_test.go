@@ -2401,19 +2401,6 @@ func TestBucket_IntSlice(t *testing.T) {
 	}
 }
 
-func TestBucket_IntSliceP(t *testing.T) {
-	bucket := NewBucket()
-	bucket.IntSliceP("long", "s", "usage")
-	actual := len(bucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := bucket.Flags()[0]
-	if _, ok := f.(*IntSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IntSliceFlag{}, f)
-	}
-}
-
 func TestBucket_UIntSlice(t *testing.T) {
 	bucket := NewBucket()
 	bucket.UIntSlice("long", "usage")

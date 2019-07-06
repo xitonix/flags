@@ -64,7 +64,7 @@ func TestIntSlice(t *testing.T) {
 	}
 }
 
-func TestIntSliceP(t *testing.T) {
+func TestIntSliceFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -143,7 +143,7 @@ func TestIntSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IntSliceP(tc.long, tc.usage, tc.short)
+			f := flags.IntSlice(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[]int", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkSliceFlagValues(t, []int{}, f.Get(), f.Var())
 		})

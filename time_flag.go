@@ -100,10 +100,9 @@ type TimeFlag struct {
 	acceptedItems       []time.Time
 }
 
-func newTime(name, usage, short string) *TimeFlag {
+func newTime(name, usage string) *TimeFlag {
 	f := &TimeFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(time.Time),
@@ -117,6 +116,14 @@ func newTime(name, usage, short string) *TimeFlag {
 // Long name is case insensitive and always lower case (i.e. --birthday).
 func (f *TimeFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -b).
+func (f *TimeFlag) WithShort(short string) *TimeFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

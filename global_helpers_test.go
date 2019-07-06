@@ -652,19 +652,6 @@ func TestGlobalTime(t *testing.T) {
 	}
 }
 
-func TestGlobalTimeP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	TimeP("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*TimeFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &TimeFlag{}, f)
-	}
-}
-
 func TestGlobalStringSlice(t *testing.T) {
 	DefaultBucket = NewBucket()
 	StringSlice("long", "usage")

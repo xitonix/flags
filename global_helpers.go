@@ -405,45 +405,6 @@ func Time(longName, usage string) *TimeFlag {
 	return DefaultBucket.Time(longName, usage)
 }
 
-// TimeP adds a new Time flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. birthday).
-// A valid short name is a case sensitive single character string (i.e. b or B).
-//
-// Supported layouts are:
-//
-// Full Date and Time
-//
-//  dd-MM-yyyyThh:mm:SS[.999999999] (24 hrs, i.e. 27-08-1980T14:22:20)
-//  dd-MM-yyyy hh:mm:SS[.999999999] (24 hrs, i.e. 27-08-1980 14:22:20)
-//  dd-MM-yyyyThh:mm:SS[.999999999] AM/PM (i.e. 27-08-1980T02:22:20 PM)
-//  dd-MM-yyyy hh:mm:SS[.999999999] AM/PM (i.e. 27-08-1980 02:22:20 PM)
-//
-//  dd/MM/yyyyThh:mm:SS[.999999999] (24 hrs)
-//  dd/MM/yyyy hh:mm:SS[.999999999] (24 hrs)
-//  dd/MM/yyyyThh:mm:SS[.999999999] AM/PM
-//  dd/MM/yyyy hh:mm:SS[.999999999] AM/PM
-//
-// Date
-//
-//  dd-MM-yyyy
-//  dd/MM/yyyy
-//
-// Timestamp
-//
-//  MMM dd hh:mm:ss[.999999999] (24 hrs, i.e. Aug 27 14:22:20)
-//  MMM dd hh:mm:ss[.999999999] AM/PM (i.e. Aug 27 02:22:20 PM)
-//
-// Time
-//
-//  hh:mm:ss[.999999999] (24 hrs, i.e. 14:22:20)
-//  hh:mm:ss[.999999999] AM/PM (i.e. 02:22:20 PM)
-//
-// [.999999999] is the optional nano second component for time.
-func TimeP(longName, usage, shortName string) *TimeFlag {
-	return DefaultBucket.TimeP(longName, usage, shortName)
-}
-
 // StringSlice adds a new string slice flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. week-days).

@@ -477,26 +477,25 @@ func (b *Bucket) Float32P(longName, usage, shortName string) *Float32Flag {
 	return f
 }
 
-// CounterP adds a new counter flag with a short name to the bucket.
+// Counter adds a new counter flag to the bucket.
 //
-// The value of a counter flag can be increased by repeating the short or the long form.
-// For example the presence of -vv command line argument will set the value of the counter to 2.
+// The value of a counter flag can be increased by repeating the short or the long form of the flag.
+// For example, if the short name is 'c', the presence of -cc command line argument will set the value of the counter to 2.
 //
-// The long name will be automatically converted to lowercase by the library (i.e. verbosity).
-// A valid short name is a case sensitive single character string (i.e. v or V).
-func (b *Bucket) CounterP(longName, usage, shortName string) *CounterFlag {
-	f := newCounter(longName, usage, shortName)
+// The long name will be automatically converted to lowercase by the library (i.e. count).
+func (b *Bucket) Counter(longName, usage string) *CounterFlag {
+	f := newCounter(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
 
-// VerbosityP is an alias for CounterP("verbose", usage, "v").
+// Verbosity is an alias for Counter("verbose", usage).WithShort("v").
 //
 // The value of the verbosity flag can be increased by repeating the short or the long form.
 // For example the presence of -vv command line argument will set the verbosity level to 2.
 // Having '--verbose -v', '--verbose --verbose' or '-v -v' would have the same effect.
-func (b *Bucket) VerbosityP(usage string) *CounterFlag {
-	return b.CounterP("verbose", usage, "v")
+func (b *Bucket) Verbosity(usage string) *CounterFlag {
+	return b.Counter("verbose", usage).WithShort("v")
 }
 
 // Duration adds a new Duration flag to the bucket.

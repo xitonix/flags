@@ -687,7 +687,7 @@ func TestGlobalFloat32P(t *testing.T) {
 
 func TestGlobalCounter(t *testing.T) {
 	DefaultBucket = NewBucket()
-	CounterP("long", "c", "usage")
+	Counter("long", "usage").WithShort("c")
 	actual := len(DefaultBucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
@@ -698,9 +698,9 @@ func TestGlobalCounter(t *testing.T) {
 	}
 }
 
-func TestGlobalVerbosityP(t *testing.T) {
+func TestGlobalVerbosity(t *testing.T) {
 	DefaultBucket = NewBucket()
-	VerbosityP("usage")
+	Verbosity("usage")
 	actual := len(DefaultBucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)

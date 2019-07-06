@@ -2190,9 +2190,9 @@ func TestBucket_Float32P(t *testing.T) {
 	}
 }
 
-func TestBucket_CounterP(t *testing.T) {
+func TestBucket_Counter(t *testing.T) {
 	bucket := NewBucket()
-	bucket.CounterP("long", "s", "usage")
+	bucket.Counter("long", "usage").WithShort("s")
 	actual := len(bucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
@@ -2216,79 +2216,79 @@ func TestBucket_Parse_Counter(t *testing.T) {
 	}{
 		{
 			title:         "long name has been provided",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter"},
 			expectedValue: 1,
 		},
 		{
 			title:         "long name with value has been provided with no equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter", "10"},
 			expectedValue: 10,
 		},
 		{
 			title:         "long name with value has been provided with equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter=10"},
 			expectedValue: 10,
 		},
 		{
 			title:         "short name has been provided",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-c"},
 			expectedValue: 1,
 		},
 		{
 			title:         "short name with value has been provided with no equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-c", "10"},
 			expectedValue: 10,
 		},
 		{
 			title:         "short name with value has been provided with equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-c=10"},
 			expectedValue: 10,
 		},
 		{
 			title:         "chained short name has been provided",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-cc"},
 			expectedValue: 2,
 		},
 		{
 			title:         "short name has been provided multiple times",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-c", "-c", "-c"},
 			expectedValue: 3,
 		},
 		{
 			title:         "long name has been provided multiple times",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter", "--counter"},
 			expectedValue: 2,
 		},
 		{
 			title:         "long and short names have been provided multiple times",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter", "--counter", "-c", "-c"},
 			expectedValue: 4,
 		},
 		{
 			title:         "no argument has been provided",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			expectedValue: 0,
 		},
 		{
 			title:         "no arguments with default value",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			setDefault:    true,
 			defaultValue:  100,
 			expectedValue: 100,
 		},
 		{
 			title:         "long name with default value",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2296,7 +2296,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "multiple long names with default value",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter", "--counter"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2304,7 +2304,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "long name with value and default value no equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter", "200"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2312,7 +2312,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "long name with value and default value with equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"--counter=200"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2320,7 +2320,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "explicit value of long names overrides the counter value without equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-ccc", "--counter", "1000"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2328,7 +2328,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "explicit value of short names overrides the counter value without equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-ccc", "1000"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2336,7 +2336,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "explicit value of long names overrides the counter value with equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-ccc", "--counter=1000"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2344,7 +2344,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		},
 		{
 			title:         "explicit value of short names overrides the counter value with equal sign",
-			flag:          CounterP("counter", "usage", "c"),
+			flag:          Counter("counter", "usage").WithShort("c"),
 			args:          []string{"-ccc=1000"},
 			setDefault:    true,
 			defaultValue:  100,
@@ -2382,9 +2382,9 @@ func TestBucket_Parse_Counter(t *testing.T) {
 	}
 }
 
-func TestBucket_VerbosityP(t *testing.T) {
+func TestBucket_Verbosity(t *testing.T) {
 	bucket := NewBucket()
-	bucket.VerbosityP("usage")
+	bucket.Verbosity("usage")
 	actual := len(bucket.Flags())
 	if actual != 1 {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)

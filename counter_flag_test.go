@@ -9,7 +9,7 @@ import (
 	"github.com/xitonix/flags"
 )
 
-func TestCounterP(t *testing.T) {
+func TestCounter(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -88,7 +88,7 @@ func TestCounterP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP(tc.long, tc.usage, tc.short)
+			f := flags.Counter(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "counter", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkFlagValues(t, 0, f.Get(), f.Var())
 
@@ -136,7 +136,7 @@ func TestCounterFlag_WithKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s").WithKey(tc.key)
+			f := flags.Counter("long", "usage").WithShort("s").WithKey(tc.key)
 			actual := f.Key().String()
 			if actual != tc.expectedKey {
 				t.Errorf("Expected Key: %s, Actual: %s", tc.expectedKey, actual)
@@ -175,7 +175,7 @@ func TestCounterFlag_WithDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s").WithDefault(tc.defaultValue)
+			f := flags.Counter("long", "usage").WithShort("s").WithDefault(tc.defaultValue)
 			actual := f.Default()
 			if actual != tc.expectedDefaultValue {
 				t.Errorf("Expected Default Value: %v, Actual: %s", tc.expectedDefaultValue, actual)
@@ -200,7 +200,7 @@ func TestCounterFlag_Hide(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s")
+			f := flags.Counter("long", "usage").WithShort("s")
 			if tc.isHidden {
 				f = f.Hide()
 			}
@@ -228,7 +228,7 @@ func TestCounterFlag_IsDeprecated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s")
+			f := flags.Counter("long", "usage").WithShort("s")
 			if tc.isDeprecated {
 				f = f.MarkAsDeprecated()
 			}
@@ -256,7 +256,7 @@ func TestCounterFlag_IsRequired(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s")
+			f := flags.Counter("long", "usage").WithShort("s")
 			if tc.isRequired {
 				f = f.Required()
 			}
@@ -314,7 +314,7 @@ func TestCounterFlag_Set(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s")
+			f := flags.Counter("long", "usage").WithShort("s")
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			checkFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
@@ -424,7 +424,7 @@ func TestCounterFlag_Validation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s")
+			f := flags.Counter("long", "usage").WithShort("s")
 			fVar := f.Var()
 			if tc.setValidationCB {
 				f = f.WithValidationCallback(tc.validationCB)
@@ -478,7 +478,7 @@ func TestCounterFlag_ResetToDefault(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.CounterP("long", "usage", "s")
+			f := flags.Counter("long", "usage").WithShort("s")
 			if tc.setDefault {
 				f = f.WithDefault(tc.defaultValue)
 			}

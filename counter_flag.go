@@ -28,10 +28,9 @@ type CounterFlag struct {
 	acceptableItems     []string
 }
 
-func newCounter(name, usage, short string) *CounterFlag {
+func newCounter(name, usage string) *CounterFlag {
 	f := &CounterFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(int),
@@ -52,6 +51,14 @@ func (f *CounterFlag) LongName() string {
 // A hidden flag won't be printed in the help output.
 func (f *CounterFlag) IsHidden() bool {
 	return f.isHidden
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -v).
+func (f *CounterFlag) WithShort(short string) *CounterFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsDeprecated returns true if the flag is deprecated.

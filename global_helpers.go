@@ -431,22 +431,6 @@ func DurationSlice(longName, usage string) *DurationSliceFlag {
 	return DefaultBucket.DurationSlice(longName, usage)
 }
 
-// DurationSliceP adds a new duration slice flag with a short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. durations).
-// A valid short name is a case sensitive single character string (i.e. d or D).
-//
-// The value of a Duration slice flag can be set using a comma (or any custom delimiter) separated string of durations.
-//
-// Each duration string is a possibly signed sequence of decimal numbers, with optional fraction and a unit suffix,
-// such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
-// For example --durations "2s, 2.5s, 5s".
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-func DurationSliceP(longName, usage, shortName string) *DurationSliceFlag {
-	return DefaultBucket.DurationSliceP(longName, usage, shortName)
-}
-
 // Time adds a new Time flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. birthday).

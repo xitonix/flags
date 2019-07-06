@@ -35,10 +35,9 @@ type DurationSliceFlag struct {
 	acceptableItems     []string
 }
 
-func newDurationSlice(name, usage, short string) *DurationSliceFlag {
+func newDurationSlice(name, usage string) *DurationSliceFlag {
 	f := &DurationSliceFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]time.Duration),
@@ -53,6 +52,14 @@ func newDurationSlice(name, usage, short string) *DurationSliceFlag {
 // Long name is case insensitive and always lower case (i.e. --durations).
 func (f *DurationSliceFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -d).
+func (f *DurationSliceFlag) WithShort(short string) *DurationSliceFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

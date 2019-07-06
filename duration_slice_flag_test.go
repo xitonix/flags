@@ -63,7 +63,7 @@ func TestDurationSlice(t *testing.T) {
 	}
 }
 
-func TestDurationSliceP(t *testing.T) {
+func TestDurationSliceFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestDurationSliceP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.DurationSliceP(tc.long, tc.usage, tc.short)
+			f := flags.DurationSlice(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[]duration", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkSliceFlagValues(t, []time.Duration{}, f.Get(), f.Var())
 		})

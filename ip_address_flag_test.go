@@ -63,7 +63,7 @@ func TestIPAddress(t *testing.T) {
 	}
 }
 
-func TestIPAddressP(t *testing.T) {
+func TestIPAddressFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -142,7 +142,7 @@ func TestIPAddressP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.IPAddressP(tc.long, tc.usage, tc.short)
+			f := flags.IPAddress(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "ip", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkIPFlagValues(t, nil, f.Get(), f.Var())
 		})

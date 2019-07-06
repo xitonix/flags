@@ -546,17 +546,6 @@ func IPAddress(longName, usage string) *IPAddressFlag {
 	return DefaultBucket.IPAddress(longName, usage)
 }
 
-// IPAddressP adds a new IP address flag with short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. endpoint).
-// A valid short name is a case sensitive single character string (i.e. e or E).
-//
-// The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
-// or an IPv6 ("2001:db8::68") formatted string.
-func IPAddressP(longName, usage, shortName string) *IPAddressFlag {
-	return DefaultBucket.IPAddressP(longName, usage, shortName)
-}
-
 // IPAddressSlice adds a new IP address slice flag to the default bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. endpoints)

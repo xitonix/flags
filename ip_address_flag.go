@@ -28,10 +28,9 @@ type IPAddressFlag struct {
 	acceptableItems     []string
 }
 
-func newIPAddress(name, usage, short string) *IPAddressFlag {
+func newIPAddress(name, usage string) *IPAddressFlag {
 	f := &IPAddressFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(net.IP),
@@ -45,6 +44,14 @@ func newIPAddress(name, usage, short string) *IPAddressFlag {
 // Long name is case insensitive and always lower case (i.e. --endpoint).
 func (f *IPAddressFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -e).
+func (f *IPAddressFlag) WithShort(short string) *IPAddressFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

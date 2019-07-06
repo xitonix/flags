@@ -26,10 +26,9 @@ type StringMapFlag struct {
 	validate            func(key, value string) error
 }
 
-func newStringMap(name, usage, short string) *StringMapFlag {
+func newStringMap(name, usage string) *StringMapFlag {
 	f := &StringMapFlag{
 		key:   &data.Key{},
-		short: internal.SanitiseShortName(short),
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(map[string]string),
@@ -43,6 +42,14 @@ func newStringMap(name, usage, short string) *StringMapFlag {
 // Long name is case insensitive and always lower case (i.e. --mappings).
 func (f *StringMapFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -m).
+func (f *StringMapFlag) WithShort(short string) *StringMapFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

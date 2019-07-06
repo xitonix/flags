@@ -586,18 +586,7 @@ func CIDRSlice(longName, usage string) *CIDRSliceFlag {
 // The value of a string map flag can be set using standard map initialisation strings.
 // For example --mappings '{"key1":"value1", "key2":"value2"}'
 func StringMap(longName, usage string) *StringMapFlag {
-	return DefaultBucket.StringMapP(longName, usage, "")
-}
-
-// StringMapP adds a new string map flag with a short name to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. mappings).
-// A valid short name is a case sensitive single character string (i.e. m or M).
-//
-// The value of a string map flag can be set using standard map initialisation strings.
-// For example --mappings '{"key1":"value1", "key2":"value2"}'
-func StringMapP(longName, usage, shortName string) *StringMapFlag {
-	return DefaultBucket.StringMapP(longName, usage, shortName)
+	return DefaultBucket.StringMap(longName, usage)
 }
 
 // StringSliceMap adds a new string slice map flag to the default bucket.

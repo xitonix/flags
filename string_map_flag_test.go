@@ -61,7 +61,7 @@ func TestStringMap(t *testing.T) {
 	}
 }
 
-func TestStringMapP(t *testing.T) {
+func TestStringMapFlag_WithShort(t *testing.T) {
 	testCases := []struct {
 		title         string
 		long, short   string
@@ -140,7 +140,7 @@ func TestStringMapP(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			f := flags.StringMapP(tc.long, tc.usage, tc.short)
+			f := flags.StringMap(tc.long, tc.usage).WithShort(tc.short)
 			checkFlagInitialState(t, f, "[string]string", tc.expectedUsage, tc.expectedLong, tc.expectedShort)
 			checkMapFlagValues(t, map[string]string{}, f.Get(), f.Var())
 		})

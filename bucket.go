@@ -702,18 +702,7 @@ func (b *Bucket) CIDRSlice(longName, usage string) *CIDRSliceFlag {
 // The value of a string map flag can be set using standard map initialisation strings.
 // For example --mappings '{"key1":"value1", "key2":"value2"}'
 func (b *Bucket) StringMap(longName, usage string) *StringMapFlag {
-	return b.StringMapP(longName, usage, "")
-}
-
-// StringMapP adds a new string map flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. mappings).
-// A valid short name is a case sensitive single character string (i.e. m or M).
-//
-// The value of a string map flag can be set using standard map initialisation strings.
-// For example --mappings '{"key1":"value1", "key2":"value2"}'
-func (b *Bucket) StringMapP(longName, usage, shortName string) *StringMapFlag {
-	f := newStringMap(longName, usage, shortName)
+	f := newStringMap(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

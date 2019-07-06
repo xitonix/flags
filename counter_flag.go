@@ -263,7 +263,7 @@ func (f *CounterFlag) Key() *data.Key {
 //
 // Example,
 //
-// counter := CounterP("count", "usage","c")
+// counter := Counter("count", "usage").WithShort("c")
 //
 // providing '-ccc' as command line argument will set the final value of the flag to 3.
 // '--count -cc', '--count --count --count' or '-c --count --count' would result in the same final value.

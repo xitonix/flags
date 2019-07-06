@@ -291,7 +291,7 @@ func Counter(longName, usage string) *CounterFlag {
 	return DefaultBucket.Counter(longName, usage)
 }
 
-// Verbosity is an alias for CounterP("verbose", usage, "v").
+// Verbosity is an alias for Counter("verbose", usage).WithShort("v").
 //
 // The value of the verbosity flag can be increased by repeating the short or the long form.
 // For example the presence of -vv command line argument will set the verbosity level to 2.

@@ -22,13 +22,13 @@ Use a new bucket instance
 
 	bucket := flags.NewBucket()
 	config := bucket.String("config-file", "The path to the configuration file")
-	server := bucket.IPAddressP("remote-server", "The remote server to connect to","r")
+	server := bucket.IPAddress("remote-server", "The remote server to connect to").WithShort("r")
 	bucket.Parse()
 
 Use the default bucket
 
 	config := flags.String("config-file", "The path to the configuration file")
-	server := flags.IPAddressP("remote-server", "The remote server to connect to","r")
+	server := flags.IPAddressP("remote-server", "The remote server to connect to").WithShort("r")
 	flags.Parse()
 
 */

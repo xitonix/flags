@@ -558,25 +558,7 @@ func (b *Bucket) TimeP(longName, usage, shortName string) *TimeFlag {
 // {"Sat", "Sun"} instead of {"Sat", " Sun"}.
 // Notice that the leading white space before " Sun" has been removed.
 func (b *Bucket) StringSlice(longName, usage string) *StringSliceFlag {
-	return b.StringSliceP(longName, usage, "")
-}
-
-// StringSliceP adds a new string slice flag with a short name to the bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. week-days).
-// A valid short name is a case sensitive single character string (i.e. w or W).
-//
-// The value of a string slice flag can be set using comma (or any custom delimiter) separated strings.
-// For example --week-days "Sat,Sun,Mon,Tue,Wed,Thu,Fri"
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-//
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
-func (b *Bucket) StringSliceP(longName, usage, shortName string) *StringSliceFlag {
-	f := newStringSlice(longName, usage, shortName)
+	f := newStringSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

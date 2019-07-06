@@ -691,19 +691,6 @@ func TestGlobalStringSlice(t *testing.T) {
 	}
 }
 
-func TestGlobalStringSliceP(t *testing.T) {
-	DefaultBucket = NewBucket()
-	StringSliceP("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*StringSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringSliceFlag{}, f)
-	}
-}
-
 func TestGlobalIntSlice(t *testing.T) {
 	DefaultBucket = NewBucket()
 	IntSlice("long", "usage")

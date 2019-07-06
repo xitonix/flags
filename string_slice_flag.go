@@ -38,10 +38,9 @@ type StringSliceFlag struct {
 	ignoreCase          bool
 }
 
-func newStringSlice(name, usage, short string) *StringSliceFlag {
+func newStringSlice(name, usage string) *StringSliceFlag {
 	f := &StringSliceFlag{
 		key:       &data.Key{},
-		short:     internal.SanitiseShortName(short),
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]string),
@@ -56,6 +55,14 @@ func newStringSlice(name, usage, short string) *StringSliceFlag {
 // Long name is case insensitive and always lower case (i.e. --colours).
 func (f *StringSliceFlag) LongName() string {
 	return f.long
+}
+
+// WithShort sets the short name of the flag.
+//
+// The short name is a single case sensitive character (i.e. -c).
+func (f *StringSliceFlag) WithShort(short string) *StringSliceFlag {
+	f.short = internal.SanitiseShortName(short)
+	return f
 }
 
 // IsHidden returns true if the flag is hidden.

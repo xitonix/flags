@@ -477,19 +477,6 @@ func TestGlobalUInt16(t *testing.T) {
 	}
 }
 
-func TestGlobalUInt16P(t *testing.T) {
-	DefaultBucket = NewBucket()
-	UInt16P("long", "s", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UInt16Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
-	}
-}
-
 func TestGlobalUInt8(t *testing.T) {
 	DefaultBucket = NewBucket()
 	UInt8("long", "usage")

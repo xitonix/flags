@@ -923,6 +923,12 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			},
 			expectedCount: 2,
 		},
+		{
+			title:         "invalid short form mixed with value",
+			in:            []string{"-10", "-3.14", "-10b", "--10", "-", "--", "---"},
+			expected:      []entry{},
+			expectedCount: 0,
+		},
 	}
 
 	for _, tc := range testCases {

@@ -97,13 +97,18 @@ func processKey(arg string) []argSection {
 	// for example ‘-abc’ is equivalent to ‘-a -b -c’
 	// or mixed values such as -a100, -a10b20 or -a10b3.4
 	duplicates := regexp.MustCompile(`[a-zA-Z]|[+-]?([0-9]*[.])?[0-9]+`)
+	var prevArgWasKey bool
 	for _, match := range duplicates.FindAllString(arg, -1) {
 		var isKey bool
 		val := match
-		if IsLetter(match) {
+		// !prevArgWasKey: if the previous item was not a key we will add the current item as a key
+		// (even though it's not) in order for the invalid input to be detected as an unknown flag at the time of parsing.
+		// An example is -10 is invalid because a value entry must always be preceded by a key.
+		if IsLetter(match) || !prevArgWasKey {
 			isKey = true
 			val = "-" + match
 		}
+		prevArgWasKey = isKey
 		args = append(args, argSection{
 			isKey: isKey,
 			value: val,

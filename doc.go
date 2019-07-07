@@ -48,16 +48,16 @@ Boolean flags
 
 Numeric flags (Integers or floating point numbers)
 
-	--num=10
-	--num 10
-	-n=10
-	-n 10
-	-n10
+	--num=[+/-]10
+	--num [+/-]10
+	-n=[+/-]10
+	-n [+/-]10
+	-n[+/-]10
 
 	// Mixed short forms
-	-n10b
-	-n10m20
-	-n10m 20
+	-n[+/-]10b
+	-n[+/-]10m[+/-]20
+	-n[+/-]10m [+/-]20
 
 Non numeric flags
 

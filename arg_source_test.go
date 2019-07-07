@@ -856,6 +856,23 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 2,
 		},
 		{
+			title: "multiple short forms mixed with signed integer value",
+			in:    []string{"-c+10b-20"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "+10",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "-20",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
 			title: "multiple short forms mixed with floating point value",
 			in:    []string{"-c10.4b20.6"},
 			expected: []entry{
@@ -873,7 +890,41 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 2,
 		},
 		{
-			title: "multiple short forms mixed with floating point value starting with dot",
+			title: "multiple short forms mixed with signed floating point value",
+			in:    []string{"-c-10.4b+20.6"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "-10.4",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "+20.6",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
+			title: "multiple short forms mixed with signed partial floating point value",
+			in:    []string{"-c-.4b+.6"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "-.4",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "+.6",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
+			title: "multiple short forms mixed with partial floating point value",
 			in:    []string{"-c.4b.6"},
 			expected: []entry{
 				{
@@ -907,6 +958,33 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			expectedCount: 2,
 		},
 		{
+			title: "multiple short forms mixed with signed value",
+			in:    []string{"-c+10de-10f"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "+10",
+					ok:    true,
+				},
+				{
+					key:   "-d",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-e",
+					value: "-10",
+					ok:    true,
+				},
+				{
+					key:   "-f",
+					value: "",
+					ok:    true,
+				},
+			},
+			expectedCount: 4,
+		},
+		{
 			title: "duplicate short forms mixed with value",
 			in:    []string{"-c10b40", "-c"},
 			expected: []entry{
@@ -928,6 +1006,191 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			in:            []string{"-10", "-3.14", "-10b", "--10", "-", "--", "---"},
 			expected:      []entry{},
 			expectedCount: 0,
+		},
+		{
+			title: "long forms with signed integer numbers",
+			in:    []string{"--i1", "-10", "--i2", "+20", "--i3=-30", "--i4=+40"},
+			expected: []entry{
+				{
+					key:   "--i1",
+					value: "-10",
+					ok:    true,
+				},
+				{
+					key:   "--i2",
+					value: "+20",
+					ok:    true,
+				},
+				{
+					key:   "--i3",
+					value: "-30",
+					ok:    true,
+				},
+				{
+					key:   "--i4",
+					value: "+40",
+					ok:    true,
+				},
+			},
+			expectedCount: 4,
+		},
+		{
+			title: "long forms with signed float numbers",
+			in:    []string{"--f1", "-10.30", "--f2", "-20.80", "--f3=-30.15", "--f4=+40.44", "--f5", "+.5", "--f6", "-.6", "--f7=-.7", "--f8=+.8"},
+			expected: []entry{
+				{
+					key:   "--f1",
+					value: "-10.30",
+					ok:    true,
+				},
+				{
+					key:   "--f2",
+					value: "-20.80",
+					ok:    true,
+				},
+				{
+					key:   "--f3",
+					value: "-30.15",
+					ok:    true,
+				},
+				{
+					key:   "--f4",
+					value: "+40.44",
+					ok:    true,
+				},
+				{
+					key:   "--f5",
+					value: "+.5",
+					ok:    true,
+				},
+				{
+					key:   "--f6",
+					value: "-.6",
+					ok:    true,
+				},
+				{
+					key:   "--f7",
+					value: "-.7",
+					ok:    true,
+				},
+				{
+					key:   "--f8",
+					value: "+.8",
+					ok:    true,
+				},
+			},
+			expectedCount: 8,
+		},
+		{
+			title: "short forms with signed integer numbers",
+			in:    []string{"-a-1", "-b+1", "-c", "-2", "-d", "+2", "-e=-3", "-f=+3"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "-1",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "+1",
+					ok:    true,
+				},
+				{
+					key:   "-c",
+					value: "-2",
+					ok:    true,
+				},
+				{
+					key:   "-d",
+					value: "+2",
+					ok:    true,
+				},
+				{
+					key:   "-e",
+					value: "-3",
+					ok:    true,
+				},
+				{
+					key:   "-f",
+					value: "+3",
+					ok:    true,
+				},
+			},
+			expectedCount: 6,
+		},
+		{
+			title: "short forms with signed full floating point numbers",
+			in:    []string{"-a-1.0", "-b+1.0", "-c", "-2.0", "-d", "+2.0", "-e=-3.0", "-f=+3.0"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "-1.0",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "+1.0",
+					ok:    true,
+				},
+				{
+					key:   "-c",
+					value: "-2.0",
+					ok:    true,
+				},
+				{
+					key:   "-d",
+					value: "+2.0",
+					ok:    true,
+				},
+				{
+					key:   "-e",
+					value: "-3.0",
+					ok:    true,
+				},
+				{
+					key:   "-f",
+					value: "+3.0",
+					ok:    true,
+				},
+			},
+			expectedCount: 6,
+		},
+		{
+			title: "short forms with signed partial floating point numbers",
+			in:    []string{"-a-.1", "-b+.2", "-c", "-.3", "-d", "+.4", "-e=-.5", "-f=+.6"},
+			expected: []entry{
+				{
+					key:   "-a",
+					value: "-.1",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "+.2",
+					ok:    true,
+				},
+				{
+					key:   "-c",
+					value: "-.3",
+					ok:    true,
+				},
+				{
+					key:   "-d",
+					value: "+.4",
+					ok:    true,
+				},
+				{
+					key:   "-e",
+					value: "-.5",
+					ok:    true,
+				},
+				{
+					key:   "-f",
+					value: "+.6",
+					ok:    true,
+				},
+			},
+			expectedCount: 6,
 		},
 	}
 

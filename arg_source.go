@@ -30,7 +30,8 @@ func newArgSource(args []string) (*argSource, bool) {
 	var prevKey string
 	var isHelpRequested bool
 	for _, arg := range args {
-		isKey := strings.HasPrefix(arg, "-")
+		number := regexp.MustCompile(`^[+-]?([0-9]*[.])?[0-9]+$`)
+		isKey := strings.HasPrefix(arg, "-") && !number.Match([]byte(strings.TrimLeft(arg, "-")))
 		if !isHelpRequested && isKey {
 			ag := strings.TrimSpace(strings.ToLower(arg))
 			if ag == "--help" || ag == "-h" || strings.HasPrefix(ag, "-h=") || strings.HasPrefix(ag, "--help=") {
@@ -96,9 +97,9 @@ func processKey(arg string) []argSection {
 	// expand attached short flags
 	// for example ‘-abc’ is equivalent to ‘-a -b -c’
 	// or mixed values such as -a100, -a10b20 or -a10b3.4
-	duplicates := regexp.MustCompile(`[a-zA-Z]|[+-]?([0-9]*[.])?[0-9]+`)
+	mixedKeyValue := regexp.MustCompile(`[a-zA-Z]|[+-]?([0-9]*[.])?[0-9]+`)
 	var prevArgWasKey bool
-	for _, match := range duplicates.FindAllString(arg, -1) {
+	for _, match := range mixedKeyValue.FindAllString(arg, -1) {
 		var isKey bool
 		val := match
 		// !prevArgWasKey: if the previous item was not a key we will add the current item as a key

@@ -31,5 +31,42 @@ Use the default bucket
 	server := flags.IPAddressP("remote-server", "The remote server to connect to").WithShort("r")
 	flags.Parse()
 
+The following command line argument formats are supported by the library:
+
+Boolean flags
+
+	--bool
+	--bool=true
+	--bool=false
+	--bool=1
+	--bool=0
+	-b
+	-b=true
+	-b=false
+	-b=1
+	-b=0
+
+Numeric flags (Integers or floating point numbers)
+
+	--num=10
+	--num 10
+	-n=10
+	-n 10
+	-n10
+
+	// Mixed short forms
+	-n10b
+	-n10m20
+	-n10m 20
+
+Non numeric flags
+
+	--key="value"
+	--key "value"
+	--key value
+	-k="value"
+	-k "value"
+	-k value
+
 */
 package flags

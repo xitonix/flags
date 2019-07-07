@@ -1,7 +1,7 @@
 package flags
 
 import (
-	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/xitonix/flags/core"
@@ -10,6 +10,11 @@ import (
 type argSource struct {
 	arguments map[string]string
 	repeats   map[string]int
+}
+
+type argSection struct {
+	isKey bool
+	value string
 }
 
 // creates a new command line argument parser and returns true if one of the arguments is
@@ -37,12 +42,12 @@ func newArgSource(args []string) (*argSource, bool) {
 		if len(parts) >= 2 {
 			// This is to support key=val as well as special cases like
 			// key="-a=10 -b=20" OR key="--a=10 --b=20" to cover nested arguments
-			keys := processKey(parts[0])
-			for i, k := range keys {
-				src.arguments[k] = ""
-				src.repeats[k]++
-				if i == len(keys)-1 {
-					src.arguments[k] = strings.Join(parts[1:], "=")
+			sections := processKey(parts[0])
+			for i, section := range sections {
+				src.arguments[section.value] = ""
+				src.repeats[section.value]++
+				if i == len(sections)-1 {
+					src.arguments[section.value] = strings.Join(parts[1:], "=")
 				}
 			}
 			prevKey = ""
@@ -50,12 +55,20 @@ func newArgSource(args []string) (*argSource, bool) {
 		}
 
 		if isKey {
-			keys := processKey(arg)
-			for i, k := range keys {
-				src.arguments[k] = ""
-				src.repeats[k]++
-				if i == len(keys)-1 {
-					prevKey = k
+			sections := processKey(arg)
+			for i, section := range sections {
+				if section.isKey {
+					// -short or --long key
+					src.arguments[section.value] = ""
+					src.repeats[section.value]++
+					if i == len(sections)-1 {
+						prevKey = section.value
+					}
+				} else {
+					// short form mixed with value (i.e. -A10B2)
+					// this section is a value section, not key (i.e. 10 or 2 in -A10B2)
+					src.arguments[sections[i-1].value] = section.value
+					prevKey = ""
 				}
 			}
 			continue
@@ -70,19 +83,42 @@ func newArgSource(args []string) (*argSource, bool) {
 	return src, isHelpRequested
 }
 
-func processKey(arg string) []string {
+func processKey(arg string) []argSection {
 	isShort := !strings.HasPrefix(arg, "--")
 	if !isShort {
-		return []string{arg}
+		return []argSection{{
+			isKey: true,
+			value: arg,
+		}}
 	}
 	arg = strings.TrimLeft(arg, "-")
-	args := make([]string, len(arg))
+	args := make([]argSection, 0)
 	// expand attached short flags
 	// for example ‘-abc’ is equivalent to ‘-a -b -c’
-	for i, short := range arg {
-		args[i] = fmt.Sprintf("-%c", short)
+	// or mixed values such as -a100, -a10b20 or -a10b3.4
+	duplicates := regexp.MustCompile(`[a-zA-Z]|[+-]?([0-9]*[.])?[0-9]+`)
+	for _, match := range duplicates.FindAllString(arg, -1) {
+		var isKey bool
+		val := match
+		if IsLetter(match) {
+			isKey = true
+			val = "-" + match
+		}
+		args = append(args, argSection{
+			isKey: isKey,
+			value: val,
+		})
 	}
 	return args
+}
+
+func IsLetter(s string) bool {
+	for _, r := range s {
+		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') {
+			return false
+		}
+	}
+	return true
 }
 
 func (a *argSource) getNumberOfRepeats(f core.Flag) int {

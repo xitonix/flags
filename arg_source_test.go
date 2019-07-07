@@ -802,6 +802,127 @@ func TestArgSource_Read_With_Special_Values(t *testing.T) {
 			},
 			expectedCount: 1,
 		},
+		{
+			title: "single short form mixed with integer value",
+			in:    []string{"-c10"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "10",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			title: "single short form mixed with floating point value",
+			in:    []string{"-c10.2"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "10.2",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			title: "single short form mixed with floating point value starting with dot",
+			in:    []string{"-c.2"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: ".2",
+					ok:    true,
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			title: "multiple short forms mixed with integer value",
+			in:    []string{"-c10b20"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "10",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "20",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
+			title: "multiple short forms mixed with floating point value",
+			in:    []string{"-c10.4b20.6"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "10.4",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "20.6",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
+			title: "multiple short forms mixed with floating point value starting with dot",
+			in:    []string{"-c.4b.6"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: ".4",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: ".6",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
+			title: "multiple short forms mixed with value",
+			in:    []string{"-c10b"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "10",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
+		{
+			title: "duplicate short forms mixed with value",
+			in:    []string{"-c10b40", "-c"},
+			expected: []entry{
+				{
+					key:   "-c",
+					value: "",
+					ok:    true,
+				},
+				{
+					key:   "-b",
+					value: "40",
+					ok:    true,
+				},
+			},
+			expectedCount: 2,
+		},
 	}
 
 	for _, tc := range testCases {

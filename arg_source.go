@@ -31,7 +31,7 @@ func newArgSource(args []string) (*argSource, bool) {
 	var isHelpRequested bool
 	for _, arg := range args {
 		number := regexp.MustCompile(`^[+-]?([0-9]*[.])?[0-9]+$`)
-		isKey := strings.HasPrefix(arg, "-") && !number.Match([]byte(strings.TrimLeft(arg, "-")))
+		isKey := strings.HasPrefix(arg, "-") && !number.Match([]byte(arg))
 		if !isHelpRequested && isKey {
 			ag := strings.TrimSpace(strings.ToLower(arg))
 			if ag == "--help" || ag == "-h" || strings.HasPrefix(ag, "-h=") || strings.HasPrefix(ag, "--help=") {

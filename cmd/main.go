@@ -28,12 +28,13 @@ func main() {
 
 	// Input Validation
 	weekend := flags.StringSlice("weekends", "Weekends").WithValidRange(true, "Sat, Sun").WithTrimming()
-	numRange := flags.Int8("number", "A flag with validation callback").WithValidationCallback(func(in int8) error {
-		if in > 10 {
-			return errors.New("--number must be less than 10")
-		}
-		return nil
-	})
+	numRange := flags.Int8("number", "A flag with validation callback").
+		WithValidationCallback(func(in int8) error {
+			if in > 10 {
+				return errors.New("--number must be less than 10")
+			}
+			return nil
+		})
 
 	// CIDR and IP address
 	net := flags.CIDR("network", "Network definition. Example 192.168.1.1/16")

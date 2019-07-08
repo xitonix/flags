@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -13,7 +13,7 @@ import (
 // The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
 // The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled)
 type BoolFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value bool
 	hasDefault          bool
 	ptr                 *bool
@@ -28,7 +28,7 @@ type BoolFlag struct {
 
 func newBool(name, usage string) *BoolFlag {
 	f := &BoolFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(bool),
@@ -233,7 +233,7 @@ func (f *BoolFlag) EmptyValue() string {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *BoolFlag) Key() *data.Key {
+func (f *BoolFlag) Key() *core.Key {
 	return f.key
 }
 

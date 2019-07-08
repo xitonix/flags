@@ -5,13 +5,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
 // Float32Flag represents a float32 flag.
 type Float32Flag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value float32
 	hasDefault          bool
 	ptr                 *float32
@@ -28,7 +28,7 @@ type Float32Flag struct {
 
 func newFloat32(name, usage string) *Float32Flag {
 	f := &Float32Flag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(float32),
@@ -249,7 +249,7 @@ func (f *Float32Flag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *Float32Flag) Key() *data.Key {
+func (f *Float32Flag) Key() *core.Key {
 	return f.key
 }
 

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -15,7 +15,7 @@ import (
 // such as "300ms", "-1.5h" or "2h45m".
 // Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
 type DurationFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value time.Duration
 	hasDefault          bool
 	ptr                 *time.Duration
@@ -32,7 +32,7 @@ type DurationFlag struct {
 
 func newDuration(name, usage string) *DurationFlag {
 	f := &DurationFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(time.Duration),
@@ -258,7 +258,7 @@ func (f *DurationFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *DurationFlag) Key() *data.Key {
+func (f *DurationFlag) Key() *core.Key {
 	return f.key
 }
 

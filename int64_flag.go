@@ -4,13 +4,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
 // Int64Flag represents an int64 flag.
 type Int64Flag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value int64
 	hasDefault          bool
 	ptr                 *int64
@@ -27,7 +27,7 @@ type Int64Flag struct {
 
 func newInt64(name, usage string) *Int64Flag {
 	f := &Int64Flag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(int64),
@@ -248,7 +248,7 @@ func (f *Int64Flag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *Int64Flag) Key() *data.Key {
+func (f *Int64Flag) Key() *core.Key {
 	return f.key
 }
 

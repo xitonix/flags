@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/xitonix/flags/core"
-	"github.com/xitonix/flags/data"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -16,7 +15,7 @@ import (
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 type UIntSliceFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value []uint
 	hasDefault          bool
 	ptr                 *[]uint
@@ -34,7 +33,7 @@ type UIntSliceFlag struct {
 
 func newUIntSlice(name, usage string) *UIntSliceFlag {
 	f := &UIntSliceFlag{
-		key:       &data.Key{},
+		key:       &core.Key{},
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]uint),
@@ -275,7 +274,7 @@ func (f *UIntSliceFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *UIntSliceFlag) Key() *data.Key {
+func (f *UIntSliceFlag) Key() *core.Key {
 	return f.key
 }
 

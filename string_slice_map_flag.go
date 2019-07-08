@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/xitonix/flags/core"
-	"github.com/xitonix/flags/data"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -22,7 +21,7 @@ import (
 // {"Sat", "Sun"} instead of {"Sat", " Sun"}.
 // Notice that the leading white space before " Sun" has been removed.
 type StringSliceMapFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value map[string][]string
 	hasDefault          bool
 	ptr                 *map[string][]string
@@ -39,7 +38,7 @@ type StringSliceMapFlag struct {
 
 func newStringSliceMap(name, usage string) *StringSliceMapFlag {
 	f := &StringSliceMapFlag{
-		key:       &data.Key{},
+		key:       &core.Key{},
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new(map[string][]string),
@@ -269,7 +268,7 @@ func (f *StringSliceMapFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *StringSliceMapFlag) Key() *data.Key {
+func (f *StringSliceMapFlag) Key() *core.Key {
 	return f.key
 }
 

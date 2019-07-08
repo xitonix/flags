@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/xitonix/flags/core"
-	"github.com/xitonix/flags/data"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -19,7 +18,7 @@ import (
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 type DurationSliceFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value []time.Duration
 	hasDefault          bool
 	ptr                 *[]time.Duration
@@ -37,7 +36,7 @@ type DurationSliceFlag struct {
 
 func newDurationSlice(name, usage string) *DurationSliceFlag {
 	f := &DurationSliceFlag{
-		key:       &data.Key{},
+		key:       &core.Key{},
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]time.Duration),
@@ -281,7 +280,7 @@ func (f *DurationSliceFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *DurationSliceFlag) Key() *data.Key {
+func (f *DurationSliceFlag) Key() *core.Key {
 	return f.key
 }
 

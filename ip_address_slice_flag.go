@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/xitonix/flags/core"
-	"github.com/xitonix/flags/data"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -15,7 +14,7 @@ import (
 // IPv4 (i.e. "192.0.2.1, 192.0.2.2") or IPv6 ("2001:db8::68, 2001:ab8::69") formatted strings.
 // Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
 type IPAddressSliceFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value []net.IP
 	hasDefault          bool
 	ptr                 *[]net.IP
@@ -33,7 +32,7 @@ type IPAddressSliceFlag struct {
 
 func newIPAddressSlice(name, usage string) *IPAddressSliceFlag {
 	f := &IPAddressSliceFlag{
-		key:       &data.Key{},
+		key:       &core.Key{},
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]net.IP),
@@ -278,7 +277,7 @@ func (f *IPAddressSliceFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *IPAddressSliceFlag) Key() *data.Key {
+func (f *IPAddressSliceFlag) Key() *core.Key {
 	return f.key
 }
 

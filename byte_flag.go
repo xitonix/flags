@@ -4,13 +4,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
 // ByteFlag represents a byte flag.
 type ByteFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value byte
 	hasDefault          bool
 	ptr                 *byte
@@ -27,7 +27,7 @@ type ByteFlag struct {
 
 func newByte(name, usage string) *ByteFlag {
 	f := &ByteFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(byte),
@@ -248,7 +248,7 @@ func (f *ByteFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *ByteFlag) Key() *data.Key {
+func (f *ByteFlag) Key() *core.Key {
 	return f.key
 }
 

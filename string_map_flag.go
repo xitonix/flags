@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -13,7 +13,7 @@ import (
 // The value of a string map flag can be set using standard map initialisation strings.
 // For example --mappings '{"key1":"value1", "key2":"value2"}'
 type StringMapFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value map[string]string
 	hasDefault          bool
 	ptr                 *map[string]string
@@ -28,7 +28,7 @@ type StringMapFlag struct {
 
 func newStringMap(name, usage string) *StringMapFlag {
 	f := &StringMapFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(map[string]string),
@@ -224,7 +224,7 @@ func (f *StringMapFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *StringMapFlag) Key() *data.Key {
+func (f *StringMapFlag) Key() *core.Key {
 	return f.key
 }
 

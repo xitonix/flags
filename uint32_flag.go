@@ -4,13 +4,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
 // UInt32Flag represents an uint32 flag.
 type UInt32Flag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value uint32
 	hasDefault          bool
 	ptr                 *uint32
@@ -27,7 +27,7 @@ type UInt32Flag struct {
 
 func newUInt32(name, usage string) *UInt32Flag {
 	f := &UInt32Flag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(uint32),
@@ -248,7 +248,7 @@ func (f *UInt32Flag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *UInt32Flag) Key() *data.Key {
+func (f *UInt32Flag) Key() *core.Key {
 	return f.key
 }
 

@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -13,7 +13,7 @@ import (
 // The value of a counter flag can be increased by repeating the short form.
 // For example the presence of -vv command line argument will set the value of the counter to 2.
 type CounterFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value int
 	hasDefault          bool
 	ptr                 *int
@@ -30,7 +30,7 @@ type CounterFlag struct {
 
 func newCounter(name, usage string) *CounterFlag {
 	f := &CounterFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(int),
@@ -254,7 +254,7 @@ func (f *CounterFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *CounterFlag) Key() *data.Key {
+func (f *CounterFlag) Key() *core.Key {
 	return f.key
 }
 

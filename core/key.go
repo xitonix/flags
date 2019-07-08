@@ -1,4 +1,4 @@
-package data
+package core
 
 import (
 	"github.com/xitonix/flags/internal"

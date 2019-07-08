@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/xitonix/flags/core"
-	"github.com/xitonix/flags/data"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -16,7 +15,7 @@ import (
 //
 // For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
 type CIDRFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value core.CIDR
 	hasDefault          bool
 	ptr                 *core.CIDR
@@ -33,7 +32,7 @@ type CIDRFlag struct {
 
 func newCIDR(name, usage string) *CIDRFlag {
 	f := &CIDRFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(core.CIDR),
@@ -266,7 +265,7 @@ func (f *CIDRFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *CIDRFlag) Key() *data.Key {
+func (f *CIDRFlag) Key() *core.Key {
 	return f.key
 }
 

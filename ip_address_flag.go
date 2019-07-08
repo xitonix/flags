@@ -4,7 +4,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/xitonix/flags/data"
+	"github.com/xitonix/flags/core"
 	"github.com/xitonix/flags/internal"
 )
 
@@ -13,7 +13,7 @@ import (
 // The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
 type IPAddressFlag struct {
-	key                 *data.Key
+	key                 *core.Key
 	defaultValue, value net.IP
 	hasDefault          bool
 	ptr                 *net.IP
@@ -30,7 +30,7 @@ type IPAddressFlag struct {
 
 func newIPAddress(name, usage string) *IPAddressFlag {
 	f := &IPAddressFlag{
-		key:   &data.Key{},
+		key:   &core.Key{},
 		long:  internal.SanitiseLongName(name),
 		usage: usage,
 		ptr:   new(net.IP),
@@ -260,7 +260,7 @@ func (f *IPAddressFlag) Default() interface{} {
 // Each flag within a bucket may have an optional UNIQUE key which will be used to retrieve its value
 // from different sources. This is the key which will be used internally to retrieve the flag's value
 // from the environment variables.
-func (f *IPAddressFlag) Key() *data.Key {
+func (f *IPAddressFlag) Key() *core.Key {
 	return f.key
 }
 

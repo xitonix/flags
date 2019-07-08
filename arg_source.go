@@ -105,7 +105,7 @@ func processKey(arg string) []argSection {
 		// !prevArgWasKey: if the previous item was not a key we will add the current item as a key
 		// (even though it's not) in order for the invalid input to be detected as an unknown flag at the time of parsing.
 		// An example is -10 is invalid because a value entry must always be preceded by a key.
-		if IsLetter(match) || !prevArgWasKey {
+		if isLetter(match) || !prevArgWasKey {
 			isKey = true
 			val = "-" + match
 		}
@@ -118,7 +118,7 @@ func processKey(arg string) []argSection {
 	return args
 }
 
-func IsLetter(s string) bool {
+func isLetter(s string) bool {
 	for _, r := range s {
 		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') {
 			return false

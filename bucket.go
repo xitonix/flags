@@ -123,21 +123,7 @@ func (b *Bucket) Parse() {
 			argSrc, isArgs := src.(*argSource)
 
 			if isArgs {
-				value, found = src.Read("--" + f.LongName())
-				if !found {
-					value, found = src.Read("-" + f.ShortName())
-				}
-				if !found || internal.IsEmpty(value) {
-					if repeatable, isRepeatable := f.(core.Repeatable); isRepeatable {
-						count := argSrc.getNumberOfRepeats(f)
-						if count > 0 {
-							// Either the short form or the long form has been
-							// provided at least once
-							value = strconv.Itoa(count * repeatable.Once())
-							found = true
-						}
-					}
-				}
+				value, found = b.processArgsSource(value, found, f, argSrc)
 			}
 
 			if !found && !isArgs && f.Key().IsSet() {
@@ -694,4 +680,23 @@ func (b *Bucket) executeCallback(f core.Flag, value string, post bool) bool {
 func (b *Bucket) terminateWithError(err error) {
 	b.opts.Logger.Print(err)
 	b.opts.Terminator.Terminate(core.FailureExitCode)
+}
+
+func (b *Bucket) processArgsSource(value string, found bool, f core.Flag, argSrc *argSource) (string, bool) {
+	value, found = argSrc.Read("--" + f.LongName())
+	if !found {
+		value, found = argSrc.Read("-" + f.ShortName())
+	}
+	if !found || internal.IsEmpty(value) {
+		if repeatable, isRepeatable := f.(core.Repeatable); isRepeatable {
+			count := argSrc.getNumberOfRepeats(f)
+			if count > 0 {
+				// Either the short form or the long form has been
+				// provided at least once
+				value = strconv.Itoa(count * repeatable.Once())
+				found = true
+			}
+		}
+	}
+	return value, found
 }

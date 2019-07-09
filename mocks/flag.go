@@ -24,7 +24,7 @@ func NewFlag(long, short string) *Flag {
 	return NewFlagWithUsage(long, short, "this is a mocked flag")
 }
 
-// NewFlagWithKey creates a new flag mock along with usage string.
+// NewFlagWithUsage creates a new flag mock along with usage string.
 func NewFlagWithUsage(long, short, usage string) *Flag {
 	return &Flag{
 		long:  long,

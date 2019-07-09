@@ -3,7 +3,7 @@ package by
 var (
 	// DeclarationOrder the default sort order.
 	// The flags will be printed in the same order as they have been defined.
-	DeclarationOrder Comparer = nil
+	DeclarationOrder Comparer
 	// LongNameAscending sort by long name in ascending order.
 	LongNameAscending = StringComparer{Ascending: true, Field: LongName}
 	// LongNameDescending sort by long name in descending order.

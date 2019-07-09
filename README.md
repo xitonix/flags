@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/xitonix/flags?status.svg)](https://godoc.org/github.com/xitonix/flags)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xitonix/flags)](https://goreportcard.com/report/github.com/xitonix/flags)
 [![Build Status](https://travis-ci.org/xitonix/flags.svg?branch=master)](https://travis-ci.org/xitonix/flags)
 [![codecov](https://codecov.io/gh/xitonix/flags/branch/master/graph/badge.svg)](https://codecov.io/gh/xitonix/flags)
 # flags

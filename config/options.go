@@ -59,6 +59,7 @@ type Options struct {
 	PostSetCallback core.Callback
 }
 
+// NewOptions creates a new Options object with default values.
 func NewOptions() *Options {
 	return &Options{
 		// SetID default values here

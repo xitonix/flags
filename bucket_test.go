@@ -324,14 +324,14 @@ func TestBucket_Parse_Help_Sort(t *testing.T) {
 			title:         "sort by key ascending",
 			args:          []string{"--help"},
 			comparer:      by.KeyAscending,
-			flags:         []core.Flag{mocks.NewFlagWithKey("x-long", "x", "x-key"), mocks.NewFlagWithKey("a-long", "a", "a-key")},
+			flags:         []core.Flag{mocks.NewFlag("x-long", "x").WithKey("x-key"), mocks.NewFlag("a-long", "a").WithKey("a-key")},
 			expectedLines: []string{"A_KEY", "X_KEY"},
 		},
 		{
 			title:         "sort by key descending",
 			args:          []string{"--help"},
 			comparer:      by.KeyDescending,
-			flags:         []core.Flag{mocks.NewFlagWithKey("a-long", "a", "a-key"), mocks.NewFlagWithKey("x-long", "x", "x-key")},
+			flags:         []core.Flag{mocks.NewFlag("a-long", "a").WithKey("a-key"), mocks.NewFlag("x-long", "x").WithKey("x-key")},
 			expectedLines: []string{"X_KEY", "A_KEY"},
 		},
 		{

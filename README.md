@@ -12,6 +12,7 @@ The API is packed with a full set of standard built-in flag types, from `int` to
 
 ## Features
 
+- Fully tested with 3K+ unit tests
 - Built-in flag types
   - bool and []bool
   - byte

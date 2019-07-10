@@ -55,9 +55,9 @@ Numeric flags (Integers or floating point numbers)
 	-n[+/-]10
 
 	// Mixed short forms
-	-n[+/-]10b
-	-n[+/-]10m[+/-]20
-	-n[+/-]10m [+/-]20
+	-n[+/-]10m          // result: n=+/-10, m=0
+	-n[+/-]10m[+/-]20   // result: n=+/-10, m=+/-20
+	-n[+/-]10m [+/-]20  // result: n=+/-10, m=+/-20
 
 Non numeric flags
 

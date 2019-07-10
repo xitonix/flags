@@ -10,7 +10,7 @@ import (
 
 // CounterFlag represents a counter flag.
 //
-// The value of a counter flag can be increased by repeating the short form.
+// The value of a counter flag can be increased by repeating the short or the long form.
 // For example the presence of -vv command line argument will set the value of the counter to 2.
 type CounterFlag struct {
 	key                 *core.Key
@@ -195,7 +195,7 @@ func (f *CounterFlag) WithValidRange(valid ...int) *CounterFlag {
 
 // Set sets the flag value.
 //
-// The value of a counter flag can be increased by repeating the short form.
+// The value of a counter flag can be increased by repeating the short or the long form.
 // For example the presence of -vv command line argument will set the value of the counter to 2.
 func (f *CounterFlag) Set(value string) error {
 	value = strings.TrimSpace(value)

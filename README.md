@@ -54,28 +54,29 @@ The API is packed with a full set of standard built-in flag types, from `int` to
   
 
   ```bash
-  Boolean flags
+  # Boolean flags
   
-  	--bool  --bool=true  --bool=false  --bool=1  --bool=0
-  	-b  -b=true  -b=false  -b=1  -b=0
+  --bool  --bool=true  --bool=false  --bool=1  --bool=0
+  -b  -b=true  -b=false  -b=1  -b=0
   
-  Numeric flags (Integers or floating point numbers)
+  # Numeric flags (Integers or floating point numbers)
   
-  	--num=[+/-]10
-  	--num [+/-]10
-  	-n=[+/-]10
-  	-n [+/-]10
-  	-n[+/-]10
+  --num=[+/-]10
+  --num [+/-]10
+  -n=[+/-]10
+  -n [+/-]10
+  -n[+/-]10
   
-  	// Mixed short forms
-  	-n[+/-]10m (#result: n=+/-10, m=0)
-  	-n[+/-]10m[+/-]20 (#result: n=+/-10, m=+/-20)
-  	-n[+/-]10m [+/-]20 (#result: n=+/-10, m=+/-20)
+  # Mixed short forms
+
+  -n[+/-]10m         # result: n=+/-10, m=0
+  -n[+/-]10m[+/-]20  # result: n=+/-10, m=+/-20
+  -n[+/-]10m [+/-]20  # result: n=+/-10, m=+/-20
   
-  Non numeric flags
+  # Non numeric flags
   
-  	--key="value"  --key "value"  --key value
-  	-k="value"  -k "value"  -k value
+  --key="value"  --key "value"  --key value
+  -k="value"  -k "value"  -k value
   ```
 
   
@@ -94,120 +95,122 @@ go get github.com/xitonix/flags
 package main
 
 import (
-	"errors"
-	"fmt"
+  "errors"
+  "fmt"
 
-	"github.com/xitonix/flags"
-	"github.com/xitonix/flags/by"
+  "github.com/xitonix/flags"
+  "github.com/xitonix/flags/by"
 )
 
 func main() {
-	// Enabling auto key generation
-	flags.EnableAutoKeyGeneration()
+
+   // Enabling auto key generation
+   flags.EnableAutoKeyGeneration()
   
-  // You can optionally set a prefix for all the automatically generated 
-  // or explicitly defined flag keys.
-	flags.SetKeyPrefix("PFX")
+   // You can optionally set a prefix for all the automatically generated 
+   // or explicitly defined flag keys.
+   flags.SetKeyPrefix("PFX")
 
-	// Customising the indicator for deprecated and required flags.
-  // The markers will be used in the help output to draw the users' attention
-	flags.SetDeprecationMark("**DEPRECATED**")
-	flags.SetRequiredFlagMark("**")
+   // Customising the indicator for deprecated and required flags.
+   // The markers will be used in the help output to draw the users' attention
+   flags.SetDeprecationMark("**DEPRECATED**")
+   flags.SetRequiredFlagMark("**")
 
-	// Changing the sort order.
-  // You can use pre-built sort predicates or pass your own Comparer to change the
-  // order in which the flags will be printed in the help output.
-	flags.SetSortOrder(by.LongNameDescending)
+   // Changing the sort order.
+   // You can use pre-built sort predicates or pass your own Comparer to change the
+   // order in which the flags will be printed in the help output.
+   flags.SetSortOrder(by.LongNameDescending)
 
-  // Each flag must have a mandatory long form (ie. --file-path) and 
-  // an OPTIONAL short form (i.e. -F)
-	port := flags.Int("port-number", "Port number").WithShort("p")
+   // Each flag must have a mandatory long form (ie. --file-path) and 
+   // an OPTIONAL short form (i.e. -F)
+   port := flags.Int("port-number", "Port number").WithShort("p")
 
-	// You can ask the package to set the flag to the specified default value whenever
-  // it's not explicitly provided by any available Sources.
-  // You may also use the Var() function with each flag to access the pointer to 
-  // the underlying variable instead of calling the Get() function to read the falg value.
-	log := flags.String("log-file", "The path to the log file").WithDefault("/var/log/service.log").Var()
+   // You can ask the package to set the flag to the specified default value whenever
+   // it's not explicitly provided by any available Sources.
+   // You may also use the Var() function with each flag to access the pointer to 
+   // the underlying variable instead of calling the Get() function to read the falg value.
+   log := flags.String("log-file", "The path to the log file").WithDefault("/var/log/service.log").Var()
 
-	// You have full control over the acceptable values for each flag. You can either provide
-  // a list of allowed values using WithValidRange method:
-	weekend := flags.StringSlice("weekends", "Weekends").WithValidRange(true, "Sat, Sun").WithTrimming()
+   // You have full control over the acceptable values for each flag. You can either provide
+   // a list of allowed values using WithValidRange method:
+   weekend := flags.StringSlice("weekends", "Weekends").WithValidRange(true, "Sat, Sun").WithTrimming()
   
-  // or set a fully customisable validator using WithValidationCallback method:
-	numRange := flags.Int8("number", "A flag with validation callback").
-		WithValidationCallback(func(in int8) error {
-			if in > 10 {
-				return errors.New("--number must be less than 10")
-			}
-			return nil
-		})
+   // or set a fully customisable validator using WithValidationCallback method:
+   numRange := flags.Int8("number", "A flag with validation callback").
+	WithValidationCallback(func(in int8) error {
+	  if in > 10 {
+		return errors.New("--number must be less than 10")
+	  }
+	  return nil
+	})
 
-	// CIDR and IP address
-	net := flags.CIDR("network", "Network definition. Example 192.168.1.1/16")
-	endpoint := flags.IPAddress("endpoint", "The IP address of the remote server")
+   // CIDR and IP address
+   net := flags.CIDR("network", "Network definition. Example 192.168.1.1/16")
+   endpoint := flags.IPAddress("endpoint", "The IP address of the remote server")
 
-  // Deprecated flags will be marked in the help output 
-  // using a customisable indicator to draw user's attention
-	_ = flags.Int("port", "Legacy port number. Use -p, --port-number instead").MarkAsDeprecated()
+   // Deprecated flags will be marked in the help output 
+   // using a customisable indicator to draw user's attention
+   _ = flags.Int("port", "Legacy port number. Use -p, --port-number instead").MarkAsDeprecated()
 
-	// Required flags will be marked in the help output 
-  // using a customisable indicator to draw user's attention.
-  // The user must explicitly provide value for a required flag.
-  // Setting the default value of required flags will have zero effect.
-	rate := flags.Float64("rate", "Conversion rate").Required()
+   // Required flags will be marked in the help output 
+   // using a customisable indicator to draw user's attention.
+   // The user must explicitly provide value for a required flag.
+   // Setting the default value of required flags will have zero effect.
+   rate := flags.Float64("rate", "Conversion rate").Required()
 
-	// Hidden flags will not be displayed in the help output.
-	hidden := flags.Bool("enable-logging", "Secret flag").Hide()
+   // Hidden flags will not be displayed in the help output.
+   hidden := flags.Bool("enable-logging", "Secret flag").Hide()
 
-  // You can explicitly define the key for each flag. These keys will override
-  // their automatically generated counterparts.
-  t := flags.Time("start-time", "Start time").WithKey("START")
-	ttl := flags.Duration("ttl", "Time to live")
+   // You can explicitly define the key for each flag. These keys will override
+   // their automatically generated counterparts.
+   t := flags.Time("start-time", "Start time").WithKey("START")
+   ttl := flags.Duration("ttl", "Time to live")
 
-	// The value of Counter flags can be increased by repeating the short or the long form
-  // for example -cc --counter --counter will the the counter flag to 4.
-	counter := flags.Counter("counter", "Repeat counter")
+   // The value of Counter flags can be increased by repeating the short or the long form
+   // for example -cc --counter --counter will the the counter flag to 4.
+   counter := flags.Counter("counter", "Repeat counter")
   
-  // Verbosity is an alias for Counter("verbose", "usage").WithShort("v")
-	verbose := flags.Verbosity("Verbosity. Repeat -v for higher verbosity levels. Example -vv")
+   // Verbosity is an alias for Counter("verbose", "usage").WithShort("v")
+   verbose := flags.Verbosity("Verbosity. Repeat -v for higher verbosity levels. Example -vv")
 
-  // This callback function will be called before the flag value is being set by a source.
-  preCallback := func(flag core.Flag, value string) error {
-		fmt.Printf("%s will be set to %s\n", flag.LongName(), value)
-		return nil
+   // This callback function will be called before the flag value is being set by a source.
+   preCallback := func(flag core.Flag, value string) error {
+	  fmt.Printf("%s will be set to %s\n", flag.LongName(), value)
+	  return nil
 	}
 
-  // This callback function will be called after the flag value has been set by a source.
-  // postCallback will not get called if preCallback returns an error.
-	postCallback := func(flag core.Flag, value string) error {
-		fmt.Printf("%s has been set to %s\n", flag.LongName(), value)
-		return nil
+   // This callback function will be called after the flag value has been set by a source.
+   // postCallback will not get called if preCallback returns an error.
+   postCallback := func(flag core.Flag, value string) error {
+	  fmt.Printf("%s has been set to %s\n", flag.LongName(), value)
+	  return nil
 	}
   
-  flags.SetPreSetCallback(preCallback)
-  flags.SetPostSetCallback(postCallback)
+    flags.SetPreSetCallback(preCallback)
+    flags.SetPostSetCallback(postCallback)
   
 	flags.Parse()
   
-  // You can read the flag value by calling the Get() method
-	fmt.Println("Port", port.Get())
-  // or accessing the underlying pointer if Var() is used when creating the flag
-	fmt.Println("Log", *log)
-	fmt.Println("Weekend", weekend.Get())
-	fmt.Println("Network", net.Get())
-	fmt.Println("Endpoint", endpoint.Get())
-	fmt.Println("Rate", rate.Get())
-	fmt.Println("Hidden", hidden.Get())
-	fmt.Println("Range", numRange.Get())
-	fmt.Println("Time", t.Get())
-	fmt.Println("TTL", ttl.Get())
-	fmt.Println("Counter", counter.Get())
-	fmt.Println("Verbosity", verbose.Get())
+   // You can read the flag value by calling the Get() method
+   fmt.Println("Port", port.Get())
+   
+   // or accessing the underlying pointer if Var() is used when creating the flag
+   fmt.Println("Log", *log)
+   fmt.Println("Weekend", weekend.Get())
+   fmt.Println("Network", net.Get())
+   fmt.Println("Endpoint", endpoint.Get())
+   fmt.Println("Rate", rate.Get())
+   fmt.Println("Hidden", hidden.Get())
+   fmt.Println("Range", numRange.Get())
+   fmt.Println("Time", t.Get())
+   fmt.Println("TTL", ttl.Get())
+   fmt.Println("Counter", counter.Get())
+   fmt.Println("Verbosity", verbose.Get())
 
   // It's possible to navigate through all the registered flags
-	for _, flag := range flags.DefaultBucket.Flags() {
-		fmt.Printf("--%s (%s) %s\n", flag.LongName(), flag.Type(), flag.Usage())
-	}
+  for _, flag := range flags.DefaultBucket.Flags() {
+ 	fmt.Printf("--%s (%s) %s\n", flag.LongName(), flag.Type(), flag.Usage())
+  }
 }
 
 ```

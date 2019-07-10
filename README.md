@@ -178,19 +178,18 @@ func main() {
    preCallback := func(flag core.Flag, value string) error {
 	  fmt.Printf("%s will be set to %s\n", flag.LongName(), value)
 	  return nil
-	}
+   }
 
    // This callback function will be called after the flag value has been set by a source.
    // postCallback will not get called if preCallback returns an error.
    postCallback := func(flag core.Flag, value string) error {
 	  fmt.Printf("%s has been set to %s\n", flag.LongName(), value)
 	  return nil
-	}
+   }
   
-    flags.SetPreSetCallback(preCallback)
-    flags.SetPostSetCallback(postCallback)
-  
-	flags.Parse()
+   flags.SetPreSetCallback(preCallback)
+   flags.SetPostSetCallback(postCallback)
+   flags.Parse()
   
    // You can read the flag value by calling the Get() method
    fmt.Println("Port", port.Get())

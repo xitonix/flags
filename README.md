@@ -7,7 +7,7 @@
 
 Package flags is a POSIX/GNU compliant flags library providing a simple, yet fully flexible API to manage command line arguments.
 
-The value of each flag can be provided by different sources. Two built-in value providers are **command line argument** and **environment variable** sources, with the former at the beginning of the chain, meaning the values parsed by the command line argument source will override the environment variable values. The package also provides the API to add new custom sources to the chain with a desired priority. For example, you may have your own implementation of the `Source` interface to read from a YAML or JSON file.
+The value of each flag can be provided by different sources. Two built-in value providers are **command line argument** and **environment variable** sources, with the former at the beginning of the chain, meaning the values parsed by the command line argument source will override the values provided by environment variables. The package also provides the API to add new custom sources to the chain with a desired priority. For example, you may have your own implementation of the `Source` interface to read from a YAML or JSON file.
 
 The API is packed with a full set of standard built-in flag types, from `int` to IP address and many more. But you can also build a flag for your custom types and ask the library to pass them through the processing pipeline, the same way it treats the pre-built flags.
 
@@ -38,7 +38,7 @@ The API is packed with a full set of standard built-in flag types, from `int` to
 
 - Automatic key generation (For environment variables and other custom sources)
 
-- Flag value validation through callbacks and providing valid lists
+- Flag value validation through callbacks and providing a list of acceptable values
 
 - API extendability to read the flag values from custom sources
 
@@ -53,9 +53,9 @@ The API is packed with a full set of standard built-in flag types, from `int` to
   - Sort by Required
   - Sort by Deprecated
 
-- Ability to register your own `Comparer` to gain full control over sorting behaviour
+- Ability to register your own `Comparer` to gain full control over the sorting behaviour
 
-- Supporting the following command line argument formats
+- Support for the following command line argument formats:
   
 
   ```bash

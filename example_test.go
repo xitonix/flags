@@ -64,7 +64,7 @@ func Example_deprecated() {
 func Example_validationCallback() {
 	port := flags.Int("port-number", "Port number").WithValidationCallback(func(in int) error {
 		if in > 9000 {
-			return errors.New("The port number must be less than 9000")
+			return errors.New("the port number must be less than 9000")
 		}
 		return nil
 	})

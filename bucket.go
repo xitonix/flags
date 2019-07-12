@@ -210,8 +210,8 @@ func (b *Bucket) AddSource(src core.Source, index int) {
 // String adds a new string flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library.
-func (b *Bucket) String(longName, usage string) *StringFlag {
-	f := newString(longName, usage)
+func (b *Bucket) String(longName, usage string) *core.StringFlag {
+	f := core.NewString(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -219,8 +219,8 @@ func (b *Bucket) String(longName, usage string) *StringFlag {
 // Int adds a new int flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) Int(longName, usage string) *IntFlag {
-	f := newInt(longName, usage)
+func (b *Bucket) Int(longName, usage string) *core.IntFlag {
+	f := core.NewInt(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -228,8 +228,8 @@ func (b *Bucket) Int(longName, usage string) *IntFlag {
 // Int8 adds a new int8 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) Int8(longName, usage string) *Int8Flag {
-	f := newInt8(longName, usage)
+func (b *Bucket) Int8(longName, usage string) *core.Int8Flag {
+	f := core.NewInt8(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -237,8 +237,8 @@ func (b *Bucket) Int8(longName, usage string) *Int8Flag {
 // Int16 adds a new int16 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) Int16(longName, usage string) *Int16Flag {
-	f := newInt16(longName, usage)
+func (b *Bucket) Int16(longName, usage string) *core.Int16Flag {
+	f := core.NewInt16(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -246,8 +246,8 @@ func (b *Bucket) Int16(longName, usage string) *Int16Flag {
 // Int32 adds a new int32 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) Int32(longName, usage string) *Int32Flag {
-	f := newInt32(longName, usage)
+func (b *Bucket) Int32(longName, usage string) *core.Int32Flag {
+	f := core.NewInt32(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -255,8 +255,8 @@ func (b *Bucket) Int32(longName, usage string) *Int32Flag {
 // Int64 adds a new int64 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) Int64(longName, usage string) *Int64Flag {
-	f := newInt64(longName, usage)
+func (b *Bucket) Int64(longName, usage string) *core.Int64Flag {
+	f := core.NewInt64(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -264,8 +264,8 @@ func (b *Bucket) Int64(longName, usage string) *Int64Flag {
 // UInt adds a new uint flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) UInt(longName, usage string) *UIntFlag {
-	f := newUInt(longName, usage)
+func (b *Bucket) UInt(longName, usage string) *core.UIntFlag {
+	f := core.NewUInt(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -273,8 +273,8 @@ func (b *Bucket) UInt(longName, usage string) *UIntFlag {
 // UInt64 adds a new uint64 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) UInt64(longName, usage string) *UInt64Flag {
-	f := newUInt64(longName, usage)
+func (b *Bucket) UInt64(longName, usage string) *core.UInt64Flag {
+	f := core.NewUInt64(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -282,8 +282,8 @@ func (b *Bucket) UInt64(longName, usage string) *UInt64Flag {
 // UInt32 adds a new uint32 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) UInt32(longName, usage string) *UInt32Flag {
-	f := newUInt32(longName, usage)
+func (b *Bucket) UInt32(longName, usage string) *core.UInt32Flag {
+	f := core.NewUInt32(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -291,8 +291,8 @@ func (b *Bucket) UInt32(longName, usage string) *UInt32Flag {
 // UInt16 adds a new uint16 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) UInt16(longName, usage string) *UInt16Flag {
-	f := newUInt16(longName, usage)
+func (b *Bucket) UInt16(longName, usage string) *core.UInt16Flag {
+	f := core.NewUInt16(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -300,8 +300,8 @@ func (b *Bucket) UInt16(longName, usage string) *UInt16Flag {
 // UInt8 adds a new uint8 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. port-number).
-func (b *Bucket) UInt8(longName, usage string) *UInt8Flag {
-	f := newUInt8(longName, usage)
+func (b *Bucket) UInt8(longName, usage string) *core.UInt8Flag {
+	f := core.NewUInt8(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -309,8 +309,8 @@ func (b *Bucket) UInt8(longName, usage string) *UInt8Flag {
 // Byte adds a new byte flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. byte).
-func (b *Bucket) Byte(longName, usage string) *ByteFlag {
-	f := newByte(longName, usage)
+func (b *Bucket) Byte(longName, usage string) *core.ByteFlag {
+	f := core.NewByte(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -321,8 +321,8 @@ func (b *Bucket) Byte(longName, usage string) *ByteFlag {
 //
 // The value of a boolean flag can be explicitly set using true, false, 1 and 0 (i.e. --enabled true OR --enabled=1).
 // The presence of the flag as a CLI argument will also set the flag to true (i.e. --enabled).
-func (b *Bucket) Bool(longName, usage string) *BoolFlag {
-	f := newBool(longName, usage)
+func (b *Bucket) Bool(longName, usage string) *core.BoolFlag {
+	f := core.NewBool(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -335,8 +335,8 @@ func (b *Bucket) Bool(longName, usage string) *BoolFlag {
 // For example --bits "0, 1, true, false"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) BoolSlice(longName, usage string) *BoolSliceFlag {
-	f := newBoolSlice(longName, usage)
+func (b *Bucket) BoolSlice(longName, usage string) *core.BoolSliceFlag {
+	f := core.NewBoolSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -344,8 +344,8 @@ func (b *Bucket) BoolSlice(longName, usage string) *BoolSliceFlag {
 // Float64 adds a new float64 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
-func (b *Bucket) Float64(longName, usage string) *Float64Flag {
-	f := newFloat64(longName, usage)
+func (b *Bucket) Float64(longName, usage string) *core.Float64Flag {
+	f := core.NewFloat64(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -353,8 +353,8 @@ func (b *Bucket) Float64(longName, usage string) *Float64Flag {
 // Float32 adds a new float32 flag to the bucket.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. conversion-rate).
-func (b *Bucket) Float32(longName, usage string) *Float32Flag {
-	f := newFloat32(longName, usage)
+func (b *Bucket) Float32(longName, usage string) *core.Float32Flag {
+	f := core.NewFloat32(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -365,8 +365,8 @@ func (b *Bucket) Float32(longName, usage string) *Float32Flag {
 // For example, if the short name is 'c', the presence of -cc command line argument will set the value of the counter to 2.
 //
 // The long name will be automatically converted to lowercase by the library (i.e. count).
-func (b *Bucket) Counter(longName, usage string) *CounterFlag {
-	f := newCounter(longName, usage)
+func (b *Bucket) Counter(longName, usage string) *core.CounterFlag {
+	f := core.NewCounter(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -376,7 +376,7 @@ func (b *Bucket) Counter(longName, usage string) *CounterFlag {
 // The value of the verbosity flag can be increased by repeating the short or the long form.
 // For example the presence of -vv command line argument will set the verbosity level to 2.
 // Having '--verbose -v', '--verbose --verbose' or '-v -v' would have the same effect.
-func (b *Bucket) Verbosity(usage string) *CounterFlag {
+func (b *Bucket) Verbosity(usage string) *core.CounterFlag {
 	return b.Counter("verbose", usage).WithShort("v")
 }
 
@@ -388,8 +388,8 @@ func (b *Bucket) Verbosity(usage string) *CounterFlag {
 // decimal numbers, each with optional fraction and a unit suffix,
 // such as "300ms", "-1.5h" or "2h45m".
 // Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
-func (b *Bucket) Duration(longName, usage string) *DurationFlag {
-	f := newDuration(longName, usage)
+func (b *Bucket) Duration(longName, usage string) *core.DurationFlag {
+	f := core.NewDuration(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -405,8 +405,8 @@ func (b *Bucket) Duration(longName, usage string) *DurationFlag {
 // For example --durations "2s, 2.5s, 5s".
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) DurationSlice(longName, usage string) *DurationSliceFlag {
-	f := newDurationSlice(longName, usage)
+func (b *Bucket) DurationSlice(longName, usage string) *core.DurationSliceFlag {
+	f := core.NewDurationSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -445,8 +445,8 @@ func (b *Bucket) DurationSlice(longName, usage string) *DurationSliceFlag {
 //  hh:mm:ss[.999999999] AM/PM (i.e. 02:22:20 PM)
 //
 // [.999999999] is the optional nano second component for time.
-func (b *Bucket) Time(longName, usage string) *TimeFlag {
-	f := newTime(longName, usage)
+func (b *Bucket) Time(longName, usage string) *core.TimeFlag {
+	f := core.NewTime(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -464,8 +464,8 @@ func (b *Bucket) Time(longName, usage string) *TimeFlag {
 // using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
 // {"Sat", "Sun"} instead of {"Sat", " Sun"}.
 // Notice that the leading white space before " Sun" has been removed.
-func (b *Bucket) StringSlice(longName, usage string) *StringSliceFlag {
-	f := newStringSlice(longName, usage)
+func (b *Bucket) StringSlice(longName, usage string) *core.StringSliceFlag {
+	f := core.NewStringSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -478,8 +478,8 @@ func (b *Bucket) StringSlice(longName, usage string) *StringSliceFlag {
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) IntSlice(longName, usage string) *IntSliceFlag {
-	f := newIntSlice(longName, usage)
+func (b *Bucket) IntSlice(longName, usage string) *core.IntSliceFlag {
+	f := core.NewIntSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -492,8 +492,8 @@ func (b *Bucket) IntSlice(longName, usage string) *IntSliceFlag {
 // For example --numbers "1,8,70,60,100"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) UIntSlice(longName, usage string) *UIntSliceFlag {
-	f := newUIntSlice(longName, usage)
+func (b *Bucket) UIntSlice(longName, usage string) *core.UIntSliceFlag {
+	f := core.NewUIntSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -506,8 +506,8 @@ func (b *Bucket) UIntSlice(longName, usage string) *UIntSliceFlag {
 // For example --rates "1.0, 1.5, 3.0, 3.5, 5.0"
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) Float64Slice(longName, usage string) *Float64SliceFlag {
-	f := newFloat64Slice(longName, usage)
+func (b *Bucket) Float64Slice(longName, usage string) *core.Float64SliceFlag {
+	f := core.NewFloat64Slice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -518,8 +518,8 @@ func (b *Bucket) Float64Slice(longName, usage string) *Float64SliceFlag {
 //
 // The value of an IP address flag can be specified using an IPv4 dotted decimal (i.e. "192.0.2.1")
 // or an IPv6 ("2001:db8::68") formatted string.
-func (b *Bucket) IPAddress(longName, usage string) *IPAddressFlag {
-	f := newIPAddress(longName, usage)
+func (b *Bucket) IPAddress(longName, usage string) *core.IPAddressFlag {
+	f := core.NewIPAddress(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -533,8 +533,8 @@ func (b *Bucket) IPAddress(longName, usage string) *IPAddressFlag {
 // Different IP address versions can also be combined into a single string (i.e. "192.0.2.1, 2001:db8::68").
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
-	f := newIPAddressSlice(longName, usage)
+func (b *Bucket) IPAddressSlice(longName, usage string) *core.IPAddressSliceFlag {
+	f := core.NewIPAddressSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -548,8 +548,8 @@ func (b *Bucket) IPAddressSlice(longName, usage string) *IPAddressSliceFlag {
 // parsed to the IP address and the network implied by the IP and prefix length.
 //
 // For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
-func (b *Bucket) CIDR(longName, usage string) *CIDRFlag {
-	f := newCIDR(longName, usage)
+func (b *Bucket) CIDR(longName, usage string) *core.CIDRFlag {
+	f := core.NewCIDR(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -565,8 +565,8 @@ func (b *Bucket) CIDR(longName, usage string) *CIDRFlag {
 // For example, "192.0.2.1/24" will be translated to the IP address 192.0.2.1 and the network 192.0.2.0/24.
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
-func (b *Bucket) CIDRSlice(longName, usage string) *CIDRSliceFlag {
-	f := newCIDRSlice(longName, usage)
+func (b *Bucket) CIDRSlice(longName, usage string) *core.CIDRSliceFlag {
+	f := core.NewCIDRSlice(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -577,8 +577,8 @@ func (b *Bucket) CIDRSlice(longName, usage string) *CIDRSliceFlag {
 //
 // The value of a string map flag can be set using standard map initialisation strings.
 // For example --mappings '{"key1":"value1", "key2":"value2"}'
-func (b *Bucket) StringMap(longName, usage string) *StringMapFlag {
-	f := newStringMap(longName, usage)
+func (b *Bucket) StringMap(longName, usage string) *core.StringMapFlag {
+	f := core.NewStringMap(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }
@@ -597,8 +597,8 @@ func (b *Bucket) StringMap(longName, usage string) *StringMapFlag {
 // using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
 // {"Sat", "Sun"} instead of {"Sat", " Sun"}.
 // Notice that the leading white space before " Sun" has been removed.
-func (b *Bucket) StringSliceMap(longName, usage string) *StringSliceMapFlag {
-	f := newStringSliceMap(longName, usage)
+func (b *Bucket) StringSliceMap(longName, usage string) *core.StringSliceMapFlag {
+	f := core.NewStringSliceMap(longName, usage)
 	b.flags = append(b.flags, f)
 	return f
 }

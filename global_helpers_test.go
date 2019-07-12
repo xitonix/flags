@@ -290,8 +290,8 @@ func TestGlobalString(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*StringFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringFlag{}, f)
+	if _, ok := f.(*core.StringFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringFlag{}, f)
 	}
 }
 
@@ -303,8 +303,8 @@ func TestGlobalStringMap(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*StringMapFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	if _, ok := f.(*core.StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringMapFlag{}, f)
 	}
 }
 
@@ -316,8 +316,8 @@ func TestGlobalStringSliceMap(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*StringSliceMapFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
+	if _, ok := f.(*core.StringSliceMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringSliceMapFlag{}, f)
 	}
 }
 
@@ -329,8 +329,8 @@ func TestGlobalInt(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*IntFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IntFlag{}, f)
+	if _, ok := f.(*core.IntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IntFlag{}, f)
 	}
 }
 
@@ -342,8 +342,8 @@ func TestGlobalInt64(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Int64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int64Flag{}, f)
+	if _, ok := f.(*core.Int64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int64Flag{}, f)
 	}
 }
 
@@ -355,8 +355,8 @@ func TestGlobalInt32(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Int32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
+	if _, ok := f.(*core.Int32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int32Flag{}, f)
 	}
 }
 
@@ -368,8 +368,8 @@ func TestGlobalInt16(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Int16Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
+	if _, ok := f.(*core.Int16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int16Flag{}, f)
 	}
 }
 
@@ -381,8 +381,8 @@ func TestGlobalInt8(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Int8Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
+	if _, ok := f.(*core.Int8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int8Flag{}, f)
 	}
 }
 
@@ -394,8 +394,8 @@ func TestGlobalUInt(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UIntFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &UIntFlag{}, f)
+	if _, ok := f.(*core.UIntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UIntFlag{}, f)
 	}
 }
 
@@ -407,8 +407,8 @@ func TestGlobalUInt64(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UInt64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
+	if _, ok := f.(*core.UInt64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt64Flag{}, f)
 	}
 }
 
@@ -420,8 +420,8 @@ func TestGlobalUInt32(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UInt32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt32Flag{}, f)
+	if _, ok := f.(*core.UInt32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt32Flag{}, f)
 	}
 }
 
@@ -433,8 +433,8 @@ func TestGlobalUInt16(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UInt16Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
+	if _, ok := f.(*core.UInt16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt16Flag{}, f)
 	}
 }
 
@@ -446,8 +446,8 @@ func TestGlobalUInt8(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UInt8Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt8Flag{}, f)
+	if _, ok := f.(*core.UInt8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt8Flag{}, f)
 	}
 }
 
@@ -459,8 +459,8 @@ func TestGlobalByte(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*ByteFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &ByteFlag{}, f)
+	if _, ok := f.(*core.ByteFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.ByteFlag{}, f)
 	}
 }
 
@@ -472,8 +472,8 @@ func TestGlobalFloat64(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float64Flag{}, f)
+	if _, ok := f.(*core.Float64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Float64Flag{}, f)
 	}
 }
 
@@ -485,8 +485,8 @@ func TestGlobalFloat32(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
+	if _, ok := f.(*core.Float32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Float32Flag{}, f)
 	}
 }
 
@@ -498,8 +498,8 @@ func TestGlobalCounter(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*CounterFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	if _, ok := f.(*core.CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CounterFlag{}, f)
 	}
 }
 
@@ -511,8 +511,8 @@ func TestGlobalVerbosity(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*CounterFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	if _, ok := f.(*core.CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CounterFlag{}, f)
 	}
 	if f.LongName() != "verbose" {
 		t.Errorf("Expected Long Name: verbose, Actual %s", f.LongName())
@@ -530,8 +530,8 @@ func TestGlobalDuration(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*DurationFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &DurationFlag{}, f)
+	if _, ok := f.(*core.DurationFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.DurationFlag{}, f)
 	}
 }
 
@@ -543,8 +543,8 @@ func TestGlobalDurationSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*DurationSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &DurationSliceFlag{}, f)
+	if _, ok := f.(*core.DurationSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.DurationSliceFlag{}, f)
 	}
 }
 
@@ -556,8 +556,8 @@ func TestGlobalBool(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*BoolFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	if _, ok := f.(*core.BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.BoolFlag{}, f)
 	}
 }
 
@@ -569,8 +569,8 @@ func TestGlobalBoolSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*BoolSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	if _, ok := f.(*core.BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.BoolSliceFlag{}, f)
 	}
 }
 
@@ -582,8 +582,8 @@ func TestGlobalTime(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*TimeFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &TimeFlag{}, f)
+	if _, ok := f.(*core.TimeFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.TimeFlag{}, f)
 	}
 }
 
@@ -595,8 +595,8 @@ func TestGlobalStringSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*StringSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringSliceFlag{}, f)
+	if _, ok := f.(*core.StringSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringSliceFlag{}, f)
 	}
 }
 
@@ -608,8 +608,8 @@ func TestGlobalIntSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*IntSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IntSliceFlag{}, f)
+	if _, ok := f.(*core.IntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IntSliceFlag{}, f)
 	}
 }
 
@@ -621,8 +621,8 @@ func TestGlobalUIntSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*UIntSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &UIntSliceFlag{}, f)
+	if _, ok := f.(*core.UIntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UIntSliceFlag{}, f)
 	}
 }
 
@@ -634,8 +634,8 @@ func TestGlobalFloat64Slice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*Float64SliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float64SliceFlag{}, f)
+	if _, ok := f.(*core.Float64SliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Float64SliceFlag{}, f)
 	}
 }
 
@@ -647,8 +647,8 @@ func TestGlobalIPAddress(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*IPAddressFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IPAddressFlag{}, f)
+	if _, ok := f.(*core.IPAddressFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IPAddressFlag{}, f)
 	}
 }
 
@@ -660,8 +660,8 @@ func TestGlobalIPAddressSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*IPAddressSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IPAddressSliceFlag{}, f)
+	if _, ok := f.(*core.IPAddressSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IPAddressSliceFlag{}, f)
 	}
 }
 
@@ -673,8 +673,8 @@ func TestGlobalCIDR(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*CIDRFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	if _, ok := f.(*core.CIDRFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CIDRFlag{}, f)
 	}
 }
 
@@ -686,7 +686,7 @@ func TestGlobalCIDRSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*CIDRSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
+	if _, ok := f.(*core.CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CIDRSliceFlag{}, f)
 	}
 }

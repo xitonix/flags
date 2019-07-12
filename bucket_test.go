@@ -1605,8 +1605,8 @@ func TestBucket_String(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*StringFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringFlag{}, f)
+	if _, ok := f.(*core.StringFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringFlag{}, f)
 	}
 }
 
@@ -1618,8 +1618,8 @@ func TestBucket_StringMap(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*StringMapFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringMapFlag{}, f)
+	if _, ok := f.(*core.StringMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringMapFlag{}, f)
 	}
 }
 
@@ -1631,8 +1631,8 @@ func TestBucket_StringSliceMap(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*StringSliceMapFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringSliceMapFlag{}, f)
+	if _, ok := f.(*core.StringSliceMapFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringSliceMapFlag{}, f)
 	}
 }
 
@@ -1644,8 +1644,8 @@ func TestBucket_Int(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*IntFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IntFlag{}, f)
+	if _, ok := f.(*core.IntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IntFlag{}, f)
 	}
 }
 
@@ -1657,8 +1657,8 @@ func TestBucket_Int64(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Int64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int64Flag{}, f)
+	if _, ok := f.(*core.Int64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int64Flag{}, f)
 	}
 }
 
@@ -1670,8 +1670,8 @@ func TestBucket_Int32(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Int32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int32Flag{}, f)
+	if _, ok := f.(*core.Int32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int32Flag{}, f)
 	}
 }
 
@@ -1683,8 +1683,8 @@ func TestBucket_Int16(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Int16Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int16Flag{}, f)
+	if _, ok := f.(*core.Int16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int16Flag{}, f)
 	}
 }
 
@@ -1696,8 +1696,8 @@ func TestBucket_Int8(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Int8Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Int8Flag{}, f)
+	if _, ok := f.(*core.Int8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Int8Flag{}, f)
 	}
 }
 
@@ -1709,8 +1709,8 @@ func TestBucket_UInt(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*UIntFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &UIntFlag{}, f)
+	if _, ok := f.(*core.UIntFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UIntFlag{}, f)
 	}
 }
 
@@ -1722,8 +1722,8 @@ func TestBucket_UInt64(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*UInt64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt64Flag{}, f)
+	if _, ok := f.(*core.UInt64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt64Flag{}, f)
 	}
 }
 
@@ -1735,8 +1735,8 @@ func TestBucket_UInt32(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*UInt32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt32Flag{}, f)
+	if _, ok := f.(*core.UInt32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt32Flag{}, f)
 	}
 }
 
@@ -1748,8 +1748,8 @@ func TestBucket_UInt16(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*UInt16Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt16Flag{}, f)
+	if _, ok := f.(*core.UInt16Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt16Flag{}, f)
 	}
 }
 
@@ -1761,8 +1761,8 @@ func TestBucket_UInt8(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*UInt8Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &UInt8Flag{}, f)
+	if _, ok := f.(*core.UInt8Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UInt8Flag{}, f)
 	}
 }
 
@@ -1774,8 +1774,8 @@ func TestBucket_Byte(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*ByteFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &ByteFlag{}, f)
+	if _, ok := f.(*core.ByteFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.ByteFlag{}, f)
 	}
 }
 
@@ -1787,8 +1787,8 @@ func TestBucket_Bool(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*BoolFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolFlag{}, f)
+	if _, ok := f.(*core.BoolFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.BoolFlag{}, f)
 	}
 }
 
@@ -1799,7 +1799,7 @@ func TestBucket_Parse_Bool(t *testing.T) {
 		defaultValue  bool
 		setDefault    bool
 		args          []string
-		flag          *BoolFlag
+		flag          *core.BoolFlag
 		key           string
 		keyValue      string
 	}{
@@ -1964,8 +1964,8 @@ func TestBucket_BoolSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*BoolSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &BoolSliceFlag{}, f)
+	if _, ok := f.(*core.BoolSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.BoolSliceFlag{}, f)
 	}
 }
 
@@ -1977,8 +1977,8 @@ func TestBucket_Float64(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Float64Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float64Flag{}, f)
+	if _, ok := f.(*core.Float64Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Float64Flag{}, f)
 	}
 }
 
@@ -1990,8 +1990,8 @@ func TestBucket_Float32(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Float32Flag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float32Flag{}, f)
+	if _, ok := f.(*core.Float32Flag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Float32Flag{}, f)
 	}
 }
 
@@ -2003,8 +2003,8 @@ func TestBucket_Counter(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*CounterFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	if _, ok := f.(*core.CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CounterFlag{}, f)
 	}
 }
 
@@ -2015,7 +2015,7 @@ func TestBucket_Parse_Counter(t *testing.T) {
 		defaultValue  int
 		setDefault    bool
 		args          []string
-		flag          *CounterFlag
+		flag          *core.CounterFlag
 		key           string
 		keyValue      string
 	}{
@@ -2195,8 +2195,8 @@ func TestBucket_Verbosity(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*CounterFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CounterFlag{}, f)
+	if _, ok := f.(*core.CounterFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CounterFlag{}, f)
 	}
 	if f.LongName() != "verbose" {
 		t.Errorf("Expected Long Name: verbose, Actual %s", f.LongName())
@@ -2214,8 +2214,8 @@ func TestBucket_Duration(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*DurationFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &DurationFlag{}, f)
+	if _, ok := f.(*core.DurationFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.DurationFlag{}, f)
 	}
 }
 
@@ -2227,8 +2227,8 @@ func TestBucket_DurationSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*DurationSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &DurationSliceFlag{}, f)
+	if _, ok := f.(*core.DurationSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.DurationSliceFlag{}, f)
 	}
 }
 
@@ -2240,8 +2240,8 @@ func TestBucket_Time(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*TimeFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &TimeFlag{}, f)
+	if _, ok := f.(*core.TimeFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.TimeFlag{}, f)
 	}
 }
 
@@ -2253,8 +2253,8 @@ func TestBucket_StringSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*StringSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &StringSliceFlag{}, f)
+	if _, ok := f.(*core.StringSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.StringSliceFlag{}, f)
 	}
 }
 
@@ -2266,8 +2266,8 @@ func TestBucket_IntSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*IntSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IntSliceFlag{}, f)
+	if _, ok := f.(*core.IntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IntSliceFlag{}, f)
 	}
 }
 
@@ -2279,8 +2279,8 @@ func TestBucket_UIntSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*UIntSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &UIntSliceFlag{}, f)
+	if _, ok := f.(*core.UIntSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.UIntSliceFlag{}, f)
 	}
 }
 
@@ -2292,8 +2292,8 @@ func TestBucket_Float64Slice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*Float64SliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &Float64SliceFlag{}, f)
+	if _, ok := f.(*core.Float64SliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.Float64SliceFlag{}, f)
 	}
 }
 
@@ -2305,8 +2305,8 @@ func TestBucket_IPAddress(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*IPAddressFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IPAddressFlag{}, f)
+	if _, ok := f.(*core.IPAddressFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IPAddressFlag{}, f)
 	}
 }
 
@@ -2318,8 +2318,8 @@ func TestBucket_IPAddressSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*IPAddressSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &IPAddressSliceFlag{}, f)
+	if _, ok := f.(*core.IPAddressSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.IPAddressSliceFlag{}, f)
 	}
 }
 
@@ -2331,8 +2331,8 @@ func TestBucket_CIDR(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*CIDRFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CIDRFlag{}, f)
+	if _, ok := f.(*core.CIDRFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CIDRFlag{}, f)
 	}
 }
 
@@ -2344,8 +2344,8 @@ func TestBucket_CIDRSlice(t *testing.T) {
 		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
 	}
 	f := bucket.Flags()[0]
-	if _, ok := f.(*CIDRSliceFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &CIDRSliceFlag{}, f)
+	if _, ok := f.(*core.CIDRSliceFlag); !ok {
+		t.Errorf("Expected %T, but received %T", &core.CIDRSliceFlag{}, f)
 	}
 }
 

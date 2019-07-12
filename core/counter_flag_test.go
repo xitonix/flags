@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/xitonix/flags"
+	"github.com/xitonix/flags/core"
 )
 
 func TestCounter(t *testing.T) {
@@ -494,5 +495,17 @@ func TestCounterFlag_ResetToDefault(t *testing.T) {
 
 			checkFlagValues(t, tc.expectedAfterResetValue, f.Get(), fVar)
 		})
+	}
+}
+
+func TestCounterFlag_Once(t *testing.T) {
+	var f core.Flag = core.NewCounter("counter", "usage")
+	fb, ok := f.(core.Repeatable)
+	if !ok {
+		t.Error("a counter flag must implement core.Repeatable interface")
+	}
+	actual := fb.Once()
+	if actual != 1 {
+		t.Errorf("Expected Once() value: true, Actual: %d", actual)
 	}
 }

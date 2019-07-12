@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/xitonix/flags"
+	"github.com/xitonix/flags/core"
 )
 
 func TestBool(t *testing.T) {
@@ -474,5 +475,17 @@ func TestBoolFlag_ResetToDefault(t *testing.T) {
 
 			checkFlagValues(t, tc.expectedAfterResetValue, f.Get(), fVar)
 		})
+	}
+}
+
+func TestBoolFlag_EmptyValue(t *testing.T) {
+	var f core.Flag = core.NewBool("bool", "usage")
+	fb, ok := f.(core.EmptyValueProvider)
+	if !ok {
+		t.Error("a boolean flag must implement core.EmptyValueProvider interface")
+	}
+	actual := fb.EmptyValue()
+	if actual != "true" {
+		t.Errorf("Expected Empty Value: true, Actual: %s", actual)
 	}
 }

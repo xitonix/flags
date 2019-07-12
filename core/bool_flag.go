@@ -223,7 +223,7 @@ func (f *BoolFlag) Default() interface{} {
 //
 // Remember that this is different to Default values in which none of the sources provides any value.
 // For example the presence of --boolean or -b command line argument will be enough to set the value
-// of a BoolFlag type to true.
+// of a boolean flag to true.
 func (f *BoolFlag) EmptyValue() string {
 	return "true"
 }

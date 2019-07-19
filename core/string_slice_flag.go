@@ -13,10 +13,10 @@ import (
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 //
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
+// By default, the leading and trailing white spaces will be automatically trimmed from each list item
+// With trimming enabled, --weekends "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}. Notice that the leading white space before " Sun" has been removed.
+// Trimming can be disabled by calling the DisableTrimming() method.
 type StringSliceFlag struct {
 	key                 *Key
 	defaultValue, value []string
@@ -39,11 +39,12 @@ type StringSliceFlag struct {
 // NewStringSlice creates a new string slice flag.
 func NewStringSlice(name, usage string) *StringSliceFlag {
 	f := &StringSliceFlag{
-		key:       &Key{},
-		long:      internal.SanitiseLongName(name),
-		usage:     usage,
-		ptr:       new([]string),
-		delimiter: DefaultDelimiter,
+		key:        &Key{},
+		long:       internal.SanitiseLongName(name),
+		usage:      usage,
+		ptr:        new([]string),
+		delimiter:  DefaultDelimiter,
+		trimSpaces: true,
 	}
 	f.set(make([]string, 0))
 	return f
@@ -182,9 +183,9 @@ func (f *StringSliceFlag) WithDelimiter(delimiter string) *StringSliceFlag {
 	return f
 }
 
-// WithTrimming enables trimming the leading and trailing white space characters from each list item.
-func (f *StringSliceFlag) WithTrimming() *StringSliceFlag {
-	f.trimSpaces = true
+// DisableTrimming disables trimming the leading and trailing white space characters from each list item.
+func (f *StringSliceFlag) DisableTrimming() *StringSliceFlag {
+	f.trimSpaces = false
 	return f
 }
 
@@ -230,10 +231,10 @@ func (f *StringSliceFlag) WithValidRange(ignoreCase bool, valid ...string) *Stri
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 //
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
+// By default, the leading and trailing white spaces will be automatically trimmed from each list item
+// With trimming enabled, --weekends "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}. Notice that the leading white space before " Sun" has been removed.
+// Trimming can be disabled by calling the DisableTrimming() method.
 func (f *StringSliceFlag) Set(value string) error {
 	var parts []string
 	if len(value) == 0 {

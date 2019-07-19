@@ -138,7 +138,7 @@ func main() {
 
    // You have full control over the acceptable values for each flag. You can either provide
    // a list of allowed values using WithValidRange method:
-   weekend := flags.StringSlice("weekends", "Weekends").WithValidRange(true, "Sat, Sun").WithTrimming()
+   weekend := flags.StringSlice("weekends", "Weekends").WithValidRange(true, "Sat, Sun")
   
    // or set a fully customisable validator using WithValidationCallback method:
    numRange := flags.Int8("number", "A flag with validation callback").

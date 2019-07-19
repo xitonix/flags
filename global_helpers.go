@@ -374,10 +374,10 @@ func Time(longName, usage string) *core.TimeFlag {
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 //
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
+// By default, the leading and trailing white spaces will be automatically trimmed from each list item
+// With trimming enabled, --weekends "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}. Notice that the leading white space before " Sun" has been removed.
+// Trimming can be disabled by calling the DisableTrimming() method.
 func StringSlice(longName, usage string) *core.StringSliceFlag {
 	return DefaultBucket.StringSlice(longName, usage)
 }
@@ -475,6 +475,12 @@ func CIDRSlice(longName, usage string) *core.CIDRSliceFlag {
 //
 // The value of a string map flag can be set using map initialisation literals.
 // For example --mappings "key1:value1, key2:value2"
+//
+// By default, the leading and trailing white spaces will be automatically trimmed from each key/value pairs.
+// With trimming enabled, "key1 : value1 , key2:  value2  " will be parsed into
+// {"key1", "value1", "key2":"value2"} instead of {"key1 ", " value1 ", " key2":"  value2  "}.
+// Notice that all the leading/trailing white space characters have been removed from all the keys and the values.
+// Trimming can be disabled by calling the DisableKeyTrimming(), DisableValueTrimming() methods.
 func StringMap(longName, usage string) *core.StringMapFlag {
 	return DefaultBucket.StringMap(longName, usage)
 }

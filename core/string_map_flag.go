@@ -10,6 +10,12 @@ import (
 //
 // The value of a string map flag can be set using map initialisation literals.
 // For example --mappings "key1:value1, key2:value2"
+//
+// By default, the leading and trailing white spaces will be automatically trimmed from each key/value pairs.
+// With trimming enabled, "key1 : value1 , key2:  value2  " will be parsed into
+// {"key1", "value1", "key2":"value2"} instead of {"key1 ", " value1 ", " key2":"  value2  "}.
+// Notice that all the leading/trailing white space characters have been removed from all the keys and the values.
+// Trimming can be disabled by calling the DisableKeyTrimming(), DisableValueTrimming() methods.
 type StringMapFlag struct {
 	key                 *Key
 	defaultValue, value map[string]string
@@ -178,6 +184,12 @@ func (f *StringMapFlag) WithValidationCallback(validate func(key, value string) 
 //
 // The value of a string map flag can be set using map initialisation literals.
 // For example --mappings "key1:value1, key2:value2"
+//
+// By default, the leading and trailing white spaces will be automatically trimmed from each key/value pairs.
+// With trimming enabled, "key1 : value1 , key2:  value2  " will be parsed into
+// {"key1", "value1", "key2":"value2"} instead of {"key1 ", " value1 ", " key2":"  value2  "}.
+// Notice that all the leading/trailing white space characters have been removed from all the keys and the values.
+// Trimming can be disabled by calling the DisableKeyTrimming(), DisableValueTrimming() methods.
 func (f *StringMapFlag) Set(value string) error {
 	if internal.IsEmpty(value) {
 		f.set(make(map[string]string))

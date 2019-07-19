@@ -349,44 +349,44 @@ func TestStringSliceFlag_WithDelimiter(t *testing.T) {
 	}
 }
 
-func TestStringSliceFlag_WithTrimming(t *testing.T) {
+func TestStringSliceFlag_DisableTrimming(t *testing.T) {
 	testCases := []struct {
-		title          string
-		value          string
-		enableTrimming bool
-		expectedValue  []string
+		title           string
+		value           string
+		disableTrimming bool
+		expectedValue   []string
 	}{
 		{
-			title:          "without trimming",
-			enableTrimming: false,
-			value:          "  abc  ,  xyz  ",
-			expectedValue:  []string{"  abc  ", "  xyz  "},
+			title:           "without trimming",
+			disableTrimming: true,
+			value:           "  abc  ,  xyz  ",
+			expectedValue:   []string{"  abc  ", "  xyz  "},
 		},
 		{
-			title:          "with trimming",
-			enableTrimming: true,
-			value:          "  abc  ,  xyz  ",
-			expectedValue:  []string{"abc", "xyz"},
+			title:           "with trimming",
+			disableTrimming: false,
+			value:           "  abc  ,  xyz  ",
+			expectedValue:   []string{"abc", "xyz"},
 		},
 		{
-			title:          "only white space input without trimming",
-			enableTrimming: false,
-			value:          "   ",
-			expectedValue:  []string{"   "},
+			title:           "only white space input without trimming",
+			disableTrimming: true,
+			value:           "   ",
+			expectedValue:   []string{"   "},
 		},
 		{
-			title:          "only white space input with trimming",
-			enableTrimming: true,
-			value:          "   ,   ",
-			expectedValue:  []string{"", ""},
+			title:           "only white space input with trimming",
+			disableTrimming: false,
+			value:           "   ,   ",
+			expectedValue:   []string{"", ""},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.StringSlice("long", "usage")
-			if tc.enableTrimming {
-				f = f.WithTrimming()
+			if tc.disableTrimming {
+				f = f.DisableTrimming()
 			}
 			fVar := f.Var()
 			err := f.Set(tc.value)
@@ -410,12 +410,12 @@ func TestStringSliceFlag_Set(t *testing.T) {
 		{
 			title:         "white space value",
 			value:         "   ",
-			expectedValue: []string{"   "},
+			expectedValue: []string{""},
 		},
 		{
 			title:         "value with white space",
 			value:         "  abc  ",
-			expectedValue: []string{"  abc  "},
+			expectedValue: []string{"abc"},
 		},
 		{
 			title:         "value with no white space",
@@ -430,7 +430,7 @@ func TestStringSliceFlag_Set(t *testing.T) {
 		{
 			title:         "comma separated value with white space",
 			value:         " abc , efg ",
-			expectedValue: []string{" abc ", " efg "},
+			expectedValue: []string{"abc", "efg"},
 		},
 	}
 
@@ -456,6 +456,7 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 		setValidationList bool
 		ignoreCase        bool
 		expectedError     string
+		disableTrimming   bool
 	}{
 		{
 			title:           "nil validation callback",
@@ -557,6 +558,16 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			setValidationList: true,
 			value:             "  ",
 			expectedError:     "",
+			expectedValue:     []string{""},
+		},
+		{
+			title:             "acceptable white space value with trimming",
+			validationList:    []string{"Green", "Red", "  "},
+			ignoreCase:        false,
+			setValidationList: true,
+			disableTrimming:   true,
+			value:             "  ",
+			expectedError:     "",
 			expectedValue:     []string{"  "},
 		},
 		{
@@ -623,6 +634,9 @@ func TestStringSliceFlag_Validation(t *testing.T) {
 			fVar := f.Var()
 			if tc.setValidationCB {
 				f = f.WithValidationCallback(tc.validationCB)
+			}
+			if tc.disableTrimming {
+				f = f.DisableTrimming()
 			}
 			if tc.setValidationList {
 				f = f.WithValidRange(tc.ignoreCase, tc.validationList...)

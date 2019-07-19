@@ -460,10 +460,10 @@ func (b *Bucket) Time(longName, usage string) *core.TimeFlag {
 //
 // A custom delimiter string can be defined using WithDelimiter() method.
 //
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, --weekends "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
+// By default, the leading and trailing white spaces will be automatically trimmed from each list item
+// With trimming enabled, --weekends "Sat, Sun" will be parsed into
+// {"Sat", "Sun"} instead of {"Sat", " Sun"}. Notice that the leading white space before " Sun" has been removed.
+// Trimming can be disabled by calling the DisableTrimming() method.
 func (b *Bucket) StringSlice(longName, usage string) *core.StringSliceFlag {
 	f := core.NewStringSlice(longName, usage)
 	b.flags = append(b.flags, f)

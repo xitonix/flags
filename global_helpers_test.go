@@ -308,19 +308,6 @@ func TestGlobalStringMap(t *testing.T) {
 	}
 }
 
-func TestGlobalStringSliceMap(t *testing.T) {
-	DefaultBucket = NewBucket()
-	StringSliceMap("long", "usage")
-	actual := len(DefaultBucket.Flags())
-	if actual != 1 {
-		t.Errorf("Expected to get 1 parsed flag, but received %d", actual)
-	}
-	f := DefaultBucket.Flags()[0]
-	if _, ok := f.(*core.StringSliceMapFlag); !ok {
-		t.Errorf("Expected %T, but received %T", &core.StringSliceMapFlag{}, f)
-	}
-}
-
 func TestGlobalInt(t *testing.T) {
 	DefaultBucket = NewBucket()
 	Int("long", "usage")

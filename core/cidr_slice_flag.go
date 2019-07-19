@@ -37,7 +37,7 @@ func NewCIDRSlice(name, usage string) *CIDRSliceFlag {
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]CIDR),
-		delimiter: DefaultSliceDelimiter,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(nil)
 	return f
@@ -167,10 +167,10 @@ func (f *CIDRSliceFlag) MarkAsDeprecated() *CIDRSliceFlag {
 	return f
 }
 
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultDelimiter).
 func (f *CIDRSliceFlag) WithDelimiter(delimiter string) *CIDRSliceFlag {
 	if len(delimiter) == 0 {
-		delimiter = DefaultSliceDelimiter
+		delimiter = DefaultDelimiter
 	}
 	f.delimiter = delimiter
 	return f

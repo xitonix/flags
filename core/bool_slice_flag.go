@@ -35,7 +35,7 @@ func NewBoolSlice(name, usage string) *BoolSliceFlag {
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]bool),
-		delimiter: DefaultSliceDelimiter,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(make([]bool, 0))
 	return f
@@ -165,10 +165,10 @@ func (f *BoolSliceFlag) Required() *BoolSliceFlag {
 	return f
 }
 
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultDelimiter).
 func (f *BoolSliceFlag) WithDelimiter(delimiter string) *BoolSliceFlag {
 	if len(delimiter) == 0 {
-		delimiter = DefaultSliceDelimiter
+		delimiter = DefaultDelimiter
 	}
 	f.delimiter = delimiter
 	return f

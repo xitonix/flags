@@ -40,7 +40,7 @@ func NewDurationSlice(name, usage string) *DurationSliceFlag {
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]time.Duration),
-		delimiter: DefaultSliceDelimiter,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(make([]time.Duration, 0))
 	return f
@@ -170,10 +170,10 @@ func (f *DurationSliceFlag) MarkAsDeprecated() *DurationSliceFlag {
 	return f
 }
 
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultDelimiter).
 func (f *DurationSliceFlag) WithDelimiter(delimiter string) *DurationSliceFlag {
 	if len(delimiter) == 0 {
-		delimiter = DefaultSliceDelimiter
+		delimiter = DefaultDelimiter
 	}
 	f.delimiter = delimiter
 	return f

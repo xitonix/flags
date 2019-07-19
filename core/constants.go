@@ -8,6 +8,6 @@ const (
 )
 
 const (
-	// DefaultSliceDelimiter the default string to separate the items of a slice flag
-	DefaultSliceDelimiter = ","
+	// DefaultDelimiter the default string to separate the items of a slice flag
+	DefaultDelimiter = ","
 )

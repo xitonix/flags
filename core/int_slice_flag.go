@@ -37,7 +37,7 @@ func NewIntSlice(name, usage string) *IntSliceFlag {
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]int),
-		delimiter: DefaultSliceDelimiter,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(make([]int, 0))
 	return f
@@ -167,10 +167,10 @@ func (f *IntSliceFlag) MarkAsDeprecated() *IntSliceFlag {
 	return f
 }
 
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultDelimiter).
 func (f *IntSliceFlag) WithDelimiter(delimiter string) *IntSliceFlag {
 	if len(delimiter) == 0 {
-		delimiter = DefaultSliceDelimiter
+		delimiter = DefaultDelimiter
 	}
 	f.delimiter = delimiter
 	return f

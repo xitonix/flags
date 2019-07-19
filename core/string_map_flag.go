@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"strings"
 
 	"github.com/xitonix/flags/internal"
@@ -9,8 +8,8 @@ import (
 
 // StringMapFlag represents a string map flag.
 //
-// The value of a string map flag can be set using standard map initialisation strings.
-// For example --mappings '{"key1":"value1", "key2":"value2"}'
+// The value of a string map flag can be set using map initialisation literals.
+// For example --mappings "key1:value1, key2:value2"
 type StringMapFlag struct {
 	key                 *Key
 	defaultValue, value map[string]string
@@ -22,16 +21,22 @@ type StringMapFlag struct {
 	isDeprecated        bool
 	isRequired          bool
 	isHidden            bool
+	trimKey             bool
+	trimValue           bool
+	delimiter           string
 	validate            func(key, value string) error
 }
 
 // NewStringMap creates a new string map flag.
 func NewStringMap(name, usage string) *StringMapFlag {
 	f := &StringMapFlag{
-		key:   &Key{},
-		long:  internal.SanitiseLongName(name),
-		usage: usage,
-		ptr:   new(map[string]string),
+		key:       &Key{},
+		long:      internal.SanitiseLongName(name),
+		usage:     usage,
+		ptr:       new(map[string]string),
+		trimKey:   true,
+		trimValue: true,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(make(map[string]string))
 	return f
@@ -171,17 +176,29 @@ func (f *StringMapFlag) WithValidationCallback(validate func(key, value string) 
 
 // Set sets the flag value.
 //
-// The value of a string map flag can be set using standard map initialisation strings.
-// For example --mappings '{"key1":"value1", "key2":"value2"}'
+// The value of a string map flag can be set using map initialisation literals.
+// For example --mappings "key1:value1, key2:value2"
 func (f *StringMapFlag) Set(value string) error {
-	value = strings.TrimSpace(value)
-	if value == "" {
-		value = "{}"
+	if internal.IsEmpty(value) {
+		f.set(make(map[string]string))
+		f.isSet = true
+		return nil
 	}
+
 	mp := make(map[string]string)
-	err := json.Unmarshal([]byte(value), &mp)
-	if err != nil {
-		return internal.InvalidValueErr(value, f.long, f.short, f.Type())
+	pairs := strings.Split(value, f.delimiter)
+	for _, pair := range pairs {
+		parts := strings.Split(pair, ":")
+		if len(parts) != 2 {
+			return internal.InvalidValueErr(value, f.long, f.short, f.Type())
+		}
+		if f.trimKey {
+			parts[0] = strings.TrimSpace(parts[0])
+		}
+		if f.trimValue {
+			parts[1] = strings.TrimSpace(parts[1])
+		}
+		mp[parts[0]] = parts[1]
 	}
 
 	if f.validate != nil {
@@ -195,6 +212,27 @@ func (f *StringMapFlag) Set(value string) error {
 	f.set(mp)
 	f.isSet = true
 	return nil
+}
+
+// WithDelimiter sets the delimiter for separating key/value pairs within the input string (Default: core.DefaultDelimiter).
+func (f *StringMapFlag) WithDelimiter(delimiter string) *StringMapFlag {
+	if len(delimiter) == 0 {
+		delimiter = DefaultDelimiter
+	}
+	f.delimiter = delimiter
+	return f
+}
+
+// DisableTrimming disables trimming the leading and trailing white space characters from each key in the map.
+func (f *StringMapFlag) DisableKeyTrimming() *StringMapFlag {
+	f.trimKey = false
+	return f
+}
+
+// DisableValueTrimming disables trimming the leading and trailing white space characters from each value in the map.
+func (f *StringMapFlag) DisableValueTrimming() *StringMapFlag {
+	f.trimValue = false
+	return f
 }
 
 // ResetToDefault resets the value of this flag to default if a default value is specified.

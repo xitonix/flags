@@ -38,7 +38,7 @@ func NewFloat64Slice(name, usage string) *Float64SliceFlag {
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]float64),
-		delimiter: DefaultSliceDelimiter,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(make([]float64, 0))
 	return f
@@ -168,10 +168,10 @@ func (f *Float64SliceFlag) MarkAsDeprecated() *Float64SliceFlag {
 	return f
 }
 
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultDelimiter).
 func (f *Float64SliceFlag) WithDelimiter(delimiter string) *Float64SliceFlag {
 	if len(delimiter) == 0 {
-		delimiter = DefaultSliceDelimiter
+		delimiter = DefaultDelimiter
 	}
 	f.delimiter = delimiter
 	return f

@@ -318,39 +318,95 @@ func TestStringMapFlag_Set(t *testing.T) {
 		expectedError string
 	}{
 		{
-			title:         "empty value",
+			title:         "empty input",
 			value:         "",
 			expectedValue: empty,
 		},
 		{
-			title:         "empty map value",
-			value:         "{}",
-			expectedValue: empty,
-		},
-		{
-			title:         "empty map value with white space",
-			value:         " {    } ",
-			expectedValue: empty,
-		},
-		{
-			title:         "white space value",
+			title:         "white space input",
 			value:         "   ",
 			expectedValue: empty,
 		},
 		{
-			title:         "value with white space",
-			value:         `  { "key" : "value" }  `,
+			title:         "empty value",
+			value:         "key:",
+			expectedValue: map[string]string{"key": ""},
+		},
+		{
+			title:         "white space value",
+			value:         "key:    ",
+			expectedValue: map[string]string{"key": ""},
+		},
+		{
+			title:         "empty key",
+			value:         ":value",
+			expectedValue: map[string]string{"": "value"},
+		},
+		{
+			title:         "white space key",
+			value:         "  :value",
+			expectedValue: map[string]string{"": "value"},
+		},
+		{
+			title:         "white space key value",
+			value:         "  :  ",
+			expectedValue: map[string]string{"": ""},
+		},
+		{
+			title:         "with white spaced key value",
+			value:         ` key : value `,
 			expectedValue: map[string]string{"key": "value"},
 		},
 		{
-			title:         "value without white space",
-			value:         `{"key":"value"}`,
+			title:         "with white spaced key",
+			value:         ` key :value`,
 			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "with white spaced value",
+			value:         `key:  value  `,
+			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "without white space",
+			value:         `key:value`,
+			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "multiple key value pairs",
+			value:         `key1:value1, key2:value2`,
+			expectedValue: map[string]string{"key1": "value1", "key2": "value2"},
+		},
+		{
+			title:         "multiple key value pairs with duplicate keys",
+			value:         `key:value1, key:value2`,
+			expectedValue: map[string]string{"key": "value2"},
+		},
+		{
+			title:         "multiple empty key value",
+			value:         `:,:,:`,
+			expectedValue: map[string]string{"": ""},
+		},
+		{
+			title:         "multiple white space key value",
+			value:         `  :  ,  :  ,  :  `,
+			expectedValue: map[string]string{"": ""},
+		},
+		{
+			title:         "with white space in the middle",
+			value:         ` map key : map value `,
+			expectedValue: map[string]string{"map key": "map value"},
 		},
 		{
 			title:         "invalid value",
-			value:         " invalid ",
+			value:         "invalid",
 			expectedError: "'invalid' is not a valid [string]string value for --long",
+			expectedValue: empty,
+		},
+		{
+			title:         "only delimiter input",
+			value:         ",",
+			expectedError: "',' is not a valid [string]string value for --long",
 			expectedValue: empty,
 		},
 	}
@@ -358,6 +414,286 @@ func TestStringMapFlag_Set(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
 			f := flags.StringMap("long", "usage")
+			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkMapFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestStringMapFlag_DisableKeyTrimming(t *testing.T) {
+	testCases := []struct {
+		title         string
+		value         string
+		expectedValue map[string]string
+		expectedError string
+	}{
+		{
+			title:         "empty value",
+			value:         "key:",
+			expectedValue: map[string]string{"key": ""},
+		},
+		{
+			title:         "white space value",
+			value:         "key:    ",
+			expectedValue: map[string]string{"key": ""},
+		},
+		{
+			title:         "empty key",
+			value:         ":value",
+			expectedValue: map[string]string{"": "value"},
+		},
+		{
+			title:         "white space key",
+			value:         "  :value",
+			expectedValue: map[string]string{"  ": "value"},
+		},
+		{
+			title:         "white space key value",
+			value:         "  :  ",
+			expectedValue: map[string]string{"  ": ""},
+		},
+		{
+			title:         "with white spaced key value",
+			value:         ` key : value `,
+			expectedValue: map[string]string{" key ": "value"},
+		},
+		{
+			title:         "with white spaced key",
+			value:         ` key :value`,
+			expectedValue: map[string]string{" key ": "value"},
+		},
+		{
+			title:         "with white spaced value",
+			value:         `key:  value  `,
+			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "without white space",
+			value:         `key:value`,
+			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "multiple key value pairs",
+			value:         ` key1 :value1, key2 :value2`,
+			expectedValue: map[string]string{" key1 ": "value1", " key2 ": "value2"},
+		},
+		{
+			title:         "multiple key value pairs with duplicate keys",
+			value:         ` key :value1, key :value2`,
+			expectedValue: map[string]string{" key ": "value2"},
+		},
+		{
+			title:         "multiple empty key value",
+			value:         `:,:,:`,
+			expectedValue: map[string]string{"": ""},
+		},
+		{
+			title:         "multiple white space key value",
+			value:         `:, :  ,  :     `,
+			expectedValue: map[string]string{"": "", " ": "", "  ": ""},
+		},
+		{
+			title:         "with white space in the middle",
+			value:         ` map key : map value `,
+			expectedValue: map[string]string{" map key ": "map value"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.StringMap("long", "usage").DisableKeyTrimming()
+			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkMapFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestStringMapFlag_DisableValueTrimming(t *testing.T) {
+	testCases := []struct {
+		title         string
+		value         string
+		expectedValue map[string]string
+		expectedError string
+	}{
+		{
+			title:         "empty value",
+			value:         "key:",
+			expectedValue: map[string]string{"key": ""},
+		},
+		{
+			title:         "white space value",
+			value:         "key:  ",
+			expectedValue: map[string]string{"key": "  "},
+		},
+		{
+			title:         "empty key",
+			value:         ":value",
+			expectedValue: map[string]string{"": "value"},
+		},
+		{
+			title:         "white space key",
+			value:         "  :value",
+			expectedValue: map[string]string{"": "value"},
+		},
+		{
+			title:         "white space key value",
+			value:         "  :  ",
+			expectedValue: map[string]string{"": "  "},
+		},
+		{
+			title:         "with white spaced key value",
+			value:         ` key : value `,
+			expectedValue: map[string]string{"key": " value "},
+		},
+		{
+			title:         "with white spaced key",
+			value:         ` key :value`,
+			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "with white spaced value",
+			value:         `key: value `,
+			expectedValue: map[string]string{"key": " value "},
+		},
+		{
+			title:         "without white space",
+			value:         `key:value`,
+			expectedValue: map[string]string{"key": "value"},
+		},
+		{
+			title:         "multiple key value pairs",
+			value:         ` key1 : value1 , key2 : value2 `,
+			expectedValue: map[string]string{"key1": " value1 ", "key2": " value2 "},
+		},
+		{
+			title:         "multiple key value pairs with duplicate keys",
+			value:         ` key :value1, key : value2 `,
+			expectedValue: map[string]string{"key": " value2 "},
+		},
+		{
+			title:         "multiple empty key value",
+			value:         `:,:,:`,
+			expectedValue: map[string]string{"": ""},
+		},
+		{
+			title:         "multiple white space key value",
+			value:         `:  , :  ,  :  `,
+			expectedValue: map[string]string{"": "  "},
+		},
+		{
+			title:         "with white space in the middle",
+			value:         ` map key : map value `,
+			expectedValue: map[string]string{"map key": " map value "},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.StringMap("long", "usage").DisableValueTrimming()
+			fVar := f.Var()
+			err := f.Set(tc.value)
+			checkMapFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
+		})
+	}
+}
+
+func TestStringMapFlag_WithDelimiter(t *testing.T) {
+	empty := make(map[string]string)
+	testCases := []struct {
+		title         string
+		value         string
+		expectedValue map[string]string
+		expectedError string
+		delimiter     string
+	}{
+		{
+			title:         "empty input",
+			value:         "",
+			expectedValue: empty,
+			delimiter:     "|",
+		},
+		{
+			title:         "white space input",
+			value:         "   ",
+			expectedValue: empty,
+			delimiter:     "|",
+		},
+		{
+			title:         "with white spaced key value",
+			value:         ` key : value `,
+			expectedValue: map[string]string{"key": "value"},
+			delimiter:     "|",
+		},
+		{
+			title:         "with white spaced key",
+			value:         ` key :value`,
+			expectedValue: map[string]string{"key": "value"},
+			delimiter:     "|",
+		},
+		{
+			title:         "with white spaced value",
+			value:         `key:  value  `,
+			expectedValue: map[string]string{"key": "value"},
+			delimiter:     "|",
+		},
+		{
+			title:         "without white space",
+			value:         `key:value`,
+			expectedValue: map[string]string{"key": "value"},
+			delimiter:     "|",
+		},
+		{
+			title:         "multiple key value pairs",
+			value:         `key1:value1 | key2:value2`,
+			expectedValue: map[string]string{"key1": "value1", "key2": "value2"},
+			delimiter:     "|",
+		},
+		{
+			title:         "multiple key value pairs without a valid delimiter",
+			value:         `key1:value1, key2:value2`,
+			expectedValue: empty,
+			expectedError: "'key1:value1, key2:value2' is not a valid [string]string value for --long",
+			delimiter:     "|",
+		},
+		{
+			title:         "multiple key value pairs with duplicate keys",
+			value:         `key:value1 | key:value2`,
+			expectedValue: map[string]string{"key": "value2"},
+			delimiter:     "|",
+		},
+		{
+			title:         "with white space in the middle",
+			value:         ` map key : map value `,
+			expectedValue: map[string]string{"map key": "map value"},
+			delimiter:     "|",
+		},
+		{
+			title:         "invalid value",
+			value:         "invalid",
+			expectedError: "'invalid' is not a valid [string]string value for --long",
+			expectedValue: empty,
+			delimiter:     "|",
+		},
+		{
+			title:         "only delimiter input",
+			value:         "|",
+			expectedError: "'|' is not a valid [string]string value for --long",
+			expectedValue: empty,
+			delimiter:     "|",
+		},
+		{
+			title:         "with empty delimiter",
+			value:         `key1:value1 , key2:value2`,
+			expectedValue: map[string]string{"key1": "value1", "key2": "value2"},
+			delimiter:     "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.title, func(t *testing.T) {
+			f := flags.StringMap("long", "usage").WithDelimiter(tc.delimiter)
 			fVar := f.Var()
 			err := f.Set(tc.value)
 			checkMapFlag(t, f, err, tc.expectedError, tc.expectedValue, f.Get(), fVar)
@@ -376,7 +712,7 @@ func TestStringMapFlag_Validation(t *testing.T) {
 	}{
 		{
 			title:         "nil validation callback",
-			value:         `{"key":"value"}`,
+			value:         `key:value`,
 			expectedValue: map[string]string{"key": "value"},
 			expectedError: "",
 		},
@@ -385,7 +721,7 @@ func TestStringMapFlag_Validation(t *testing.T) {
 			validationCB: func(k, v string) error {
 				return nil
 			},
-			value:         `{"key":"value"}`,
+			value:         `key:value`,
 			expectedValue: map[string]string{"key": "value"},
 		},
 		{
@@ -393,7 +729,7 @@ func TestStringMapFlag_Validation(t *testing.T) {
 			validationCB: func(k, v string) error {
 				return errors.New("validation callback failed")
 			},
-			value:         `{"key":"value"}`,
+			value:         `key:value`,
 			expectedError: "validation callback failed",
 			expectedValue: empty,
 		},
@@ -424,7 +760,7 @@ func TestStringMapFlag_ResetToDefault(t *testing.T) {
 	}{
 		{
 			title:                   "reset without defining the default value",
-			value:                   `{"key":"value"}`,
+			value:                   `key:value`,
 			expectedValue:           map[string]string{"key": "value"},
 			expectedAfterResetValue: map[string]string{"key": "value"},
 			setDefault:              false,
@@ -432,7 +768,7 @@ func TestStringMapFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset to empty default value",
-			value:                   `{"key":"value"}`,
+			value:                   `key:value`,
 			expectedValue:           map[string]string{"key": "value"},
 			defaultValue:            empty,
 			expectedAfterResetValue: empty,
@@ -441,7 +777,7 @@ func TestStringMapFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset to nil default value",
-			value:                   `{"key":"value"}`,
+			value:                   `key:value`,
 			expectedValue:           map[string]string{"key": "value"},
 			defaultValue:            nil,
 			expectedAfterResetValue: nil,
@@ -450,7 +786,7 @@ func TestStringMapFlag_ResetToDefault(t *testing.T) {
 		},
 		{
 			title:                   "reset to non-empty default value",
-			value:                   `{"key":"value"}`,
+			value:                   `key:value`,
 			expectedValue:           map[string]string{"key": "value"},
 			defaultValue:            map[string]string{"default_key": "default_value"},
 			expectedAfterResetValue: map[string]string{"default_key": "default_value"},

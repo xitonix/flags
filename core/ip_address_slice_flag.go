@@ -36,7 +36,7 @@ func NewIPAddressSlice(name, usage string) *IPAddressSliceFlag {
 		long:      internal.SanitiseLongName(name),
 		usage:     usage,
 		ptr:       new([]net.IP),
-		delimiter: DefaultSliceDelimiter,
+		delimiter: DefaultDelimiter,
 	}
 	f.set(nil)
 	return f
@@ -166,10 +166,10 @@ func (f *IPAddressSliceFlag) MarkAsDeprecated() *IPAddressSliceFlag {
 	return f
 }
 
-// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultSliceDelimiter)
+// WithDelimiter sets the delimiter for splitting the input string (Default: core.DefaultDelimiter).
 func (f *IPAddressSliceFlag) WithDelimiter(delimiter string) *IPAddressSliceFlag {
 	if len(delimiter) == 0 {
-		delimiter = DefaultSliceDelimiter
+		delimiter = DefaultDelimiter
 	}
 	f.delimiter = delimiter
 	return f

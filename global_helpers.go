@@ -473,26 +473,8 @@ func CIDRSlice(longName, usage string) *core.CIDRSliceFlag {
 //
 // The long name will be automatically converted to lowercase by the library (i.e. mappings)
 //
-// The value of a string map flag can be set using standard map initialisation strings.
-// For example --mappings '{"key1":"value1", "key2":"value2"}'
+// The value of a string map flag can be set using map initialisation literals.
+// For example --mappings "key1:value1, key2:value2"
 func StringMap(longName, usage string) *core.StringMapFlag {
 	return DefaultBucket.StringMap(longName, usage)
-}
-
-// StringSliceMap adds a new string slice map flag to the default bucket.
-//
-// The long name will be automatically converted to lowercase by the library (i.e. days)
-//
-// The value of a string slice map flag can be set using standard map initialisation strings.
-// Keys are strings and each value is a set of comma (or any custom delimiter) separated strings.
-// For example --days '{"Week Days":"Mon,Tue,Wed,Thu,Fri", "Weekend":"Sat,Sun"}'
-//
-// A custom delimiter string can be defined using WithDelimiter() method.
-//
-// You can also trim the leading and trailing white spaces from each list item by enabling the feature
-// using WithTrimming() method. With trimming enabled, "Sat, Sun" will be parsed into
-// {"Sat", "Sun"} instead of {"Sat", " Sun"}.
-// Notice that the leading white space before " Sun" has been removed.
-func StringSliceMap(longName, usage string) *core.StringSliceMapFlag {
-	return DefaultBucket.StringSliceMap(longName, usage)
 }

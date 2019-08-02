@@ -25,7 +25,7 @@ func (k *Key) Prefix() string {
 // The return value is uppercase and consists of the optional prefix, concatenated with the ID in PREFIX_ID format.
 // If the ID has not been set, this method will return an empty string, even if the prefix is not empty.
 func (k *Key) String() string {
-	if internal.IsEmpty(k.id) {
+	if internal.IsEmpty(k.id) || k.id == "-" {
 		return ""
 	}
 	if internal.IsEmpty(k.prefix) {
@@ -41,6 +41,10 @@ func (k *Key) SetPrefix(prefix string) {
 
 // SetID sets the ID of the key.
 func (k *Key) SetID(id string) {
+	if id == "-" {
+		k.id = id
+		return
+	}
 	k.id = internal.SanitiseFlagID(id)
 }
 

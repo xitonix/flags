@@ -160,6 +160,11 @@ func TestUIntSliceFlag_WithKey(t *testing.T) {
 			title: "empty key",
 		},
 		{
+			title:       "dash key",
+			key:         "-",
+			expectedKey: "",
+		},
+		{
 			title: "white space key",
 			key:   "      ",
 		},

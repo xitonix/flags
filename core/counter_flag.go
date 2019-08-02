@@ -125,7 +125,7 @@ func (f *CounterFlag) Get() int {
 // Explicit keys will override the automatically generated values, defined at bucket level (if enabled).
 //
 // In order for the flag value to be extractable from the environment variables, or all the other custom sources,
-// it MUST have a key associated with it.
+// it MUST have a key associated with it. You can set the key to "-" to disable the auto generated ID (if there is one) for this flag.
 func (f *CounterFlag) WithKey(keyID string) *CounterFlag {
 	f.key.SetID(keyID)
 	return f

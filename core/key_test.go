@@ -51,6 +51,27 @@ func TestKey_Set(t *testing.T) {
 			expectedName: "",
 		},
 		{
+			title:         "dash with no prefix",
+			inputName:     "-",
+			inputPrefix:   "",
+			expectedName:  "",
+			expectedIsSet: true,
+		},
+		{
+			title:         "dash with prefix",
+			inputName:     "-",
+			inputPrefix:   "PREFIX",
+			expectedName:  "",
+			expectedIsSet: true,
+		},
+		{
+			title:         "dash with white space prefix",
+			inputName:     "-",
+			inputPrefix:   "  ",
+			expectedName:  "",
+			expectedIsSet: true,
+		},
+		{
 			title:        "empty name with prefix",
 			inputName:    "",
 			inputPrefix:  "prefix",
@@ -79,11 +100,12 @@ func TestKey_Set(t *testing.T) {
 			e.SetID(tc.inputName)
 			actual := e.String()
 			if actual != tc.expectedName {
-				t.Errorf("FullString(), Expected: %s, Actual:%s", tc.expectedName, actual)
+				t.Errorf("String(), Expected: %s, Actual:%s", tc.expectedName, actual)
 			}
 
-			if tc.expectedIsSet != e.IsSet() {
-				t.Errorf("IsSet(), Expected: %s, Actual:%s", tc.expectedName, actual)
+			actualIsSet := e.IsSet()
+			if tc.expectedIsSet != actualIsSet {
+				t.Errorf("IsSet(), Expected: %v, Actual:%v", tc.expectedIsSet, actualIsSet)
 			}
 		})
 	}

@@ -890,7 +890,7 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 			expectedValue:    "",
 		},
 		{
-			title:            "without default value and with explicit environment variable",
+			title:            "without default value and explicit environment variable",
 			flag:             mocks.NewFlag("flag", "f"),
 			explicitKey:      "TEST_FLAG",
 			envVariableKey:   "TEST_FLAG",
@@ -898,7 +898,7 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 			expectedValue:    "env_value",
 		},
 		{
-			title:            "without default value and with explicit empty environment variable",
+			title:            "without default value and explicit empty environment variable",
 			flag:             mocks.NewFlag("flag", "f"),
 			explicitKey:      "TEST_FLAG",
 			envVariableKey:   "TEST_FLAG",
@@ -1001,6 +1001,39 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 			envVariableValue: "env_value",
 			expectedValue:    "flag_value",
 		},
+		{
+			title:            "auto key generation with explicit dash key and default value",
+			flag:             mocks.NewFlag("test-flag", "f"),
+			args:             []string{"--test-flag", "flag_value"},
+			autoKey:          true,
+			explicitKey:      "-",
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "flag_value",
+		},
+		{
+			title:            "auto key generation with empty args and explicit dash key and default value",
+			flag:             mocks.NewFlag("test-flag", "f"),
+			autoKey:          true,
+			explicitKey:      "-",
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			defaultValue:     "default_value",
+			envVariableValue: "env_value",
+			expectedValue:    "default_value",
+		},
+		{
+			title:            "auto key generation with empty args and explicit dash key with no default value",
+			flag:             mocks.NewFlag("test-flag", "f"),
+			autoKey:          true,
+			explicitKey:      "-",
+			keyPrefix:        "Prefix",
+			envVariableKey:   "PREFIX_TEST_FLAG",
+			envVariableValue: "env_value",
+			expectedValue:    "",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -1043,6 +1076,11 @@ func TestBucket_Parse_Value_Environment_Variable_Source(t *testing.T) {
 					t.Errorf("Expectced termination code %d, actual: %d", core.FailureExitCode, tm.Code)
 				}
 				return
+			}
+
+			actualKey := tc.flag.Key().String()
+			if tc.explicitKey == "-" && actualKey != "" {
+				t.Errorf("Expected: an empty key, Actual: %v", actualKey)
 			}
 
 			if tc.flag.Get() != tc.expectedValue {
